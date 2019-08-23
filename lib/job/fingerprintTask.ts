@@ -32,7 +32,7 @@ import {
     fingerprintRunner,
 } from "@atomist/sdm-pack-fingerprints";
 import { FingerprintHandler } from "@atomist/sdm-pack-fingerprints/lib/machine/Aspect";
-import { computeFingerprints } from "@atomist/sdm-pack-fingerprints/lib/machine/runner";
+import { createFingerprintComputer } from "@atomist/sdm-pack-fingerprints/lib/machine/runner";
 import * as _ from "lodash";
 import {
     GitHubAppInstallationByOwner,
@@ -50,7 +50,7 @@ export type CalculateFingerprintTaskParameters = {
     branch: string,
 };
 
-export function calculateFingerprintTask(fingerprinters: Aspect[],
+export function calculateFingerprintTask(aspects: Aspect[],
                                          handlers: FingerprintHandler[])
     : CommandHandlerRegistration<CalculateFingerprintTaskParameters> {
     return {
@@ -171,7 +171,8 @@ export function calculateFingerprintTask(fingerprinters: Aspect[],
                     },
                 };
 
-                await fingerprintRunner(fingerprinters, handlers, computeFingerprints)(pi);
+                const fingerprintComputer = createFingerprintComputer(aspects);
+                await fingerprintRunner(aspects, handlers, fingerprintComputer)(pi);
             });
         },
     };

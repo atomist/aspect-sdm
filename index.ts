@@ -95,7 +95,7 @@ export const configuration: Configuration = configure(async sdm => {
         registerReportDetails(NpmDependencies, {
             shortName: "dependency",
             unit: "version",
-            url: "drift?type=npm-project-deps",
+            url: "drift?type=npm-project-deps&band=true&showAll=true",
             description: "Node direct dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         });
@@ -106,7 +106,7 @@ export const configuration: Configuration = configure(async sdm => {
         registerReportDetails(DirectMavenDependencies, {
             shortName: "dependency",
             unit: "version",
-            url: "drift?type=maven-direct-dep",
+            url: "drift?type=maven-direct-dep&band=true&showAll=true",
             description: "Maven direct dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         });
@@ -115,7 +115,7 @@ export const configuration: Configuration = configure(async sdm => {
             registerReportDetails(LeinDeps, {
                 shortName: "dependency",
                 unit: "version",
-                url: "drift?type=clojure-project-deps",
+                url: "drift?type=clojure-project-deps&band=true&showAll=true",
                 description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
                     "grouped by Drift Level.",
             });
