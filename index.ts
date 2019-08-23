@@ -163,7 +163,7 @@ export const configuration: Configuration = configure(async sdm => {
         }
     },
     {
-        name: "Drift Software Delivery Machine",
+        name: "Aspect Software Delivery Machine",
         preProcessors: async cfg => {
 
             // Do not surface the single pushImpact goal set in every UI
