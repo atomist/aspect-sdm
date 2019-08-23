@@ -1,0 +1,8 @@
+query GetFpBySha($type: String!, $name: String!, $sha: String!) {
+  SourceFingerprint(type: $type, name: $name, sha: $sha) {
+    type
+    sha
+    data
+    name
+  }
+}

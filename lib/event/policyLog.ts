@@ -16,6 +16,7 @@
 
 import {
     GraphQL,
+    QueryNoCacheOptions,
     Success,
 } from "@atomist/automation-client";
 import { EventHandlerRegistration } from "@atomist/sdm";
@@ -31,6 +32,7 @@ import {
     displayValue,
 } from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
 import {
+    GetFpBySha,
     OnPullRequest,
     PullRequestAction,
 } from "../typings/types";
@@ -53,7 +55,18 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
 
                 for (const tag of tags) {
                     const { type, name } = fromName(tag[1]);
-                    const value = displayValue(aspectOf({ type }, aspects), { type, name, sha: tag[2], data: undefined });
+
+                    const fp = (await ctx.graphClient.query<GetFpBySha.Query, GetFpBySha.Variables>({
+                        name: "GetFpBySha",
+                        variables: {
+                            type,
+                            name,
+                            sha: tag[2],
+                        },
+                        options: QueryNoCacheOptions,
+                    })).SourceFingerprint[0];
+
+                    const value = displayValue(aspectOf(fp, aspects), fp);
                     const message = `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
                     const log: PolicyLog = {
                         type,
