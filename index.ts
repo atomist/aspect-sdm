@@ -146,6 +146,8 @@ export const configuration: Configuration = configure(async sdm => {
                 aspectSupport({
                     pushImpactGoal: pushImpact,
                     aspects,
+
+                    exposeWeb: true,
                 }),
             );
 
