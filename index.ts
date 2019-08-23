@@ -147,6 +147,10 @@ export const configuration: Configuration = configure(async sdm => {
                     pushImpactGoal: pushImpact,
                     aspects,
 
+                    undesirableUsageChecker: {
+                        check: () => undefined,
+                    },
+
                     exposeWeb: true,
                 }),
             );
