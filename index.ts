@@ -197,7 +197,7 @@ export const configuration: Configuration = configure(async sdm => {
             };
 
             if (mode === "job") {
-                cfg.name = `${cfg.name} - job`;
+                cfg.name = `${cfg.name}-job`;
                 cfg.ws.termination = {
                     graceful: true,
                     gracePeriod: 1000 * 60 * 10,
