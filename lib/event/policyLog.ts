@@ -64,7 +64,7 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
                             sha: tag[2],
                         },
                         options: QueryNoCacheOptions,
-                    })).SourceFingerprint[0];
+                    })).SourceFingerprint as any;
 
                     const value = displayValue(aspectOf(fp, aspects), fp);
                     const message = `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
