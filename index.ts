@@ -26,6 +26,7 @@ import {
 import { configure } from "@atomist/sdm-core";
 import {
     aspectSupport,
+    branchCount,
     CiAspect,
     JavaBuild,
     StackAspect,
@@ -61,7 +62,7 @@ export const configuration: Configuration = configure(async sdm => {
 
         const isStaging = sdm.configuration.endpoints.api.includes("staging");
 
-        const optionalAspects = isStaging ? [LeinDeps] : [];
+        const optionalAspects = isStaging ? [LeinDeps, branchCount] : [];
 
         const aspects = [
             DockerFrom,
@@ -138,6 +139,15 @@ export const configuration: Configuration = configure(async sdm => {
                 "broken out by port number and repositories where used.",
             manage: false,
         });
+        registerCategories(branchCount, "Git");
+        registerReportDetails(branchCount, {
+            shortName: "branches",
+            unit: "branch",
+            url: `fingerprint/${branchCount.name}}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
+            description: "Number of Git branches across repositories in your workspace, " +
+                "grouped by Drift Level.",
+            manage: false,
+        });
 
         if (mode === "online") {
             const pushImpact = new PushImpact();
@@ -187,7 +197,7 @@ export const configuration: Configuration = configure(async sdm => {
             };
 
             if (mode === "job") {
-                cfg.name = `${cfg.name}-job`;
+                cfg.name = `${cfg.name} - job`;
                 cfg.ws.termination = {
                     graceful: true,
                     gracePeriod: 1000 * 60 * 10,
