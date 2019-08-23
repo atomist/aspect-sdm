@@ -143,7 +143,7 @@ export const configuration: Configuration = configure(async sdm => {
         registerReportDetails(branchCount, {
             shortName: "branches",
             unit: "branch",
-            url: `fingerprint/${branchCount.name}}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
+            url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
             description: "Number of Git branches across repositories in your workspace, " +
                 "grouped by Drift Level.",
             manage: false,
