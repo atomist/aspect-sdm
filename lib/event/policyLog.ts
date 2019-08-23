@@ -64,9 +64,16 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
                             sha: tag[2],
                         },
                         options: QueryNoCacheOptions,
-                    })).SourceFingerprint as any;
+                    }));
 
-                    const value = displayValue(aspectOf(fp, aspects), fp);
+                    const fingerprint = {
+                        type,
+                        name,
+                        data: JSON.parse(fp.SourceFingerprint.data),
+                        sha: fp.SourceFingerprint.sha,
+                    };
+
+                    const value = displayValue(aspectOf(fingerprint, aspects), fingerprint);
                     const message = `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
                     const log: PolicyLog = {
                         type,
