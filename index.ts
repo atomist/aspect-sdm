@@ -47,7 +47,7 @@ import { DirectMavenDependencies } from "./lib/aspect/spring/directMavenDependen
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
-import { CreatePolicyLogOnPullRequest } from "./lib/event/policyLog";
+import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import {
     CreateFingerprintJob,
     CreateFingerprintJobCommand,
@@ -162,9 +162,9 @@ export const configuration: Configuration = configure(async sdm => {
             };
         } else {
             sdm.addEvent(CreateFingerprintJob);
-            sdm.addEvent(CreatePolicyLogOnPullRequest);
+            sdm.addEvent(createPolicyLogOnPullRequest(aspects));
             sdm.addCommand(CreateFingerprintJobCommand);
-            sdm.addCommand(calculateFingerprintTask(aspects, handlers));
+            sdm.addCommand(calculateFingerprintTask(aspects));
             return {};
         }
     },

@@ -9,5 +9,9 @@ subscription OnPullRequest {
             message
         }
         branchName
+        repo {
+            owner
+            name
+        }
     }
 }

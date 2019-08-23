@@ -50,8 +50,7 @@ export type CalculateFingerprintTaskParameters = {
     branch: string,
 };
 
-export function calculateFingerprintTask(aspects: Aspect[],
-                                         handlers: FingerprintHandler[])
+export function calculateFingerprintTask(aspects: Aspect[])
     : CommandHandlerRegistration<CalculateFingerprintTaskParameters> {
     return {
         name: "CalculateFingerprintTask",
@@ -172,7 +171,7 @@ export function calculateFingerprintTask(aspects: Aspect[],
                 };
 
                 const fingerprintComputer = createFingerprintComputer(aspects);
-                await fingerprintRunner(aspects, handlers, fingerprintComputer)(pi);
+                await fingerprintRunner(aspects, [], fingerprintComputer)(pi);
             });
         },
     };

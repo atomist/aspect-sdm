@@ -19,6 +19,7 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { EventHandlerRegistration } from "@atomist/sdm";
+import { Aspect } from "@atomist/sdm-pack-fingerprints";
 import { fromName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
 import {
     ApplyPolicyState,
@@ -26,42 +27,50 @@ import {
     sendPolicyLog,
 } from "@atomist/sdm-pack-fingerprints/lib/log/policyLog";
 import {
+    aspectOf,
+    displayValue,
+} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+import {
     OnPullRequest,
     PullRequestAction,
 } from "../typings/types";
 
-export const CreatePolicyLogOnPullRequest: EventHandlerRegistration<OnPullRequest.Subscription> = {
-    name: "OnPullRequest",
-    description: "Create PolicyLog on PullRequest activity",
-    subscription: GraphQL.subscription("OnPullRequest"),
-    listener: async (e, ctx) => {
-        const pr = e.data.PullRequest[0];
-        if (pr.action === PullRequestAction.opened || pr.action === PullRequestAction.closed) {
-            const tagRegex = /\[fingerprint:([-\w:\/]+)=([-\w]+)\]/g;
-            let tagMatches = tagRegex.exec(pr.body);
-            const tags = [];
-            while (!!tagMatches) {
-                tags.push(tagMatches);
-                tagMatches = tagRegex.exec(pr.body);
-            }
+export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerRegistration<OnPullRequest.Subscription> {
+    return {
+        name: "OnPullRequest",
+        description: "Create PolicyLog on PullRequest activity",
+        subscription: GraphQL.subscription("OnPullRequest"),
+        listener: async (e, ctx) => {
+            const pr = e.data.PullRequest[0];
+            if (pr.action === PullRequestAction.opened || pr.action === PullRequestAction.closed) {
+                const tagRegex = /\[fingerprint:([-\w:\/]+)=([-\w]+)\]/g;
+                let tagMatches = tagRegex.exec(pr.body);
+                const tags = [];
+                while (!!tagMatches) {
+                    tags.push(tagMatches);
+                    tagMatches = tagRegex.exec(pr.body);
+                }
 
-            for (const tag of tags) {
-                const { type, name } = fromName(tag[1]);
-
-                const log: PolicyLog = {
-                    type,
-                    name,
-                    apply: {
-                        _sha: pr.head.sha,
-                        _prId: pr.id,
-                        branch: pr.branchName,
-                        state: ApplyPolicyState.Success,
-                        targetSha: tag[2],
-                    },
-                };
-                await sendPolicyLog(log, ctx);
+                for (const tag of tags) {
+                    const { type, name } = fromName(tag[1]);
+                    const value = displayValue(aspectOf({ type }, aspects), { type, name, sha: tag[2], data: undefined });
+                    const message = `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
+                    const log: PolicyLog = {
+                        type,
+                        name,
+                        apply: {
+                            _sha: pr.head.sha,
+                            _prId: pr.id,
+                            branch: pr.branchName,
+                            state: ApplyPolicyState.Success,
+                            targetSha: tag[2],
+                            message,
+                        },
+                    };
+                    await sendPolicyLog(log, ctx);
+                }
             }
-        }
-        return Success;
-    },
-};
+            return Success;
+        },
+    };
+}
