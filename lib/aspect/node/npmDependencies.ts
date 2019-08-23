@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { LocalProject } from "@atomist/automation-client";
+import {
+    GitProject,
+    LocalProject,
+} from "@atomist/automation-client";
 import {
     LoggingProgressLog,
     spawnLog,
@@ -38,6 +41,7 @@ import {
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { idealsFromNpm } from "./idealFromNpm";
+import { updatePackage } from "./updatePackage";
 
 /**
  * [lib, version]
@@ -137,32 +141,7 @@ export const applyNpmDepsFingerprint: ApplyFingerprint<NpmDepData> = async (p, p
     const fp = papi.parameters.fp;
     const pckage = fp.data[0];
     const version = fp.data[1];
-    const file = await p.getFile("package.json");
-    if (!!file) {
-        const pj = (await file.getContent())
-            .replace(new RegExp(`"${pckage}":\\s*".*"`, "g"), `"${pckage}": "${version}"`);
-        await file.setContent(pj);
-        const log = new StringCapturingProgressLog();
-        log.stripAnsi = true;
-        const result = await spawnLog(
-            "npm",
-            ["install"],
-            {
-                cwd: (p as LocalProject).baseDir,
-                log,
-                logCommand: true,
-            });
-        if (result.code !== 0) {
-            return {
-                edited: false,
-                success: false,
-                error: new Error(`npm installed failed:\n\n${log.log}`),
-                target: p,
-            };
-        }
-    }
-
-    return p;
+    return updatePackage(pckage, version, p as GitProject);
 };
 
 /* tslint:disable:max-line-length */

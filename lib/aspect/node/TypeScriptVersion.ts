@@ -15,6 +15,7 @@
  */
 
 import {
+    GitProject,
     LocalProject,
     logger,
 } from "@atomist/automation-client";
@@ -31,6 +32,7 @@ import {
 import { PackageJson } from "@atomist/sdm-pack-node";
 import { codeLine } from "@atomist/slack-messages";
 import * as _ from "lodash";
+import { updatePackage } from "./updatePackage";
 
 export const TypeScriptVersionType = "typescript-version";
 const PackageJsonName = "package.json";
@@ -81,31 +83,9 @@ export const TypeScriptVersion: Aspect = {
     },
     apply: async (p, papi) => {
         const fp = papi.parameters.fp;
-        if (fp.data.length !== 1) {
-            return p;
-        }
-        if (!(await p.hasFile(PackageJsonName))) {
-            return p;
-        }
-        if (!(p as LocalProject).baseDir) {
-            return p;
-        }
-        const log = new StringCapturingProgressLog();
-        log.stripAnsi = true;
-        const result = await spawnLog(
-                "npm",
-                ["install", `typescript@${fp.data[0]}`, "--save-dev", "--safe-exact"],
-                { cwd: (p as LocalProject).baseDir, log });
-
-        if (result.code !== 0) {
-            return {
-                edited: false,
-                success: false,
-                target: p,
-                error: new Error(`npm install typescript@${fp.data[0]} failed:\n\n${log.log}`),
-            };
-        }
-        return p;
+        const pckage = "typescript";
+        const version = fp.data[0];
+        return updatePackage(pckage, version, p as GitProject);
     },
     toDisplayableFingerprintName: () => "TypeScript version",
     toDisplayableFingerprint: fp => fp.data.join(","),
