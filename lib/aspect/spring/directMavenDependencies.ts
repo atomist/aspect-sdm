@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { projectUtils } from "@atomist/automation-client";
+import { Microgrammar } from "@atomist/microgrammar";
 import {
     Aspect,
     FP,
@@ -23,6 +25,25 @@ import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
 
 const MavenDirectDep = "maven-direct-dep";
+
+export const LEGAL_VALUE = /[\[\]\(\),a-zA-Z_\.0-9\-]+/;
+
+const VERSION = {
+    lx2: "<version>",
+    version: LEGAL_VALUE,
+    rx2: "</version>",
+};
+
+export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
+    _lx1: "<dependency>",
+    lx1: "<groupId>",
+    group: LEGAL_VALUE,
+    rx1: "</groupId>",
+    lx: "<artifactId>",
+    artifact: LEGAL_VALUE,
+    rx: "</artifactId>",
+    ...VERSION,
+});
 
 /**
  * Emits direct dependencies only
@@ -35,12 +56,26 @@ export const DirectMavenDependencies: Aspect = {
         return deps.dependencies.map(gavToFingerprint);
     },
     apply: async (p, papi) => {
+        await projectUtils.doWithFiles(p, "pom.xml", async f => {
+            const pom = await f.getContent();
+            const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as VersionedArtifact[];
+            if (matches.length === 0) {
+                return;
+            }
+            const fp = papi.parameters.fp;
+            const artifact = JSON.parse(fp.data);
+            const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
+            if (!!artifactToUpdate) {
+                const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
+                updater.version = artifact.version;
+                await f.setContent(updater.newContent());
+            }
+        });
         return p;
     },
     toDisplayableFingerprintName: name => name,
     toDisplayableFingerprint: fp => {
-        const version = JSON.parse(fp.data).version;
-        return version;
+        return JSON.parse(fp.data).version;
     },
 };
 
