@@ -56,7 +56,7 @@ export const branchCount: Aspect<BranchCountData> = {
                 {
                     cwd: lp.baseDir,
                 });
-        } catch(e) {
+        } catch (e) {
             logger.warn(e.message);
         }
         try {
