@@ -26,7 +26,6 @@ import {
 import { configure } from "@atomist/sdm-core";
 import {
     aspectSupport,
-    branchCount,
     CiAspect,
     JavaBuild,
     StackAspect,
@@ -41,6 +40,7 @@ import {
     DockerFrom,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
+import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
 import { TypeScriptVersion } from "./lib/aspect/node/TypeScriptVersion";
