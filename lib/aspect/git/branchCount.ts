@@ -79,7 +79,7 @@ export const branchCount: Aspect<BranchCountData> = {
         return bandFor<"Low" | "Medium" | "High" | "Excessive">({
             Low: { upTo: 5 },
             Medium: { upTo: 12 },
-            High: { upTo: 12 },
+            High: { upTo: 30 },
             Excessive: Default,
         }, fp.data.count, { includeNumber: true });
     },
