@@ -40,21 +40,34 @@ export const branchCount: Aspect<BranchCountData> = {
     baseOnly: true,
     extract: async p => {
         const lp = p as LocalProject;
-        await execPromise(
-            "git", ["fetch", "--unshallow"],
-            {
-                cwd: lp.baseDir,
-            });
-        await execPromise(
-            "git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"],
-            {
-                cwd: lp.baseDir,
-            });
-        await execPromise(
-            "git", ["fetch", "origin"],
-            {
-                cwd: lp.baseDir,
-            });
+
+        try {
+            await execPromise(
+                "git", ["fetch", "--unshallow"],
+                {
+                    cwd: lp.baseDir,
+                });
+        } catch (e) {
+            logger.warn(e.message);
+        }
+        try {
+            await execPromise(
+                "git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"],
+                {
+                    cwd: lp.baseDir,
+                });
+        } catch(e) {
+            logger.warn(e.message);
+        }
+        try {
+            await execPromise(
+                "git", ["fetch", "origin"],
+                {
+                    cwd: lp.baseDir,
+                });
+        } catch (e) {
+            logger.warn(e.message);
+        }
 
         const commandResult = await execPromise(
             "git", ["branch", "--list", "-r", "origin/*"],
