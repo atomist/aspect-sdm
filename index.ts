@@ -40,7 +40,10 @@ import {
     DockerFrom,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
-import { Aspect, DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
+import {
+    Aspect,
+    DefaultTargetDiffHandler,
+} from "@atomist/sdm-pack-fingerprints";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
