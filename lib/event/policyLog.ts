@@ -74,7 +74,9 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
                     };
 
                     const value = displayValue(aspectOf(fingerprint, aspects), fingerprint);
-                    const message = `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
+                    const message = pr.action === PullRequestAction.closed ?
+                        `PR of policy ${value} application to ${pr.repo.owner}/${pr.repo.name} was ${pr.merged ? "merged" : "closed without merging"}` :
+                        `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
                     const log: PolicyLog = {
                         type,
                         name,

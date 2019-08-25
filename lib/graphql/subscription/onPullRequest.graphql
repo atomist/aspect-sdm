@@ -4,6 +4,7 @@ subscription OnPullRequest {
         body
         state
         action
+        merged
         head {
             sha
             message
