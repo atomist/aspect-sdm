@@ -51,7 +51,8 @@ export const TypeScriptVersion: Aspect = {
             return {
                 title: "New TypeScript Version Policy",
                 description:
-                    `Policy version for TypeScript is ${codeLine(target.data[0])}.\nProject ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[0])}.`,
+                    `Policy version for TypeScript is ${codeLine(target.data[0])}.
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[0])}.`,
             };
         },
         extract: async p => {

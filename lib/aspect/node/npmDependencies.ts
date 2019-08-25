@@ -149,7 +149,8 @@ export const diffNpmDepsFingerprints: DiffSummaryFingerprint = (diff, target) =>
     return {
         title: "New NPM Package Version Policy",
         description:
-            `Policy version for NPM package ${bold(diff.from.data[0])} is ${codeLine(target.data[1])}.\nProject ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[1])}.`,
+            `Policy version for NPM package ${bold(diff.from.data[0])} is ${codeLine(target.data[1])}.
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[1])}.`,
     };
 };
 
