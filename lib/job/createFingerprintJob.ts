@@ -152,6 +152,7 @@ async function fingerprintGitHubResourceProvider(ctx: HandlerContext, rerun: boo
                         parameters: org.tasks,
                         name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
                         description: `Analyzing repositories in ${bold(org.name)}`,
+                        concurrentTasks: 2,
                     },
                     ctx);
                 await prefs.put<boolean>(preferenceKey(org.name), true, { scope: PreferenceScope.Sdm });
