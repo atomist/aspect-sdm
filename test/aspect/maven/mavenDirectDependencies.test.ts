@@ -30,11 +30,11 @@ describe("mavenDirectDependencies", () => {
                 const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>atomist</groupId> 
+   <groupId>atomist</groupId>
    <artifactId>cd41</artifactId>
    <version>0.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging> 
-   <name>cd41</name>  
+   <packaging>jar</packaging>
+   <name>cd41</name>
    <dependencies>
       <dependency>
          <groupId>com.atomist</groupId>
@@ -65,11 +65,11 @@ describe("mavenDirectDependencies", () => {
             const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>atomist</groupId> 
+   <groupId>atomist</groupId>
    <artifactId>cd41</artifactId>
    <version>0.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging> 
-   <name>cd41</name>  
+   <packaging>jar</packaging>
+   <name>cd41</name>
    <dependencies>
       <dependency>
          <groupId>com.atomist</groupId>
@@ -98,11 +98,11 @@ describe("mavenDirectDependencies", () => {
             const epom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>atomist</groupId> 
+   <groupId>atomist</groupId>
    <artifactId>cd41</artifactId>
    <version>0.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging> 
-   <name>cd41</name>  
+   <packaging>jar</packaging>
+   <name>cd41</name>
    <dependencies>
       <dependency>
          <groupId>com.atomist</groupId>
@@ -118,11 +118,11 @@ describe("mavenDirectDependencies", () => {
             const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>atomist</groupId> 
+   <groupId>atomist</groupId>
    <artifactId>cd41</artifactId>
    <version>0.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging> 
-   <name>cd41</name>  
+   <packaging>jar</packaging>
+   <name>cd41</name>
    <dependencies>
       <dependency>
          <groupId>com.atomist</groupId>
@@ -150,11 +150,11 @@ describe("mavenDirectDependencies", () => {
             const epom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
-   <groupId>atomist</groupId> 
+   <groupId>atomist</groupId>
    <artifactId>cd41</artifactId>
    <version>0.1.0-SNAPSHOT</version>
-   <packaging>jar</packaging> 
-   <name>cd41</name>  
+   <packaging>jar</packaging>
+   <name>cd41</name>
    <dependencies>
       <dependency>
          <groupId>com.atomist</groupId>
