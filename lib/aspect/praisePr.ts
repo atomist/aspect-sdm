@@ -44,8 +44,10 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
     return async (pli, diffs, aspect) => {
         const repo = pli.push.repo;
 
-        // We only auto raise PRs against the default branch
+        // We only auto raise PRs against the default branch or when there are no channels mapped
         if (repo.defaultBranch !== pli.push.branch) {
+            return fallback(pli, diffs, aspect);
+        } else if (!!repo.channels && repo.channels.length > 0) {
             return fallback(pli, diffs, aspect);
         }
 
