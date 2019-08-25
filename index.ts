@@ -39,6 +39,7 @@ import {
     DockerfilePath,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
+import { DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
 import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
@@ -46,6 +47,7 @@ import { MavenDirectDependencies } from "./lib/aspect/maven/mavenDirectDependenc
 import { MavenParentPom } from "./lib/aspect/maven/parentPom";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
 import { TypeScriptVersion } from "./lib/aspect/node/TypeScriptVersion";
+import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
@@ -64,7 +66,7 @@ export const configuration: Configuration = configure(async sdm => {
         const isStaging = sdm.configuration.endpoints.api.includes("staging");
 
         const optionalAspects = isStaging ? [LeinDeps] : [];
-
+        
         const aspects = [
             DockerFrom,
             DockerfilePath,
@@ -83,7 +85,9 @@ export const configuration: Configuration = configure(async sdm => {
             branchCount,
             ...optionalAspects,
         ];
-        const handlers = [];
+
+        // Install default workflow
+        aspects.filter(a => !!a.workflows && a.workflows.length > 0).forEach(a => a.workflows = [raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
 
         // TODO cd merge into one call
         registerCategories(TypeScriptVersion, "Node.js");
