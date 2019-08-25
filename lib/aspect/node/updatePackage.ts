@@ -39,29 +39,34 @@ export async function updatePackage(pckage: string, version: string, p: GitProje
             return p;
         }
 
-        // Only run 'npm install' if there were changes to the package.json
-        const log = new StringCapturingProgressLog();
-        log.stripAnsi = true;
-        const result = await spawnLog(
-            "npm",
-            ["install"],
-            {
-                cwd: (p as LocalProject).baseDir,
-                log,
-                logCommand: true,
-            });
+        // Run the correct dependency install command
+        if (await p.hasFile("yarn.lock")) {
+            const log = new StringCapturingProgressLog();
+            log.stripAnsi = true;
+            await spawnLog(
+                "yarn",
+                ["install"],
+                {
+                    cwd: (p as LocalProject).baseDir,
+                    log,
+                    logCommand: true,
+                });
+        } else {
+            const log = new StringCapturingProgressLog();
+            log.stripAnsi = true;
+            await spawnLog(
+                "npm",
+                ["install"],
+                {
+                    cwd: (p as LocalProject).baseDir,
+                    log,
+                    logCommand: true,
+                });
+        }
 
         // We need to delete node_modules as not everybody has that in their .gitignore
         await p.deleteDirectory("node_modules");
-
-        if (result.code !== 0) {
-            return {
-                edited: false,
-                success: false,
-                error: new Error(`'npm install' failed:\n\n${log.log}`),
-                target: p,
-            };
-        }
+        return p;
     }
 
     return p;
