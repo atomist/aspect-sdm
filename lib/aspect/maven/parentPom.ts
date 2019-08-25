@@ -28,7 +28,6 @@ import {
     codeLine,
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
-import { PARENT_GRAMMAR } from "./mavenDirectDependencies";
 
 const MavenParentPomType = "maven-parent-pom";
 
@@ -40,8 +39,8 @@ const VERSION = {
     rx2: "</version>",
 };
 
-export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
-    _lx1: "<dependency>",
+export const PARENT_GRAMMAR = Microgrammar.fromDefinitions({
+    _lx1: "<parent>",
     lx1: "<groupId>",
     group: LEGAL_VALUE,
     rx1: "</groupId>",

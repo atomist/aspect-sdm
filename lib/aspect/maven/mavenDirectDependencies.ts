@@ -39,8 +39,8 @@ const VERSION = {
     rx2: "</version>",
 };
 
-export const PARENT_GRAMMAR = Microgrammar.fromDefinitions({
-    _lx1: "<parent>",
+export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
+    _lx1: "<dependency>",
     lx1: "<groupId>",
     group: LEGAL_VALUE,
     rx1: "</groupId>",
@@ -48,6 +48,16 @@ export const PARENT_GRAMMAR = Microgrammar.fromDefinitions({
     artifact: LEGAL_VALUE,
     rx: "</artifactId>",
     ...VERSION,
+});
+
+export const DEPENDENCY_WITHOUT_VERSION_GRAMMAR = Microgrammar.fromDefinitions({
+    _lx1: "<dependency>",
+    lx1: "<groupId>",
+    group: LEGAL_VALUE,
+    rx1: "</groupId>",
+    lx: "<artifactId>",
+    artifact: LEGAL_VALUE,
+    rx: "</artifactId>",
 });
 
 /**
@@ -60,8 +70,8 @@ export const MavenDirectDependencies: Aspect = {
         return {
             title: "New Maven Dependency Version Policy",
             description:
-                `Policy version for Maven dependency ${bold(`${dataToVersionedArtifact(diff.from.data).group}:${dataToVersionedArtifact(diff.from.data).artifact}`)} is ${codeLine(dataToVersionedArtifact(target.data).version)}.
-Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(dataToVersionedArtifact(diff.to.data).version)}.`,
+                `Policy version for Maven dependency ${bold(`${dataToVersionedArtifact(diff.from).group}:${dataToVersionedArtifact(diff.from).artifact}`)} is ${codeLine(dataToVersionedArtifact(target).version)}.
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(dataToVersionedArtifact(diff.to).version)}.`,
         };
     },
     extract: async p => {
@@ -71,19 +81,30 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
     apply: async (p, papi) => {
         await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
             const pom = await f.getContent();
-            const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
+            let matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
+            if (matches.length === 0) {
+                matches = DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
+            }
             if (matches.length === 0) {
                 return;
             }
             const fp = papi.parameters.fp;
-            const artifact = dataToVersionedArtifact(fp.data);
+            const artifact = dataToVersionedArtifact(fp);
             const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
             if (!!artifactToUpdate) {
                 const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
                 if (artifact.version === "managed") {
-                    // TODO cd how can we remove a part of the match?
-                } else {
+                    // Delete existing version
+                    if (!!artifactToUpdate.version) {
+                        const indent = indentationFromMatch((artifactToUpdate as any).$matched);
+                        updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>`);
+                    }
+                } else if (!!artifactToUpdate.version) {
                     updater.version = artifact.version;
+                } else {
+                    // Add version in
+                    const indent = indentationFromMatch((artifactToUpdate as any).$matched);
+                    updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>${indent}<version>${artifact.version}</version>`);
                 }
                 await f.setContent(updater.newContent());
             }
@@ -117,4 +138,9 @@ function dataToVersionedArtifact(fp: Pick<FP, "data">): VersionedArtifact {
         return JSON.parse(fp.data) as VersionedArtifact;
     }
     return fp.data as VersionedArtifact;
+}
+
+function indentationFromMatch(match: string): string {
+    const regexp = />([\s]*)</m;
+    return regexp.exec(match)[1];
 }
