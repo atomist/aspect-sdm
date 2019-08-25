@@ -54,9 +54,15 @@ import {
     CreateFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
+import { Aspect, DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
+
+const DockerFromWithWorkflow: Aspect = {
+    ...DockerFrom,
+    workflows: [DefaultTargetDiffHandler],
+}
 
 export const configuration: Configuration = configure(async sdm => {
 
@@ -65,7 +71,7 @@ export const configuration: Configuration = configure(async sdm => {
         const optionalAspects = isStaging ? [LeinDeps, branchCount] : [];
 
         const aspects = [
-            DockerFrom,
+            DockerFromWithWorkflow,
             DockerfilePath,
             DockerPorts,
             SpringBootStarter,
