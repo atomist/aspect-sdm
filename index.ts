@@ -40,6 +40,7 @@ import {
     DockerFrom,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
+import { Aspect, DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
@@ -54,7 +55,6 @@ import {
     CreateFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
-import { Aspect, DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
@@ -62,7 +62,7 @@ const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
 const DockerFromWithWorkflow: Aspect = {
     ...DockerFrom,
     workflows: [DefaultTargetDiffHandler],
-}
+};
 
 export const configuration: Configuration = configure(async sdm => {
 
