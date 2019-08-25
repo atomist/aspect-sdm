@@ -66,7 +66,7 @@ export const configuration: Configuration = configure(async sdm => {
         const isStaging = sdm.configuration.endpoints.api.includes("staging");
 
         const optionalAspects = isStaging ? [LeinDeps] : [];
-        
+
         const aspects = [
             DockerFrom,
             DockerfilePath,
