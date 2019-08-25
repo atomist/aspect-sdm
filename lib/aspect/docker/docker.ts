@@ -107,7 +107,7 @@ export const diffDockerBaseFingerprints: DiffSummaryFingerprint = (diff, target)
         title: "New Docker Base Image Tag Policy",
         description:
             `Policy tag for Docker base image ${bold(diff.from.data.image)} is ${codeLine(target.data.version)}.
-Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use tag ${codeLine(diff.to.data.version)}.`,
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using tag ${codeLine(diff.to.data.version)}.`,
     };
 };
 

@@ -40,7 +40,6 @@ import {
     codeLine,
 } from "@atomist/slack-messages";
 import * as _ from "lodash";
-import { idealsFromNpm } from "./idealFromNpm";
 import { updatePackage } from "./updatePackage";
 
 /**
@@ -150,7 +149,7 @@ export const diffNpmDepsFingerprints: DiffSummaryFingerprint = (diff, target) =>
         title: "New NPM Package Version Policy",
         description:
             `Policy version for NPM package ${bold(diff.from.data[0])} is ${codeLine(target.data[1])}.
-Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[1])}.`,
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(diff.to.data[1])}.`,
     };
 };
 
@@ -178,7 +177,6 @@ export const NpmDependencies: Aspect<NpmDepData> = {
     workflows: [
         DefaultTargetDiffHandler,
     ],
-    suggestedIdeals: (type, name) => idealsFromNpm(name),
 };
 
 export const NpmCoordinates: Aspect = {

@@ -42,9 +42,10 @@ import {
 import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
+import { MavenParentPom } from "./lib/aspect/maven/parentPom";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
 import { TypeScriptVersion } from "./lib/aspect/node/TypeScriptVersion";
-import { DirectMavenDependencies } from "./lib/aspect/spring/directMavenDependencies";
+import { MavenDirectDependencies } from "./lib/aspect/maven/mavenDirectDependencies";
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
@@ -76,7 +77,8 @@ export const configuration: Configuration = configure(async sdm => {
             CiAspect,
             JavaBuild,
             SpringBootVersion,
-            DirectMavenDependencies,
+            MavenDirectDependencies,
+            MavenParentPom,
             K8sSpecs,
             branchCount,
             ...optionalAspects,
@@ -104,12 +106,20 @@ export const configuration: Configuration = configure(async sdm => {
         registerCategories(SpringBootStarter, "Java");
         registerCategories(JavaBuild, "Java");
         registerCategories(SpringBootVersion, "Java");
-        registerCategories(DirectMavenDependencies, "Java");
-        registerReportDetails(DirectMavenDependencies, {
+        registerCategories(MavenDirectDependencies, "Java");
+        registerReportDetails(MavenDirectDependencies, {
             shortName: "dependency",
             unit: "version",
             url: "drift?type=maven-direct-dep&band=true",
-            description: "Maven direct dependencies in use across all repositories in your workspace, " +
+            description: "Maven declared dependencies in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+        });
+        registerCategories(MavenParentPom, "Java");
+        registerReportDetails(MavenParentPom, {
+            shortName: "parent",
+            unit: "version",
+            url: `drift?type=${MavenParentPom.name}&band=true`,
+            description: "Maven parent POM in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         });
         if (isStaging) {

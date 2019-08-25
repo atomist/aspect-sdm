@@ -39,8 +39,8 @@ const VERSION = {
     rx2: "</version>",
 };
 
-export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
-    _lx1: "<dependency>",
+export const PARENT_GRAMMAR = Microgrammar.fromDefinitions({
+    _lx1: "<parent>",
     lx1: "<groupId>",
     group: LEGAL_VALUE,
     rx1: "</groupId>",
@@ -53,14 +53,15 @@ export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
 /**
  * Emits direct dependencies only
  */
-export const DirectMavenDependencies: Aspect = {
+export const MavenDirectDependencies: Aspect = {
     name: MavenDirectDep,
-    displayName: "Direct Maven dependencies",
+    displayName: "Maven declared dependencies",
     summary: (diff, target) => {
         return {
             title: "New Maven Dependency Version Policy",
             description:
-                `Policy version for Maven dependency ${bold(`${diff.from.data.group}:${diff.from.data.artifact}`)} is ${codeLine(target.data.version)}.\nProject ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data.version)}.`,
+                `Policy version for Maven dependency ${bold(`${dataToVersionedArtifact(diff.from.data).group}:${dataToVersionedArtifact(diff.from.data).artifact}`)} is ${codeLine(dataToVersionedArtifact(target.data).version)}.
+Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(dataToVersionedArtifact(diff.to.data).version)}.`,
         };
     },
     extract: async p => {
@@ -70,12 +71,12 @@ export const DirectMavenDependencies: Aspect = {
     apply: async (p, papi) => {
         await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
             const pom = await f.getContent();
-            const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as VersionedArtifact[];
+            const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
             if (matches.length === 0) {
                 return;
             }
             const fp = papi.parameters.fp;
-            const artifact = typeof fp.data === "string" ? JSON.parse(fp.data) : fp.data;
+            const artifact = dataToVersionedArtifact(fp.data);
             const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
             if (!!artifactToUpdate) {
                 const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
@@ -90,12 +91,7 @@ export const DirectMavenDependencies: Aspect = {
         return p;
     },
     toDisplayableFingerprintName: name => name,
-    toDisplayableFingerprint: fp => {
-        if (typeof fp.data === "string") {
-            return JSON.parse(fp.data).version;
-        }
-        return fp.data.version;
-    },
+    toDisplayableFingerprint: fp => dataToVersionedArtifact(fp).version,
     workflows: [
         DefaultTargetDiffHandler,
     ],
@@ -114,4 +110,11 @@ function gavToFingerprint(gav: VersionedArtifact): FP {
         data,
         sha: sha256(JSON.stringify(data)),
     };
+}
+
+function dataToVersionedArtifact(fp: Pick<FP, "data">): VersionedArtifact {
+    if (typeof fp.data === "string") {
+        return JSON.parse(fp.data) as VersionedArtifact;
+    }
+    return fp.data as VersionedArtifact;
 }
