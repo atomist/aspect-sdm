@@ -18,11 +18,16 @@ import { projectUtils } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar";
 import {
     Aspect,
+    DefaultTargetDiffHandler,
     FP,
     sha256,
 } from "@atomist/sdm-pack-fingerprints";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
+import {
+    bold,
+    codeLine,
+} from "@atomist/slack-messages";
 
 const MavenDirectDep = "maven-direct-dep";
 
@@ -51,23 +56,34 @@ export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
 export const DirectMavenDependencies: Aspect = {
     name: MavenDirectDep,
     displayName: "Direct Maven dependencies",
+    summary: (diff, target) => {
+        return {
+            title: "New Maven Dependency Version Policy",
+            description:
+                `Policy version for Maven dependency ${bold(`${diff.from.data.group}:${diff.from.data.artifact}`)} is ${codeLine(target.data.version)}.\nProject ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data.version)}.`,
+        };
+    },
     extract: async p => {
-        const deps = await findDeclaredDependencies(p);
+        const deps = await findDeclaredDependencies(p, "**/pom.xml");
         return deps.dependencies.map(gavToFingerprint);
     },
     apply: async (p, papi) => {
-        await projectUtils.doWithFiles(p, "pom.xml", async f => {
+        await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
             const pom = await f.getContent();
             const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as VersionedArtifact[];
             if (matches.length === 0) {
                 return;
             }
             const fp = papi.parameters.fp;
-            const artifact = JSON.parse(fp.data);
+            const artifact = typeof fp.data === "string" ? JSON.parse(fp.data) : fp.data;
             const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
             if (!!artifactToUpdate) {
                 const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
-                updater.version = artifact.version;
+                if (artifact.version === "managed") {
+                    // TODO cd how can we remove a part of the match?
+                } else {
+                    updater.version = artifact.version;
+                }
                 await f.setContent(updater.newContent());
             }
         });
@@ -75,18 +91,27 @@ export const DirectMavenDependencies: Aspect = {
     },
     toDisplayableFingerprintName: name => name,
     toDisplayableFingerprint: fp => {
-        return JSON.parse(fp.data).version;
+        if (typeof fp.data === "string") {
+            return JSON.parse(fp.data).version;
+        }
+        return fp.data.version;
     },
+    workflows: [
+        DefaultTargetDiffHandler,
+    ],
 };
 
 function gavToFingerprint(gav: VersionedArtifact): FP {
-    const data = JSON.stringify(gav);
+    const data = {
+        ...gav,
+        version: !gav.version ? "managed" : gav.version,
+    };
     return {
         type: MavenDirectDep,
         name: `${gav.group}:${gav.artifact}`,
         abbreviation: "mvn",
         version: "0.1.0",
         data,
-        sha: sha256(data),
+        sha: sha256(JSON.stringify(data)),
     };
 }

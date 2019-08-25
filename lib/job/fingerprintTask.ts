@@ -31,6 +31,7 @@ import {
     Aspect,
     fingerprintRunner,
 } from "@atomist/sdm-pack-fingerprints";
+import { sendFingerprintsToAtomist } from "@atomist/sdm-pack-fingerprints/lib/adhoc/fingerprints";
 import { FingerprintHandler } from "@atomist/sdm-pack-fingerprints/lib/machine/Aspect";
 import { createFingerprintComputer } from "@atomist/sdm-pack-fingerprints/lib/machine/runner";
 import * as _ from "lodash";
@@ -171,7 +172,7 @@ export function calculateFingerprintTask(aspects: Aspect[])
                 };
 
                 const fingerprintComputer = createFingerprintComputer(aspects);
-                await fingerprintRunner(aspects, [], fingerprintComputer)(pi);
+                await fingerprintRunner(aspects, [], fingerprintComputer, sendFingerprintsToAtomist)(pi);
             });
         },
     };

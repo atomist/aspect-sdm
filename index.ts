@@ -37,13 +37,9 @@ import {
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
-    DockerFrom,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
-import {
-    Aspect,
-    DefaultTargetDiffHandler,
-} from "@atomist/sdm-pack-fingerprints";
+import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
 import { NpmDependencies } from "./lib/aspect/node/npmDependencies";
@@ -62,19 +58,14 @@ import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
 
-const DockerFromWithWorkflow: Aspect = {
-    ...DockerFrom,
-    workflows: [DefaultTargetDiffHandler],
-};
-
 export const configuration: Configuration = configure(async sdm => {
 
         const isStaging = sdm.configuration.endpoints.api.includes("staging");
 
-        const optionalAspects = isStaging ? [LeinDeps, branchCount] : [];
+        const optionalAspects = isStaging ? [LeinDeps] : [];
 
         const aspects = [
-            DockerFromWithWorkflow,
+            DockerFrom,
             DockerfilePath,
             DockerPorts,
             SpringBootStarter,
@@ -87,6 +78,7 @@ export const configuration: Configuration = configure(async sdm => {
             SpringBootVersion,
             DirectMavenDependencies,
             K8sSpecs,
+            branchCount,
             ...optionalAspects,
         ];
         const handlers = [];

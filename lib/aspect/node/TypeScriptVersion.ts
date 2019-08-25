@@ -16,21 +16,18 @@
 
 import {
     GitProject,
-    LocalProject,
     logger,
 } from "@atomist/automation-client";
 import {
-    execPromise,
-    LoggingProgressLog,
-    spawnLog,
-    StringCapturingProgressLog,
-} from "@atomist/sdm";
-import {
     Aspect,
+    DefaultTargetDiffHandler,
     sha256,
 } from "@atomist/sdm-pack-fingerprints";
 import { PackageJson } from "@atomist/sdm-pack-node";
-import { codeLine } from "@atomist/slack-messages";
+import {
+    bold,
+    codeLine,
+} from "@atomist/slack-messages";
 import * as _ from "lodash";
 import { updatePackage } from "./updatePackage";
 
@@ -46,47 +43,57 @@ const PackageJsonName = "package.json";
  *
  */
 export const TypeScriptVersion: Aspect = {
-    name: TypeScriptVersionType,
-    displayName: "TypeScript Version",
-    documentationUrl:
-        "https://atomist-blogs.github.io/org-visualizer/modules/_lib_feature_node_typescriptversionfeature_.html#typescriptversionfeature",
-
-    extract: async p => {
-        if (!(await p.hasFile(PackageJsonName))) {
-            return undefined;
-        }
-
-        try {
-            const pj = JSON.parse(await (await p.getFile(PackageJsonName)).getContent()) as PackageJson;
-
-            const versions = [
-                _.get(pj.dependencies, "typescript"),
-                _.get(pj.devDependencies, "typescript"),
-            ].filter(v => !!v);
-
-            if (versions.length === 0) {
+        name: TypeScriptVersionType,
+        displayName: "TypeScript Version",
+        documentationUrl:
+            "https://atomist-blogs.github.io/org-visualizer/modules/_lib_feature_node_typescriptversionfeature_.html#typescriptversionfeature",
+        summary: (diff, target) => {
+            return {
+                title: "New TypeScript Version Policy",
+                description:
+                    `Policy version for TypeScript is ${codeLine(target.data[0])}.\nProject ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently configured to use version ${codeLine(diff.to.data[0])}.`,
+            };
+        },
+        extract: async p => {
+            if (!(await p.hasFile(PackageJsonName))) {
                 return undefined;
             }
 
-            return {
-                type: TypeScriptVersionType,
-                name: TypeScriptVersionType,
-                abbreviation: "tsv",
-                version: "0.1.0", // of this fingerprint code
-                data: versions,
-                sha: sha256(JSON.stringify(versions)),
-            };
-        } catch (e) {
-            logger.warn("Error extracting TypeScript version: %s", e.message);
-            return undefined;
-        }
-    },
-    apply: async (p, papi) => {
-        const fp = papi.parameters.fp;
-        const pckage = "typescript";
-        const version = fp.data[0];
-        return updatePackage(pckage, version, p as GitProject);
-    },
-    toDisplayableFingerprintName: () => "TypeScript version",
-    toDisplayableFingerprint: fp => fp.data.join(","),
-};
+            try {
+                const pj = JSON.parse(await (await p.getFile(PackageJsonName)).getContent()) as PackageJson;
+
+                const versions = [
+                    _.get(pj.dependencies, "typescript"),
+                    _.get(pj.devDependencies, "typescript"),
+                ].filter(v => !!v);
+
+                if (versions.length === 0) {
+                    return undefined;
+                }
+
+                return {
+                    type: TypeScriptVersionType,
+                    name: TypeScriptVersionType,
+                    abbreviation: "tsv",
+                    version: "0.1.0", // of this fingerprint code
+                    data: versions,
+                    sha: sha256(JSON.stringify(versions)),
+                };
+            } catch (e) {
+                logger.warn("Error extracting TypeScript version: %s", e.message);
+                return undefined;
+            }
+        },
+        apply: async (p, papi) => {
+            const fp = papi.parameters.fp;
+            const pckage = "typescript";
+            const version = fp.data[0];
+            return updatePackage(pckage, version, p as GitProject);
+        },
+        toDisplayableFingerprintName: () => "TypeScript version",
+        toDisplayableFingerprint: fp => fp.data.join(","),
+        workflows: [
+            DefaultTargetDiffHandler,
+        ],
+    }
+;
