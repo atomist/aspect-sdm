@@ -120,7 +120,7 @@ export const DockerFrom: Aspect<DockerBaseData> = {
     toDisplayableFingerprint: fp => fp.data.version,
     workflows: [
         DefaultTargetDiffHandler,
-    ]
+    ],
 };
 
 function createDockerPortsFingerprint(data: string[]): FP {
@@ -167,4 +167,3 @@ export const DockerfilePath: Aspect = {
     extract: extractDockerPathFingerprint,
     toDisplayableFingerprint: fp => fp.data,
 };
-
