@@ -128,7 +128,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
             scope: PreferenceScope.Sdm,
             defaultValue: { disabled: false },
         });
-        const disabledForRepo = await pli.preferences.get<{ disabled: boolean }>(raisePrPreferenceKey(repo.owner), {
+        const disabledForRepo = await pli.preferences.get<{ disabled: boolean }>(raisePrPreferenceKey(repo.owner, repo.name), {
             scope: PreferenceScope.Sdm,
             defaultValue: { disabled: false },
         });
