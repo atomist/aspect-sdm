@@ -212,6 +212,8 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addEvent(createPolicyLogOnPullRequest(aspects));
             sdm.addCommand(CreateFingerprintJobCommand);
             sdm.addCommand(calculateFingerprintTask(aspects));
+
+            return {};
         }
     },
     {
