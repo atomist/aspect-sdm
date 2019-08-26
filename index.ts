@@ -39,7 +39,11 @@ import {
     DockerfilePath,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
-import { DefaultTargetDiffHandler } from "@atomist/sdm-pack-fingerprints";
+import {
+    DefaultTargetDiffHandler,
+    RebaseFailure,
+    RebaseStrategy,
+} from "@atomist/sdm-pack-fingerprints";
 import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
@@ -169,8 +173,17 @@ export const configuration: Configuration = configure(async sdm => {
 
             sdm.addExtensionPacks(
                 aspectSupport({
-                    pushImpactGoal: pushImpact,
                     aspects,
+
+                    rebase: {
+                        rebase: true,
+                        rebaseStrategy: RebaseStrategy.Ours,
+                        onRebaseFailure: RebaseFailure.DeleteBranch,
+                    },
+
+                    goals: {
+                        pushImpact,
+                    },
 
                     undesirableUsageChecker: {
                         check: () => undefined,
