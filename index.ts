@@ -116,9 +116,6 @@ export const configuration: Configuration = configure(async sdm => {
             description: "Node direct dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         });
-        registerCategories(SpringBootStarter, "Java");
-        registerCategories(JavaBuild, "Java");
-        registerCategories(SpringBootVersion, "Java");
         registerCategories(MavenDirectDependencies, "Java");
         registerReportDetails(MavenDirectDependencies, {
             shortName: "dependency",
