@@ -23,7 +23,7 @@ This page details all runtime OSS dependencies of `@atomist/aspect-sdm`.
 |[GPL-3.0](#gpl-30)|4|
 |[ISC](#isc)|87|
 |[MIT AND BSD-3-Clause](#mit-and-bsd-3-clause)|1|
-|[MIT](#mit)|943|
+|[MIT](#mit)|945|
 |[Public Domain](#public-domain)|1|
 |[Unlicense](#unlicense)|1|
 |[WTFPL](#wtfpl)|1|
@@ -337,10 +337,11 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`@oclif/plugin-plugins`|`1.7.8`|Jeff Dickey @jdxcode|[https://github.com/oclif/plugin-plugins](https://github.com/oclif/plugin-plugins)|
 |`@oclif/plugin-warn-if-update-available`|`1.7.0`|Jeff Dickey @jdxcode|[https://github.com/oclif/plugin-warn-if-update-available](https://github.com/oclif/plugin-warn-if-update-available)|
 |`@oclif/screen`|`1.0.4`|Jeff Dickey @jdxcode|[https://github.com/oclif/screen](https://github.com/oclif/screen)|
-|`@octokit/endpoint`|`5.2.2`||[https://github.com/octokit/endpoint.js](https://github.com/octokit/endpoint.js)|
+|`@octokit/endpoint`|`5.3.2`||[https://github.com/octokit/endpoint.js](https://github.com/octokit/endpoint.js)|
+|`@octokit/plugin-throttling`|`2.6.0`|Simon Grondin|[https://github.com/octokit/plugin-throttling.js](https://github.com/octokit/plugin-throttling.js)|
 |`@octokit/request-error`|`1.0.4`||[https://github.com/octokit/request-error.js](https://github.com/octokit/request-error.js)|
-|`@octokit/request`|`5.0.1`||[https://github.com/octokit/request.js](https://github.com/octokit/request.js)|
-|`@octokit/rest`|`16.28.4`|Gregor Martynus|[https://github.com/octokit/rest.js](https://github.com/octokit/rest.js)|
+|`@octokit/request`|`5.0.2`||[https://github.com/octokit/request.js](https://github.com/octokit/request.js)|
+|`@octokit/rest`|`16.28.7`|Gregor Martynus|[https://github.com/octokit/rest.js](https://github.com/octokit/rest.js)|
 |`@samverschueren/stream-to-observable`|`0.3.0`||[https://github.com/SamVerschueren/stream-to-observable](https://github.com/SamVerschueren/stream-to-observable)|
 |`@sindresorhus/is`|`0.7.0`|Sindre Sorhus|[https://github.com/sindresorhus/is](https://github.com/sindresorhus/is)|
 |`@typed/curry`|`1.0.1`|Tylor Steinberger|[https://github.com/TylorS/typed-curry](https://github.com/TylorS/typed-curry)|
@@ -517,6 +518,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`bl`|`3.0.0`||[https://github.com/rvagg/bl](https://github.com/rvagg/bl)|
 |`bluebird`|`3.5.5`|Petka Antonov|[https://github.com/petkaantonov/bluebird](https://github.com/petkaantonov/bluebird)|
 |`body-parser`|`1.19.0`||[https://github.com/expressjs/body-parser](https://github.com/expressjs/body-parser)|
+|`bottleneck`|`2.19.5`|Simon Grondin|[https://github.com/SGrondin/bottleneck](https://github.com/SGrondin/bottleneck)|
 |`brace-expansion`|`1.1.11`|Julian Gruber|[https://github.com/juliangruber/brace-expansion](https://github.com/juliangruber/brace-expansion)|
 |`braces`|`2.3.2`|Jon Schlinkert|[https://github.com/micromatch/braces](https://github.com/micromatch/braces)|
 |`browser-resolve`|`1.11.3`|Roman Shtylman|[https://github.com/shtylman/node-browser-resolve](https://github.com/shtylman/node-browser-resolve)|
