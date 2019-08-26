@@ -55,10 +55,7 @@ import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
-import {
-    invocableFromComment,
-    invokeCommandOnComment,
-} from "./lib/command/commentCommand";
+import { gitHubCommandSupport } from "./lib/command/commentCommand";
 import {
     OptInCommand,
     OptOutCommand,
@@ -176,6 +173,11 @@ export const configuration: Configuration = configure(async sdm => {
             manage: false,
         });
 
+        sdm.addExtensionPacks(gitHubCommandSupport(
+            {
+                command: [OptInCommand, OptOutCommand],
+            }));
+
         if (mode === "online") {
             const pushImpact = new PushImpact();
 
@@ -212,9 +214,10 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addCommand(CreateFingerprintJobCommand);
             sdm.addCommand(calculateFingerprintTask(aspects));
 
-            sdm.addCommand(invocableFromComment(OptInCommand));
-            sdm.addCommand(invocableFromComment(OptOutCommand));
-            sdm.addEvent(invokeCommandOnComment(sdm, [OptInCommand, OptOutCommand]));
+            sdm.addExtensionPacks(gitHubCommandSupport(
+                {
+                    command: [OptInCommand, OptOutCommand],
+                }));
             return {};
         }
     },

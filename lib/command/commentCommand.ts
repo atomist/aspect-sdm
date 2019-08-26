@@ -26,6 +26,8 @@ import {
     createJob,
     DeclarationType,
     EventHandlerRegistration,
+    ExtensionPack,
+    metadata,
     NamedParameter,
     resolveCredentialsPromise,
     SoftwareDeliveryMachine,
@@ -38,6 +40,21 @@ import {
     ProviderType,
 } from "../typings/types";
 import { api } from "./gitHubApi";
+
+export interface GitHubCommandSupportOptions {
+    command: CommandHandlerRegistration<any> | Array<CommandHandlerRegistration<any>>;
+}
+
+export function gitHubCommandSupport(options: GitHubCommandSupportOptions): ExtensionPack {
+    return {
+        ...metadata("command-support"),
+        configure: sdm => {
+            const commands = toArray(options.command);
+            commands.forEach(c => sdm.addCommand(invocableFromComment(c)));
+            sdm.addEvent(invokeCommandOnComment(sdm, commands));
+        },
+    };
+}
 
 export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
                                        command: CommandHandlerRegistration<any> | Array<CommandHandlerRegistration<any>>)
@@ -106,7 +123,7 @@ export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
                 description: "",
                 parameters: {
                     "owner": repo.owner,
-                    "name": repo.name,
+                    "repo": repo.name,
                     ...args,
                     "comment.apiUrl": repo.org.provider.apiUrl,
                     "comment.owner": repo.owner,
