@@ -81,13 +81,13 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
     apply: async (p, papi) => {
         await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
             const pom = await f.getContent();
-            let matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
-            if (matches.length === 0) {
-                matches = DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
-            }
+
+            const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
+            matches.push(...DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[]);
             if (matches.length === 0) {
                 return;
             }
+
             const fp = papi.parameters.fp;
             const artifact = dataToVersionedArtifact(fp);
             const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
