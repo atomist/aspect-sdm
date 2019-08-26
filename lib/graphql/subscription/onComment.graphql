@@ -1,0 +1,35 @@
+subscription OnComment {
+    Comment {
+        commentId
+        body
+        by {
+            login
+        }
+        pullRequest {
+            number
+            repo {
+                owner
+                name
+                org {
+                    provider {
+                        apiUrl
+                        providerType
+                    }
+                }
+            }
+        }
+        issue {
+            number
+            repo {
+                owner
+                name
+                org {
+                    provider {
+                        apiUrl
+                        providerType
+                    }
+                }
+            }
+        }
+    }
+}

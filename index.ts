@@ -55,6 +55,14 @@ import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
+import {
+    invocableFromComment,
+    invokeCommandOnComment,
+} from "./lib/command/commentCommand";
+import {
+    OptInCommand,
+    OptOutCommand,
+} from "./lib/command/manageOptOut";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import {
     CreateFingerprintJob,
@@ -203,6 +211,10 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addEvent(createPolicyLogOnPullRequest(aspects));
             sdm.addCommand(CreateFingerprintJobCommand);
             sdm.addCommand(calculateFingerprintTask(aspects));
+
+            sdm.addCommand(invocableFromComment(OptInCommand));
+            sdm.addCommand(invocableFromComment(OptOutCommand));
+            sdm.addEvent(invokeCommandOnComment(sdm, [OptInCommand, OptOutCommand]));
             return {};
         }
     },

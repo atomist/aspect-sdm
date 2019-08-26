@@ -42,11 +42,9 @@ import {
     prBodyFromFingerprint,
 } from "@atomist/sdm-pack-fingerprints/lib/support/messages";
 import {
-    bold,
     codeLine,
     italic,
 } from "@atomist/slack-messages";
-import has = Reflect.has;
 
 /**
  * Fingerprint diff handler that raises a PR for all policy discrepancies
@@ -113,7 +111,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
                         `${url}/issues/${pr.number}/comments`,
                         {
                             method: HttpMethod.Post,
-                            body: { body: `PR closed because all polices of ${italic(aspect.displayName)} have been applied to branch ${codeLine(pli.push.branch)}` },
+                            body: { body: `PR closed because all polices of ${italic(aspect.displayName)} have been applied to branch ${codeLine(pli.push.branch)}.` },
                             ...config,
                         });
                 }
@@ -212,10 +210,10 @@ function addCommandsToPrBody(body: string,
 <br/>
 
 You can trigger Atomist commands by commenting on this PR:
-- \`@atomist opt-out\` will stop raising policy PRs for this repository
+- \`@atomist opt out\` will stop raising policy PRs for this repository
 
 ${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(getCategories(aspect)[0])}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`
-        : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)} to manage these updates directly from Slack.`}
+        : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)}) to manage these updates directly from Slack.`}
 
 </details>`;
 }
