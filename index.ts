@@ -173,11 +173,6 @@ export const configuration: Configuration = configure(async sdm => {
             manage: false,
         });
 
-        sdm.addExtensionPacks(gitHubCommandSupport(
-            {
-                command: [OptInCommand, OptOutCommand],
-            }));
-
         if (mode === "online") {
             const pushImpact = new PushImpact();
 
