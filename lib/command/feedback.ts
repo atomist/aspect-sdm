@@ -37,7 +37,7 @@ export const FeedbackCommand: CommandHandlerRegistration<any> = {
             const msg = slackInfoMessage(
                 "Policy Help/Feedback",
                 `${body}
-            
+
 https://github.com/${owner}/${repo}/pull/${issueNumber}`);
 
             await Promise.all(WORKSPACE_IDS.map(w => ci.context.messageClient.send(msg, addressSlackChannels(w, "support"), { dashboard: false })));
