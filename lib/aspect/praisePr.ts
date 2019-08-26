@@ -210,7 +210,8 @@ function addCommandsToPrBody(body: string,
 <br/>
 
 You can trigger Atomist commands by commenting on this PR:
-- \`@atomist opt out\` will stop raising policy PRs for this repository
+- \`@atomist opt out\` will stop raising automatic policy PRs for this repository
+- \`@atomist help\` start your comment with this to ask Atomist for help or provide feedback
 
 ${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(getCategories(aspect)[0])}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`
         : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)}) to manage these updates directly from Slack.`}

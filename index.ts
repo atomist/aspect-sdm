@@ -56,6 +56,7 @@ import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
 import { gitHubCommandSupport } from "./lib/command/commentCommand";
+import { FeedbackCommand } from "./lib/command/feedback";
 import {
     OptInCommand,
     OptOutCommand,
@@ -195,7 +196,7 @@ export const configuration: Configuration = configure(async sdm => {
                 }),
                 gitHubCommandSupport(
                     {
-                        command: [OptInCommand, OptOutCommand],
+                        command: [OptInCommand, OptOutCommand, FeedbackCommand],
                     }),
             );
 

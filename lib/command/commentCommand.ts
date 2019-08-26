@@ -82,7 +82,7 @@ export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
                 return Success;
             }
 
-            const tokens = body.split(" ");
+            const tokens = body.split("\n")[0].trim().split(" ");
             const intent: string[] = [];
             let ix = 0;
             for (let i = 1; i < tokens.length; i++) {
@@ -169,6 +169,7 @@ export const CommandParameter: NamedParameter = {
     name: "comment.command",
     description: "command of the issue",
     required: false,
+    pattern: /[\s\S]*/,
 };
 
 export function invocableFromComment(c: CommandHandlerRegistration<any>): CommandHandlerRegistration<any> {
@@ -189,7 +190,7 @@ function decorateMessageClient(cmd: CommandHandlerRegistration<any>): void {
                     owner: parameters[OwnerParameter.name],
                     repo: parameters[RepoParameter.name],
                     issue_number: parameters[IssueNumberParameter.name],
-                    body: `> ${parameters[CommandParameter.name]}\n\n${msg}`,
+                    body: `> ${parameters[CommandParameter.name].split("\n")[0]}\n\n${msg}`,
                 });
             };
             const credentials = await resolveCredentialsPromise(cli.configuration.sdm.credentialsResolver.commandHandlerCredentials(cli.context, GitHubRepoRef.from({
