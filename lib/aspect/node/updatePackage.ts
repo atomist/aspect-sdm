@@ -45,7 +45,7 @@ export async function updatePackage(pckage: string, version: string, p: GitProje
             log.stripAnsi = true;
             await spawnLog(
                 "yarn",
-                ["install", "--ignore-scripts"],
+                ["install", "--ignore-scripts", "--no-bin-links"],
                 {
                     cwd: (p as LocalProject).baseDir,
                     log,
@@ -56,7 +56,7 @@ export async function updatePackage(pckage: string, version: string, p: GitProje
             log.stripAnsi = true;
             await spawnLog(
                 "npm",
-                ["install", "--ignore-scripts", "--no-audit"],
+                ["install", "--ignore-scripts", "--no-audit", "--no-bin-links"],
                 {
                     cwd: (p as LocalProject).baseDir,
                     log,
