@@ -196,6 +196,10 @@ export const configuration: Configuration = configure(async sdm => {
 
                     exposeWeb: true,
                 }),
+                gitHubCommandSupport(
+                    {
+                        command: [OptInCommand, OptOutCommand],
+                    }),
             );
 
             return {
@@ -208,12 +212,6 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addEvent(createPolicyLogOnPullRequest(aspects));
             sdm.addCommand(CreateFingerprintJobCommand);
             sdm.addCommand(calculateFingerprintTask(aspects));
-
-            sdm.addExtensionPacks(gitHubCommandSupport(
-                {
-                    command: [OptInCommand, OptOutCommand],
-                }));
-            return {};
         }
     },
     {
