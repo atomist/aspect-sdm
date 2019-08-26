@@ -52,7 +52,7 @@ export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
         listener: async (e, ctx) => {
             const commands = toArray(command);
             const comment = e.data.Comment[0];
-            const repo = _.get(comment, "issue.repo") || _.get(comment, "pullRequest.repo") as OnComment.Repo;
+            const repo = _.get(comment, "issue.repo") || _.get(comment, "pullRequest.repo");
             const issueNumber = _.get(comment, "issue.number") || _.get(comment, "pullRequest.number");
 
             if (!repo || repo.org.provider.providerType !== ProviderType.github_com) {
@@ -165,7 +165,7 @@ export function invocableFromComment(c: CommandHandlerRegistration<any>): Comman
 function decorateMessageClient(cmd: CommandHandlerRegistration<any>): void {
     const listener = cmd.listener;
     cmd.listener = async cli => {
-        const parameters = cli.parameters as any;
+        const parameters = cli.parameters;
         if (!!parameters[OwnerParameter.name] && !!parameters[RepoParameter.name] && !!parameters[NumberParameter.name]) {
             cli.context.messageClient.respond = async (msg, options) => {
                 await github.issues.createComment({
