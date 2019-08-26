@@ -218,4 +218,4 @@ ${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/work
         : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)} to manage these updates directly from Slack.`}
 
 </details>`;
-};
+}
