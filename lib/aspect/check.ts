@@ -97,7 +97,7 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffH
         if (!check.data.output.title) {
             output = {
                 title: "Policy differences",
-                summary: "The following differences from set policies have been detected",
+                summary: "The following differences from set policies have been detected:",
                 text: "",
             };
         } else {
