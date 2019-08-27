@@ -54,7 +54,7 @@ import {
 import * as _ from "lodash";
 import {
     checkDiffHandler,
-    CheckGoalExecutionListener,
+    checkGoalExecutionListener,
 } from "./lib/aspect/check";
 import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
@@ -232,7 +232,7 @@ ${rows.join("\n\n")}`);
 
                     return {
                         description: `${data.differences.length} policy ${data.differences.length === 1 ? "difference" : "differences"}`,
-                        state: SdmGoalState.failure,
+                        state: data.differences.length === 0 ? SdmGoalState.success : SdmGoalState.failure,
                         phase: `Compliance ${((1 - (data.differences.length / data.policies.length)) * 100).toFixed(0)}%`,
                         externalUrls: [{
                             label: "Details",
@@ -247,7 +247,7 @@ ${rows.join("\n\n")}`);
             });
 
             const pushImpact = new PushImpact()
-                .withExecutionListener(CheckGoalExecutionListener);
+                .withExecutionListener(checkGoalExecutionListener(policyCompliance));
 
             sdm.addExtensionPacks(
                 aspectSupport({
@@ -277,7 +277,7 @@ ${rows.join("\n\n")}`);
 
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [checkDiffHandler(sdm, policyCompliance), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
+                .forEach(a => a.workflows = [checkDiffHandler(sdm), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
 
             return {
                 analyze: {

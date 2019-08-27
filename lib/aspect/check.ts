@@ -1,19 +1,3 @@
-/*
- * Copyright © 2019 Atomist, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { TokenCredentials } from "@atomist/automation-client";
 import {
     findSdmGoalOnCommit,
@@ -39,7 +23,7 @@ import { ChecksUpdateParamsOutput } from "@octokit/rest";
 import { ComplicanceData } from "../../index";
 import { api } from "../util/gitHubApi";
 
-export function checkDiffHandler(sdm: SoftwareDeliveryMachine, complianceGoal: Goal): FingerprintDiffHandler {
+export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffHandler {
     return async (pli, diffs, aspect) => {
         const repo = pli.push.repo;
 
@@ -61,17 +45,29 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine, complianceGoal: G
             }
         }
 
-        if (discrepancies.length === 0) {
-            return [];
-        }
-
         const { credentials, context, push, id } = pli;
         const github = api((credentials as TokenCredentials).token, push.repo.org.provider.apiUrl);
         const check = await github.checks.get({
-            check_run_id: getFromContext(context).id,
+            check_run_id: getFromContext<{ id: number }>("check", context).id,
             owner: push.repo.owner,
             repo: push.repo.name,
         });
+
+        let data = getFromContext<ComplicanceData>("compliance", context);
+        if (!data) {
+            data = {
+                policies: [],
+                differences: [],
+                url: check.data.html_url,
+            };
+        }
+        data.policies.push(...targets.map(t => JSON.parse(t.value)));
+        data.differences.push(...discrepancies.map(d => d.diff.to));
+        storeInContext<ComplicanceData>("compliance", data, context);
+
+        if (discrepancies.length === 0) {
+            return [];
+        }
 
         let output: ChecksUpdateParamsOutput;
         if (!check.data.output.title) {
@@ -92,88 +88,83 @@ ${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${cod
         output.text = `${output.text}\n\n${text}`;
 
         await github.checks.update({
-            check_run_id: getFromContext(context).id,
+            check_run_id: getFromContext<{ id: number }>("check", context).id,
             owner: push.repo.owner,
             repo: push.repo.name,
             output,
         });
 
-        const cGoalEvent = await findSdmGoalOnCommit(context, id, push.repo.org.provider.providerId, complianceGoal);
-        if (!!cGoalEvent) {
-            let data: ComplicanceData;
-            if (cGoalEvent.data) {
-                data = JSON.parse(cGoalEvent.data) as ComplicanceData;
-            } else {
-                data = {
-                    policies: [],
-                    differences: [],
-                    url: check.data.html_url,
-                };
-            }
-            data.policies.push(...targets.map(t => JSON.parse(t.value)));
-            data.differences.push(...discrepancies.map(d => d.diff.to));
-            await updateGoal(context, cGoalEvent, {
-                state: SdmGoalState.planned,
-                description: complianceGoal.plannedDescription,
-                data: JSON.stringify(data),
-            });
-        }
-
         return [];
     };
 }
 
-export const CheckGoalExecutionListener: GoalExecutionListener = async li => {
-    const { credentials, goalEvent, context } = li;
+export function checkGoalExecutionListener(complianceGoal: Goal): GoalExecutionListener {
+    return async li => {
+        const { credentials, goalEvent, context, id } = li;
 
-    if (goalEvent.push.repo.defaultBranch !== goalEvent.push.branch) {
-        return;
-    }
+        if (goalEvent.push.repo.defaultBranch !== goalEvent.push.branch) {
+            return;
+        }
 
-    const github = api((credentials as TokenCredentials).token, goalEvent.push.repo.org.provider.apiUrl);
+        const github = api((credentials as TokenCredentials).token, goalEvent.push.repo.org.provider.apiUrl);
 
-    if (goalEvent.state === SdmGoalState.in_process) {
-        const checks = await github.checks.listForRef({
-            owner: goalEvent.repo.owner,
-            repo: goalEvent.repo.name,
-            check_name: "policy/atomist",
-            ref: goalEvent.sha,
-        });
-        if (checks.data.total_count > 0) {
-            storeInContext({ id: checks.data.check_runs[0].id }, context);
-        } else {
-            const check = await github.checks.create({
+        if (goalEvent.state === SdmGoalState.in_process) {
+            const checks = await github.checks.listForRef({
                 owner: goalEvent.repo.owner,
                 repo: goalEvent.repo.name,
-                name: "policy/atomist",
-                head_sha: goalEvent.sha,
-                external_id: goalEvent.goalSetId,
-                status: "in_progress",
-                details_url: `https://app.atomist.com/workspace/${context.workspaceId}/analysis`,
+                check_name: "policy/atomist",
+                ref: goalEvent.sha,
             });
-            storeInContext({ id: check.data.id }, context);
-        }
-    } else {
-        const check = await github.checks.get({
-            check_run_id: getFromContext(context).id,
-            owner: goalEvent.push.repo.owner,
-            repo: goalEvent.push.repo.name,
-        });
-        const conclusion = !!check.data.output ? "action_required" : "success";
-        await github.checks.update({
-            check_run_id: getFromContext(context).id,
-            owner: goalEvent.repo.owner,
-            repo: goalEvent.repo.name,
-            status: "completed",
-            conclusion,
-        });
-    }
-};
+            if (checks.data.total_count > 0) {
+                storeInContext<{ id: number }>("check", { id: checks.data.check_runs[0].id }, context);
+            } else {
+                const check = await github.checks.create({
+                    owner: goalEvent.repo.owner,
+                    repo: goalEvent.repo.name,
+                    name: "policy/atomist",
+                    head_sha: goalEvent.sha,
+                    external_id: goalEvent.goalSetId,
+                    status: "in_progress",
+                    details_url: `https://app.atomist.com/workspace/${context.workspaceId}/analysis`,
+                });
+                storeInContext<{ id: number }>("check", { id: check.data.id }, context);
+            }
+        } else {
+            const check = await github.checks.get({
+                check_run_id: getFromContext<{ id: number }>("check", context).id,
+                owner: goalEvent.push.repo.owner,
+                repo: goalEvent.push.repo.name,
+            });
+            const conclusion = !!check.data.output.title ? "action_required" : "success";
+            await github.checks.update({
+                check_run_id: getFromContext<{ id: number }>("check", context).id,
+                owner: goalEvent.repo.owner,
+                repo: goalEvent.repo.name,
+                status: "completed",
+                conclusion,
+                output: conclusion === "success" ? {
+                    title: "Policy differences",
+                    summary: "No policy differences detected",
+                } : undefined,
+            });
 
-function storeInContext(obj: { id: number }, context: any): void {
-    context.__check = obj;
+            const cGoalEvent = await findSdmGoalOnCommit(context, id, goalEvent.push.repo.org.provider.providerId, complianceGoal);
+            const data = getFromContext<ComplicanceData>("compliance", context);
+            if (!!cGoalEvent && !!data) {
+                await updateGoal(context, cGoalEvent, {
+                    state: SdmGoalState.planned,
+                    description: complianceGoal.plannedDescription,
+                    data: JSON.stringify(data),
+                });
+            }
+        }
+    };
 }
 
-function getFromContext(context: any): { id: number } {
-    return context.__check;
+function storeInContext<T>(key: string, obj: T, context: any): void {
+    context[key] = obj;
+}
+
+function getFromContext<T>(key: string, context: any): T {
+    return context[key] as T;
 }
