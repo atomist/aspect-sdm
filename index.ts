@@ -44,6 +44,10 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprints";
+import {
+    checkDiffHandler,
+    CheckGoalExecutionListener,
+} from "./lib/aspect/check";
 import { DockerFrom } from "./lib/aspect/docker/docker";
 import { branchCount } from "./lib/aspect/git/branchCount";
 import { K8sSpecs } from "./lib/aspect/k8s/specAspect";
@@ -55,7 +59,6 @@ import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { SpringBootStarter } from "./lib/aspect/spring/springBootStarter";
 import { SpringBootVersion } from "./lib/aspect/spring/springBootVersion";
 import { TravisScriptsAspect } from "./lib/aspect/travis/travisAspect";
-import { gitHubCommandSupport } from "./lib/command/commentCommand";
 import { FeedbackCommand } from "./lib/command/feedback";
 import {
     OptInCommand,
@@ -67,6 +70,7 @@ import {
     CreateFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
+import { gitHubCommandSupport } from "./lib/util/commentCommand";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
@@ -97,7 +101,8 @@ export const configuration: Configuration = configure(async sdm => {
         ];
 
         // Install default workflow
-        aspects.filter(a => !!a.workflows && a.workflows.length > 0).forEach(a => a.workflows = [raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
+        aspects.filter(a => !!a.workflows && a.workflows.length > 0)
+            .forEach(a => a.workflows = [checkDiffHandler(sdm), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
 
         // TODO cd merge into one call
         registerCategories(TypeScriptVersion, "Node.js");
@@ -172,7 +177,8 @@ export const configuration: Configuration = configure(async sdm => {
         });
 
         if (mode === "online") {
-            const pushImpact = new PushImpact();
+            const pushImpact = new PushImpact()
+                .withExecutionListener(CheckGoalExecutionListener);
 
             sdm.addExtensionPacks(
                 aspectSupport({
