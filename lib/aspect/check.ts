@@ -1,20 +1,8 @@
-/*
- * Copyright © 2019 Atomist, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import { TokenCredentials } from "@atomist/automation-client";
+import {
+    ProjectOperationCredentials,
+    TokenCredentials,
+} from "@atomist/automation-client";
+import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import {
     findSdmGoalOnCommit,
     Goal,
@@ -41,7 +29,12 @@ import { api } from "../util/gitHubApi";
 
 export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffHandler {
     return async (pli, diffs, aspect) => {
+        const { credentials, context, push } = pli;
         const repo = pli.push.repo;
+
+        if (!checkToken(credentials)) {
+            return [];
+        }
 
         if (repo.defaultBranch !== pli.push.branch || diffs.length === 0) {
             return [];
@@ -61,7 +54,6 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffH
             }
         }
 
-        const { credentials, context, push, id } = pli;
         const github = api((credentials as TokenCredentials).token, push.repo.org.provider.apiUrl);
         const check = await github.checks.get({
             check_run_id: getFromContext<{ id: number }>("check", context).id,
@@ -117,6 +109,10 @@ ${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${cod
 export function checkGoalExecutionListener(complianceGoal: Goal): GoalExecutionListener {
     return async li => {
         const { credentials, goalEvent, context, id } = li;
+
+        if (!checkToken(credentials)) {
+            return;
+        }
 
         if (goalEvent.push.repo.defaultBranch !== goalEvent.push.branch) {
             return;
@@ -183,4 +179,14 @@ function storeInContext<T>(key: string, obj: T, context: any): void {
 
 function getFromContext<T>(key: string, context: any): T {
     return context[key] as T;
+}
+
+function checkToken(creds: ProjectOperationCredentials): string {
+    if (isTokenCredentials(creds)) {
+        const token = creds.token;
+        if (token.startsWith("v1")) {
+            return token;
+        }
+    }
+    return undefined;
 }
