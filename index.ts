@@ -216,8 +216,8 @@ export const configuration: Configuration = configure(async sdm => {
                         const targetCount = data.policies.filter(p => p.type === k).length;
                         return `## ${aspectOf({ type: k }, aspects).displayName}
 
-${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (v.length / targetCount)) * 100).toFixed(0)}% 
-        
+${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (v.length / targetCount)) * 100).toFixed(0)}%
+
 ${v.map(d => {
     const target = data.policies.find(p => p.type === d.type && p.name === d.name);
     return `* ${displayName(aspect, d)} at ${displayValue(aspect, d)} - Policy: ${displayValue(aspect, target)}`;
