@@ -20,8 +20,10 @@ import { configureHumio } from "@atomist/automation-client-ext-humio";
 import {
     CachingProjectLoader,
     GitHubLazyProjectLoader,
+    goal,
     GoalSigningScope,
     PushImpact,
+    SdmGoalState,
 } from "@atomist/sdm";
 import { configure } from "@atomist/sdm-core";
 import {
@@ -44,6 +46,12 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprints";
+import {
+    aspectOf,
+    displayName,
+    displayValue,
+} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+import * as _ from "lodash";
 import {
     checkDiffHandler,
     CheckGoalExecutionListener,
@@ -72,6 +80,22 @@ import {
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 
+export interface ComplicanceData {
+    policies: Array<{
+        type: string;
+        name: string;
+        sha: string;
+        data: string;
+    }>;
+    differences: Array<{
+        type: string;
+        name: string;
+        sha: string;
+        data: string;
+    }>;
+    url: string;
+}
+
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
 
@@ -99,10 +123,6 @@ export const configuration: Configuration = configure(async sdm => {
             branchCount,
             ...optionalAspects,
         ];
-
-        // Install default workflow
-        aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-            .forEach(a => a.workflows = [checkDiffHandler(sdm), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
 
         // TODO cd merge into one call
         registerCategories(TypeScriptVersion, "Node.js");
@@ -177,6 +197,55 @@ export const configuration: Configuration = configure(async sdm => {
         });
 
         if (mode === "online") {
+
+            const policyCompliance = goal({
+                uniqueName: "atomist#policy",
+                displayName: "Policy Compliance",
+                descriptions: {
+                    failed: "Policy differences detected",
+                    completed: "No policy differences",
+                },
+            }, async gi => {
+                const { goalEvent } = gi;
+                if (!!goalEvent.data) {
+                    const data = JSON.parse(goalEvent.data) as ComplicanceData;
+
+                    // Write to rolar log
+                    const rows = _.map(_.groupBy(data.differences, "type"), (v, k) => {
+                        const aspect = aspectOf({ type: k }, aspects);
+                        const targetCount = data.policies.filter(p => p.type === k).length;
+                        return `## ${aspectOf({ type: k }, aspects).displayName}
+
+${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (v.length / targetCount)) * 100).toFixed(0)}% 
+        
+${v.map(d => {
+    const target = data.policies.find(p => p.type === d.type && p.name === d.name);
+    return `* ${displayName(aspect, d)} at ${displayValue(aspect, d)} - Policy: ${displayValue(aspect, target)}`;
+}).join("\n")}`;
+                    });
+
+                    gi.progressLog.write(`Policy differences
+
+The following differences from set policies have been detected:
+
+${rows.join("\n\n")}`);
+
+                    return {
+                        description: `${data.differences.length} policy ${data.differences.length === 1 ? "difference" : "differences"}`,
+                        state: SdmGoalState.failure,
+                        phase: `Compliance ${((1 - (data.differences.length / data.policies.length)) * 100).toFixed(0)}%`,
+                        externalUrls: [{
+                            label: "Details",
+                            url: data.url,
+                        }],
+                    };
+                }
+
+                return {
+                    state: SdmGoalState.success,
+                };
+            });
+
             const pushImpact = new PushImpact()
                 .withExecutionListener(CheckGoalExecutionListener);
 
@@ -206,9 +275,16 @@ export const configuration: Configuration = configure(async sdm => {
                     }),
             );
 
+            // Install default workflow
+            aspects.filter(a => !!a.workflows && a.workflows.length > 0)
+                .forEach(a => a.workflows = [checkDiffHandler(sdm, policyCompliance), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
+
             return {
                 analyze: {
-                    goals: pushImpact,
+                    goals: [
+                        [pushImpact],
+                        [policyCompliance],
+                    ],
                 },
             };
         } else {
