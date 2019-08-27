@@ -198,7 +198,7 @@ function getFromContext<T>(key: string, context: any): T {
 }
 
 function checkToken(creds: ProjectOperationCredentials): string {
-    if (isTokenCredentials(creds)) {
+    if (!!creds && isTokenCredentials(creds)) {
         const token = creds.token;
         if (token.startsWith("v1")) {
             return token;
