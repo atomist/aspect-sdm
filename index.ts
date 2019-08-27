@@ -102,8 +102,7 @@ const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
 export const configuration: Configuration = configure(async sdm => {
 
         const isStaging = sdm.configuration.endpoints.api.includes("staging");
-
-        const optionalAspects = isStaging ? [LeinDeps] : [];
+        const optionalAspects = isStaging ? [] : [];
 
         const aspects = [
             DockerFrom,
@@ -121,6 +120,7 @@ export const configuration: Configuration = configure(async sdm => {
             MavenParentPom,
             K8sSpecs,
             branchCount,
+            LeinDeps,
             ...optionalAspects,
         ];
 
