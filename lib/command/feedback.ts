@@ -38,15 +38,18 @@ export const FeedbackCommand: CommandHandlerRegistration<any> = {
             const repo = ci.parameters["comment.repo"];
             const issueNumber = ci.parameters["comment.issueNumber"];
 
-            const msg = slackInfoMessage(
-                "Policy Help/Feedback",
-                `${body}
+            if (!!body && !!owner && !!repo && !!issueNumber) {
+
+                const msg = slackInfoMessage(
+                    "Policy Help/Feedback",
+                    `${body}
 
 https://github.com/${owner}/${repo}/pull/${issueNumber}`);
 
-            msg.attachments[0].footer = `${slackFooter()} \u00B7 ${ci.context.workspaceId} \u00B7 ${(ci.context as any as AutomationContextAware).context.workspaceName}`;
+                msg.attachments[0].footer = `${slackFooter()} \u00B7 ${ci.context.workspaceId} \u00B7 ${(ci.context as any as AutomationContextAware).context.workspaceName}`;
 
-            await Promise.all(WORKSPACE_IDS.map(w => ci.context.messageClient.send(msg, addressSlackChannels(w, "support"), { dashboard: false })));
+                await Promise.all(WORKSPACE_IDS.map(w => ci.context.messageClient.send(msg, addressSlackChannels(w, "support"), { dashboard: false })));
+            }
         }
         await ci.addressChannels("Thanks for your message. We'll get right back!");
     },
