@@ -42,14 +42,14 @@ import {
 import { api } from "./gitHubApi";
 
 export interface GitHubCommandSupportOptions {
-    command: CommandHandlerRegistration<any> | Array<CommandHandlerRegistration<any>>;
+    commands: CommandHandlerRegistration<any> | Array<CommandHandlerRegistration<any>>;
 }
 
 export function gitHubCommandSupport(options: GitHubCommandSupportOptions): ExtensionPack {
     return {
         ...metadata("command-support"),
         configure: sdm => {
-            const commands = toArray(options.command);
+            const commands = toArray(options.commands);
             commands.forEach(c => sdm.addCommand(invocableFromComment(c)));
             sdm.addEvent(invokeCommandOnComment(sdm, commands));
         },

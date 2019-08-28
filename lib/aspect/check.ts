@@ -40,7 +40,7 @@ import {
 } from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
 import { codeLine } from "@atomist/slack-messages";
 import { ChecksUpdateParamsOutput } from "@octokit/rest";
-import { ComplicanceData } from "../../index";
+import { ComplicanceData } from "../goal/compliance";
 import { api } from "../util/gitHubApi";
 
 export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffHandler {
