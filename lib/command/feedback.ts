@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { addressSlackChannels } from "@atomist/automation-client";
+import {
+    addressSlackChannels,
+    AutomationContextAware,
+} from "@atomist/automation-client";
 import {
     CommandHandlerRegistration,
+    slackFooter,
     slackInfoMessage,
 } from "@atomist/sdm";
 
@@ -39,6 +43,8 @@ export const FeedbackCommand: CommandHandlerRegistration<any> = {
                 `${body}
 
 https://github.com/${owner}/${repo}/pull/${issueNumber}`);
+
+            msg.attachments[0].footer = `${slackFooter()} \u00B7 ${ci.context.workspaceId} \u00B7 ${(ci.context as any as AutomationContextAware).context.workspaceName}`;
 
             await Promise.all(WORKSPACE_IDS.map(w => ci.context.messageClient.send(msg, addressSlackChannels(w, "support"), { dashboard: false })));
         }

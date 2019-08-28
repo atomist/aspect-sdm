@@ -79,6 +79,7 @@ import {
 } from "./lib/job/createFingerprintJob";
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
+import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 
 export interface ComplicanceData {
     policies: Array<{
@@ -219,9 +220,9 @@ export const configuration: Configuration = configure(async sdm => {
 ${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (v.length / targetCount)) * 100).toFixed(0)}%
 
 ${v.map(d => {
-    const target = data.policies.find(p => p.type === d.type && p.name === d.name);
-    return `* ${displayName(aspect, d)} at ${displayValue(aspect, d)} - Policy: ${displayValue(aspect, target)}`;
-}).join("\n")}`;
+                            const target = data.policies.find(p => p.type === d.type && p.name === d.name);
+                            return `* ${displayName(aspect, d)} at ${displayValue(aspect, d)} - Policy: ${displayValue(aspect, target)}`;
+                        }).join("\n")}`;
                     });
 
                     gi.progressLog.write(`Policy differences
@@ -322,6 +323,14 @@ ${rows.join("\n\n")}`);
                 graceful: true,
                 gracePeriod: 1000 * 60 * 10,
             };
+
+            const isStaging = cfg.endpoints.api.includes("staging");
+            if (!isStaging) {
+                cfg.listeners = [
+                    ...(cfg.listeners || []),
+                    new MessageRoutingAutomationEventListener(),
+                ];
+            }
 
             return cfg;
         },
