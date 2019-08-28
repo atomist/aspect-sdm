@@ -21,6 +21,7 @@ import { AutomationMetadataProcessor } from "@atomist/automation-client/lib/spi/
 
 const CommandWhitelist = [
     "SelfDescribe",
+    "CreateFingerprintJobCommand",
 ];
 
 export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcessor {
