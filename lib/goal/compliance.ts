@@ -15,8 +15,8 @@
  */
 
 import {
-    Goal,
     goal,
+    Goal,
     SdmGoalState,
 } from "@atomist/sdm";
 import { Aspect } from "@atomist/sdm-pack-fingerprints";
