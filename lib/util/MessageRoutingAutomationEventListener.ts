@@ -58,6 +58,6 @@ ${codeBlock(_.uniq(payload.mappedParameters.map(a => `${a.name}: ${a.value}`)).j
             dashboard: false,
         };
 
-        await Promise.all(WORKSPACE_IDS.map(id => ctx.messageClient.send(msg, addressSlackChannels(id, "support"), options)));
+        await Promise.all(WORKSPACE_IDS.map(id => ctx.messageClient.send(msg, addressSlackChannels(id, "goal-stream"), options)));
     }
 }
