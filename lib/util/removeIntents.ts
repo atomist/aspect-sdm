@@ -29,7 +29,7 @@ export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcess
     public process<CommandHandlerMetadata>(metadata: CommandHandlerMetadata, configuration: Configuration): CommandHandlerMetadata {
         if (isCommandHandlerMetadata(metadata)) {
             if (!CommandWhitelist.includes(metadata.name)) {
-                metadata.intent = undefined;
+                metadata.intent = [];
             }
         }
         return metadata;
