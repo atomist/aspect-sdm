@@ -59,6 +59,15 @@ export function gitHubCommandSupport(options: GitHubCommandSupportOptions): Exte
 export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
                                        command: CommandHandlerRegistration<any> | Array<CommandHandlerRegistration<any>>)
     : EventHandlerRegistration<OnComment.Subscription> {
+    const commands: Array<{ name: string, intent: string[] }> = toArray(command).map(c => {
+        c.name = `Invoke${_.upperFirst(c.name)}OnComment`;
+        const intent = toArray(c.intent);
+        c.intent = undefined;
+        return {
+            intent,
+            name: c.name,
+        };
+    });
     return {
         name: "InvokeCommandOnComment",
         description: "Invoke commands from issue or pull request comments",
@@ -67,7 +76,6 @@ export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
             orgToken: { uri: Secrets.OrgToken, declarationType: DeclarationType.Secret },
         },
         listener: async (e, ctx) => {
-            const commands = toArray(command);
             const comment = e.data.Comment[0];
             const repo = _.get(comment, "issue.repo") || _.get(comment, "pullRequest.repo");
             const issueNumber = _.get(comment, "issue.number") || _.get(comment, "pullRequest.number");
