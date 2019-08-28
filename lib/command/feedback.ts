@@ -46,9 +46,15 @@ export const FeedbackCommand: CommandHandlerRegistration<any> = {
 
 https://github.com/${owner}/${repo}/pull/${issueNumber}`);
 
-                msg.attachments[0].footer = `${slackFooter()} \u00B7 ${ci.context.workspaceId} \u00B7 ${(ci.context as any as AutomationContextAware).context.workspaceName}`;
+                msg.attachments[0].footer =
+                    `${slackFooter()} \u00B7 ${ci.context.workspaceId} \u00B7 ${(ci.context as any as AutomationContextAware).context.workspaceName}`;
 
-                await Promise.all(WORKSPACE_IDS.map(w => ci.context.messageClient.send(msg, addressSlackChannels(w, "support"), { dashboard: false })));
+                await Promise.all(
+                    WORKSPACE_IDS.map(
+                        w => ci.context.messageClient.send(
+                            msg,
+                            addressSlackChannels(w, "support"),
+                            { dashboard: false })));
             }
         }
         await ci.addressChannels("Thanks for your message. We'll get right back!");
