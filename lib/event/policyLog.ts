@@ -66,6 +66,10 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
                         options: QueryNoCacheOptions,
                     }));
 
+                    if (!fp || !fp.SourceFingerprint) {
+                        return Success;
+                    }
+
                     const fingerprint = {
                         type,
                         name,
