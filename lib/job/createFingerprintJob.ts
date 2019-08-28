@@ -60,7 +60,7 @@ export const CreateFingerprintJob: EventHandlerRegistration<OnDiscoveryJob.Subsc
         if (job.name.startsWith("RepositoryDiscovery")) {
             const event = JSON.parse(job.data) as EventFired<OnGitHubAppInstallation.Subscription>;
 
-            if (!!event.data.GitHubAppInstallation) {
+            if (!!event.data && !!event.data.GitHubAppInstallation) {
                 await fingerprintGitHubAppInstallation(event.data, ctx);
             } else {
                 await fingerprintGitHubResourceProvider(ctx);
