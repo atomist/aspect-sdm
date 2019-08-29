@@ -16,11 +16,6 @@
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
 import {
-    CiAspect,
-    JavaBuild,
-    StackAspect,
-} from "@atomist/sdm-pack-aspect";
-import {
     registerCategories,
     registerReportDetails,
 } from "@atomist/sdm-pack-aspect/lib/customize/categories";
@@ -53,9 +48,6 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         TypeScriptVersion,
         NpmDependencies,
         TravisScriptsAspect,
-        StackAspect,
-        CiAspect,
-        JavaBuild,
         SpringBootVersion,
         MavenDirectDependencies,
         MavenParentPom,
