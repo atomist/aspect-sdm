@@ -169,14 +169,15 @@ export interface OptOutStatus {
 
 export function raisePrPreferenceKey(org: string, repo?: string): string {
     if (!repo) {
-        return `atomist.com/fingerprint/raisePr/${org}`;
+        return `atomist/aspect/raisePr/${org}`;
     } else {
-        return `atomist.com/fingerprint/raisePr/${org}/${repo}`;
+        return `atomist/aspect/raisePr/${org}/${repo}`;
     }
 }
 
-async function shouldFallback(pli: PushImpactListenerInvocation): boolean {
+async function shouldFallback(pli: PushImpactListenerInvocation): Promise<boolean> {
     const { push: { repo } } = pli;
+
     // Check Org and repo preference
     let disabledForOrg = await pli.preferences.get<OptOutStatus>(raisePrPreferenceKey(repo.owner), {
         scope: PreferenceScope.Sdm,
@@ -229,6 +230,7 @@ async function shouldFallback(pli: PushImpactListenerInvocation): boolean {
             return true;
         }
     }
+    return false;
 }
 
 async function hasChatTeam(pli: PushImpactListenerInvocation): Promise<boolean> {
