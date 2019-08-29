@@ -79,7 +79,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     registerReportDetails(NpmDependencies, {
         shortName: "dependency",
         unit: "version",
-        url: "drift?type=npm-project-deps&band=true",
+        url: "drift?type=npm-project-deps&band=true&repos=true",
         description: "Node direct dependencies in use across all repositories in your workspace, " +
             "grouped by Drift Level.",
     });
@@ -87,7 +87,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     registerReportDetails(MavenDirectDependencies, {
         shortName: "dependency",
         unit: "version",
-        url: "drift?type=maven-direct-dep&band=true",
+        url: "drift?type=maven-direct-dep&band=true&repos=true",
         description: "Maven declared dependencies in use across all repositories in your workspace, " +
             "grouped by Drift Level.",
     });
@@ -95,7 +95,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     registerReportDetails(MavenParentPom, {
         shortName: "parent",
         unit: "version",
-        url: `drift?type=${MavenParentPom.name}&band=true`,
+        url: `drift?type=${MavenParentPom.name}&band=true&repos=true`,
         description: "Maven parent POM in use across all repositories in your workspace, " +
             "grouped by Drift Level.",
     });
@@ -103,7 +103,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     registerReportDetails(LeinDeps, {
         shortName: "dependency",
         unit: "version",
-        url: "drift?type=clojure-project-deps&band=true",
+        url: "drift?type=clojure-project-deps&band=true&repos=true",
         description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
             "grouped by Drift Level.",
     });
