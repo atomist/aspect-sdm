@@ -119,22 +119,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
             return [];
         }
 
-        if (!!repo.channels && repo.channels.length > 0) {
-            return fallback(pli, diffs, aspect);
-        }
-
-        // Check Org and repo preference
-        const disabledForOrg = await pli.preferences.get<{ disabled: boolean }>(raisePrPreferenceKey(repo.owner), {
-            scope: PreferenceScope.Sdm,
-            defaultValue: { disabled: false },
-        });
-        const disabledForRepo = await pli.preferences.get<{ disabled: boolean }>(raisePrPreferenceKey(repo.owner, repo.name), {
-            scope: PreferenceScope.Sdm,
-            defaultValue: { disabled: false },
-        });
-
-        // Fallback to the fallback diff handler if this one is disabled for org or repo
-        if (disabledForOrg.disabled || disabledForRepo.disabled) {
+        if (await shouldFallback(pli)) {
             return fallback(pli, diffs, aspect);
         }
 
@@ -177,11 +162,72 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
     };
 }
 
+export interface OptOutStatus {
+    disabled?: boolean;
+    enabled?: boolean;
+}
+
 export function raisePrPreferenceKey(org: string, repo?: string): string {
     if (!repo) {
         return `atomist.com/fingerprint/raisePr/${org}`;
     } else {
         return `atomist.com/fingerprint/raisePr/${org}/${repo}`;
+    }
+}
+
+async function shouldFallback(pli: PushImpactListenerInvocation): boolean {
+    const { push: { repo } } = pli;
+    // Check Org and repo preference
+    let disabledForOrg = await pli.preferences.get<OptOutStatus>(raisePrPreferenceKey(repo.owner), {
+        scope: PreferenceScope.Sdm,
+    });
+    let disabledForRepo = await pli.preferences.get<OptOutStatus>(raisePrPreferenceKey(repo.owner, repo.name), {
+        scope: PreferenceScope.Sdm,
+    });
+
+    // Case 0: no org - no repo - no channels > yes
+    // Case 1: no org - no repo - channels > no
+
+    // Case 2: enabled org - not disabled repo > yes
+    // Case 3: enabled org - enabled repo > yes
+    // Case 4: enabled org - disabled repo > no
+
+    // Case 5: disabled org - not disabled repo > no
+    // Case 6: disabled org - enabled repo > yes
+    // Case 7: disabled org - disabled repo > no
+
+    // Case 8: no org - enabled repo > yes
+    // Case 9: no org - disabled repo > no
+
+    if (!disabledForOrg && !disabledForRepo && !!repo.channels && repo.channels.length > 0) {
+        return true;
+    } else if (!disabledForOrg && !disabledForRepo && !!repo.channels && repo.channels.length === 0) {
+        return false;
+    } else {
+        if (!disabledForOrg) {
+            disabledForOrg = {};
+        }
+        if (!disabledForRepo) {
+            disabledForRepo = {};
+        }
+
+        if (disabledForOrg.enabled && disabledForRepo.disabled === undefined) {
+            return false;
+        } else if (disabledForOrg.enabled && disabledForRepo.enabled) {
+            return false;
+        } else if (disabledForOrg.enabled && disabledForRepo.disabled) {
+            return true;
+        } else if (disabledForOrg.disabled && disabledForRepo.disabled === undefined) {
+            return true;
+        } else if (disabledForOrg.disabled && disabledForRepo.enabled) {
+            return false;
+        } else if (disabledForOrg.disabled && disabledForRepo.disabled) {
+            return true;
+        } else if (disabledForOrg.disabled === undefined && disabledForRepo.enabled) {
+            return false;
+        } else if (disabledForOrg.disabled === undefined && disabledForRepo.disabled) {
+            return true;
+        }
     }
 }
 

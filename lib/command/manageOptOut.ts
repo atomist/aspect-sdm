@@ -20,10 +20,14 @@ import {
     DeclarationType,
     PreferenceScope,
 } from "@atomist/sdm";
-import { raisePrPreferenceKey } from "../aspect/praisePr";
+import { codeLine } from "@atomist/slack-messages";
+import {
+    OptOutStatus,
+    raisePrPreferenceKey,
+} from "../aspect/praisePr";
 
 export const OptOutCommand: CommandHandlerRegistration<{ owner: string, repo: string }> = {
-    name: "OptOutCommand",
+    name: "OptOut",
     description: "Opt out of automatic policy PRs",
     intent: ["opt out", "opt-out"],
     parameters: {
@@ -31,26 +35,34 @@ export const OptOutCommand: CommandHandlerRegistration<{ owner: string, repo: st
         repo: { uri: MappedParameters.GitHubRepository, declarationType: DeclarationType.Mapped, required: false },
     },
     listener: async ci => {
-        await ci.preferences.put<{ disabled: boolean }>(
+        await ci.preferences.put<OptOutStatus>(
             raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
             { disabled: true },
             { scope: PreferenceScope.Sdm });
-        await ci.addressChannels("Opted out of automatic policy PRs for this repository. To opt back in, run `@atomist opt-in`.");
+        await ci.addressChannels(`Opted out of automatic policy PRs for this ${ci.parameters.repo ? "repository" : "organization"}. To opt back in, run ${codeLine("@atomist opt-in")}.`);
     },
 };
 
-export const OptInCommand: CommandHandlerRegistration<{ owner: string, repo: string }> = {
-    name: "OptInCommand",
-    description: "Opt in of automatic policy PRs",
+export const OptInCommand: CommandHandlerRegistration<{ always?: boolean, owner: string, repo: string }> = {
+    name: "OptIn",
+    description: "Opt in to automatic policy PRs",
     intent: ["opt in", "opt-in"],
     parameters: {
+        always: { description: "Opt in to automatic PRs regardless of linked channels", required: false, type: "boolean" },
         owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped },
         repo: { uri: MappedParameters.GitHubRepository, declarationType: DeclarationType.Mapped, required: false },
     },
     listener: async ci => {
-        await ci.preferences.delete(
-            raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
-            { scope: PreferenceScope.Sdm });
-        await ci.addressChannels("Opted in to automatic policy PRs for this repository.");
+        if (!!ci.parameters.always) {
+            await ci.preferences.put<OptOutStatus>(
+                raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
+                { enabled: true },
+                { scope: PreferenceScope.Sdm });
+        } else {
+            await ci.preferences.delete(
+                raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
+                { scope: PreferenceScope.Sdm });
+        }
+        await ci.addressChannels(`Opted in to automatic policy PRs for this ${ci.parameters.repo ? "repository" : "organization"}.`);
     },
 };

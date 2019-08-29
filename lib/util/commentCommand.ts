@@ -49,7 +49,7 @@ export function gitHubCommandSupport(options: GitHubCommandSupportOptions): Exte
     return {
         ...metadata("command-support"),
         configure: sdm => {
-            const commands = toArray(options.commands);
+            const commands = toArray(options.commands).map(_.clone);
             commands.forEach(c => sdm.addCommand(invocableFromComment(c)));
             sdm.addEvent(invokeCommandOnComment(sdm, commands));
         },

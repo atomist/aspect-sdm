@@ -15,7 +15,6 @@
  */
 
 import { Configuration } from "@atomist/automation-client";
-import { configureDashboardNotifications } from "@atomist/automation-client-ext-dashboard";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import {
     CachingProjectLoader,
@@ -66,6 +65,9 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
+            sdm.addCommand(OptInCommand)
+                .addCommand(OptOutCommand);
+
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
@@ -88,7 +90,11 @@ export const configuration: Configuration = configure(async sdm => {
                 }),
                 gitHubCommandSupport(
                     {
-                        commands: [OptInCommand, OptOutCommand, FeedbackCommand],
+                        commands: [
+                            OptInCommand,
+                            OptOutCommand,
+                            FeedbackCommand,
+                        ],
                     }),
             );
 
