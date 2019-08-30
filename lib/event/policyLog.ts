@@ -45,6 +45,10 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
         listener: async (e, ctx) => {
             const pr = e.data.PullRequest[0];
             if (pr.action === PullRequestAction.opened || pr.action === PullRequestAction.closed) {
+                if (!pr.branchName.startsWith(`atomist/${ctx.workspaceId.toLowerCase()}/`)) {
+                     return Success;
+                }
+
                 const tagRegex = /\[fingerprint:([-\w:\/\.]+)=([-\w]+)\]/g;
                 let tagMatches = tagRegex.exec(pr.body);
                 const tags = [];

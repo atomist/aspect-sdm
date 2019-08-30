@@ -84,7 +84,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
                 },
             };
             const prs = await client.exchange<Array<{ number: string }>>(
-                `${url}/pulls?state=open&head=${repo.owner}:atomist/${aspect.name}/${pli.push.branch}`,
+                `${url}/pulls?state=open&head=${repo.owner}:atomist/${pli.context.workspaceId.toLowerCase()}/${aspect.name}/${pli.push.branch}`,
                 {
                     method: HttpMethod.Get,
                     ...config,
@@ -101,7 +101,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
                         });
 
                     await client.exchange(
-                        `${url}/git/refs/heads/atomist/${aspect.name}/${pli.push.branch}`,
+                        `${url}/git/refs/heads/atomist/${pli.context.workspaceId.toLowerCase()}/${aspect.name}/${pli.push.branch}`,
                         {
                             method: HttpMethod.Delete,
                             ...config,
