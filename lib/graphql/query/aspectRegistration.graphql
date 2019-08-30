@@ -1,0 +1,12 @@
+query AspectRegistrations {
+    AspectRegistration {
+        name
+        displayName
+        description
+        shortName
+        unit
+        url
+        category
+        endpoint
+    }
+}

@@ -23,6 +23,7 @@ const CommandWhitelist = [
     "CreateFingerprintJob",
     "OptIn",
     "OptOut",
+    "RegisterAspect",
 ];
 
 export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcessor {
