@@ -1,5 +1,5 @@
-query AspectRegistrations {
-    AspectRegistration {
+query AspectRegistrations($name: [String]) {
+    AspectRegistration(enabled: ["true"], name: $name) {
         name
         displayName
         description
@@ -8,5 +8,7 @@ query AspectRegistrations {
         url
         category
         endpoint
+        uuid
+        enabled
     }
 }

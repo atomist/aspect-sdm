@@ -44,7 +44,10 @@ import {
     OptInCommand,
     OptOutCommand,
 } from "./lib/command/manageOptOut";
-import { RegisterAspectCommand } from "./lib/command/registerAspect";
+import {
+    DisableAspectCommand,
+    RegisterAspectCommand,
+} from "./lib/command/registerAspect";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import { complianceGoal } from "./lib/goal/compliance";
 import {
@@ -74,7 +77,8 @@ export const configuration: Configuration = configure(async sdm => {
 
             sdm.addCommand(OptInCommand)
                 .addCommand(OptOutCommand)
-                .addCommand(RegisterAspectCommand);
+                .addCommand(RegisterAspectCommand)
+                .addCommand(DisableAspectCommand);
 
             sdm.addExtensionPacks(
                 aspectSupport({

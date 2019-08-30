@@ -9,4 +9,7 @@ type AspectRegistration @rootType {
     unit: String
 
     endpoint: String
+    uuid: String
+
+    enabled: String
 }

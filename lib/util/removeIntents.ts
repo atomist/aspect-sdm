@@ -24,6 +24,7 @@ const CommandWhitelist = [
     "OptIn",
     "OptOut",
     "RegisterAspect",
+    "DisableAspect",
 ];
 
 export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcessor {
