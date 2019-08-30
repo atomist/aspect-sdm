@@ -11,7 +11,6 @@ import {
     Aspect,
     FP,
 } from "@atomist/sdm-pack-fingerprints";
-import { displayValue } from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
 import { AspectsFactory } from "@atomist/sdm-pack-fingerprints/lib/machine/fingerprintSupport";
 import { AspectRegistrations } from "../typings/types";
 
@@ -26,9 +25,12 @@ export interface AspectRequest {
     commit: { sha: string, message: string };
 }
 
-export async function getAspectRegistrations(ctx: HandlerContext): Promise<AspectRegistrations.AspectRegistration[]> {
+export async function getAspectRegistrations(ctx: HandlerContext, name?: string): Promise<AspectRegistrations.AspectRegistration[]> {
     return (await ctx.graphClient.query<AspectRegistrations.Query, AspectRegistrations.Variables>({
         name: "AspectRegistrations",
+        variables: {
+            name: !!name ? [name] : undefined,
+        },
     })).AspectRegistration;
 }
 
@@ -38,7 +40,6 @@ export const RegistrationsBackedAspectsFactory: AspectsFactory = async (p, pli) 
 
 function createAspectProxy(reg: AspectRegistrations.AspectRegistration): Aspect {
     // TODO cd this can't work in practice but does now
-
     registerCategories(reg as any, reg.category);
     registerReportDetails(reg as any, {
         description: reg.description,

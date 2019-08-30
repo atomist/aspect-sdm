@@ -11283,6 +11283,20 @@
                 "defaultValue": null
               },
               {
+                "name": "enabled",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "endpoint",
                 "description": null,
                 "type": {
@@ -11340,6 +11354,20 @@
               },
               {
                 "name": "url",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "uuid",
                 "description": null,
                 "type": {
                   "kind": "LIST",
@@ -42624,6 +42652,18 @@
             "deprecationReason": null
           },
           {
+            "name": "enabled",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "endpoint",
             "description": null,
             "args": [],
@@ -42673,6 +42713,18 @@
           },
           {
             "name": "url",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "uuid",
             "description": null,
             "args": [],
             "type": {
@@ -55936,6 +55988,20 @@
                 "defaultValue": null
               },
               {
+                "name": "enabled",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "endpoint",
                 "description": null,
                 "type": {
@@ -55993,6 +56059,20 @@
               },
               {
                 "name": "url",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "uuid",
                 "description": null,
                 "type": {
                   "kind": "LIST",
