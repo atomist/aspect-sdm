@@ -73,7 +73,7 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
-            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql"}))
+            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql"}));
 
             sdm.addCommand(OptInCommand)
                 .addCommand(OptOutCommand)
@@ -84,7 +84,7 @@ export const configuration: Configuration = configure(async sdm => {
                 aspectSupport({
                     aspects,
                     aspectsFactory: RegistrationsBackedAspectsFactory,
-                    
+
                     rebase: {
                         rebase: true,
                         rebaseStrategy: RebaseStrategy.Ours,
