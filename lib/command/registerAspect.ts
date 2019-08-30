@@ -98,17 +98,18 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
             },
         })).report;
 
-        let endpoint = ci.parameters.endpoint;
+        let endpoint;
         let uuid;
 
         const regs = await getAspectRegistrations(ci.context, ci.parameters.name);
         if (regs.length > 0) {
             uuid = regs[0].uuid;
+            endpoint = regs[0].endpoint;
         } else {
             uuid = guid();
         }
 
-        if (!endpoint && !!ci.parameters.owner && !!ci.parameters.repo) {
+        if (!ci.parameters.endpoint && !!ci.parameters.owner && !!ci.parameters.repo) {
             await ci.addressChannels(
                 slackInfoMessage(
                     "Aspect Registration",
