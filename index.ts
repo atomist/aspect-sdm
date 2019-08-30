@@ -114,7 +114,7 @@ export const configuration: Configuration = configure(async sdm => {
                 aspects,
                 undesirableUsageChecker: undefined,
                 configuration,
-            })
+            });
 
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
@@ -166,7 +166,7 @@ export const configuration: Configuration = configure(async sdm => {
 
             cfg.cluster = {
                 enabled: false,
-            }
+            };
 
             const isStaging = cfg.endpoints.api.includes("staging");
             if (!isStaging) {

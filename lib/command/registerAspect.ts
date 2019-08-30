@@ -107,7 +107,7 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
         } else {
             uuid = guid();
         }
-        
+
         if (!endpoint && !!ci.parameters.owner && !!ci.parameters.repo) {
             await ci.addressChannels(
                 slackInfoMessage(
