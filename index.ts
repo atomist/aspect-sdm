@@ -159,6 +159,10 @@ export const configuration: Configuration = configure(async sdm => {
                 gracePeriod: 1000 * 60 * 10,
             };
 
+            cfg.cluster = {
+                enabled: false,
+            }
+
             const isStaging = cfg.endpoints.api.includes("staging");
             if (!isStaging) {
                 cfg.listeners = [
