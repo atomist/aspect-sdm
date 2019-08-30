@@ -41,6 +41,7 @@ import { AspectRegistrations } from "../typings/types";
 export const DisableAspectCommand: CommandHandlerRegistration<{ name: string }> = {
     name: "DisableAspect",
     description: "Disable an registered aspect",
+    intent: ["disable aspect"],
     parameters: {
         name: {},
     },
@@ -67,6 +68,7 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
     name: "RegisterAspect",
     description: "Register and deploy a new aspect",
     intent: ["register aspect", "deploy aspect"],
+    parameterStyle: ParameterStyle.Dialog,
     parameters: {
         owner: {}, // uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped },
         repo: {}, // uri: MappedParameters.GitHubRepository, declarationType: DeclarationType.Mapped },

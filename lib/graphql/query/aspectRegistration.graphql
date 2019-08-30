@@ -1,5 +1,5 @@
-query AspectRegistrations($name: [String]) {
-    AspectRegistration(enabled: ["true"], name: $name) {
+query AspectRegistrations($enabled: [String], $name: [String]) {
+    AspectRegistration(enabled: $enabled, name: $name) {
         name
         displayName
         description

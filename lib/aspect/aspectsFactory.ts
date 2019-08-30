@@ -42,12 +42,13 @@ export interface AspectRequest {
 }
 
 export async function getAspectRegistrations(ctx: HandlerContext, name?: string): Promise<AspectRegistrations.AspectRegistration[]> {
-    return (await ctx.graphClient.query<AspectRegistrations.Query, AspectRegistrations.Variables>({
+    const aspects = (await ctx.graphClient.query<AspectRegistrations.Query, AspectRegistrations.Variables>({
         name: "AspectRegistrations",
         variables: {
             name: !!name ? [name] : undefined,
         },
-    })).AspectRegistration;
+    }));
+    return !!aspects ? aspects.AspectRegistration : [];
 }
 
 export const RegistrationsBackedAspectsFactory: AspectsFactory = async (p, pli) => {
