@@ -104,9 +104,10 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
         const regs = await getAspectRegistrations(ci.context, ci.parameters.name);
         if (regs.length > 0) {
             uuid = regs[0].uuid;
-            endpoint = regs[0].endpoint;
+            endpoint = regs[0].endpoint || ci.parameters.endpoint;
         } else {
             uuid = guid();
+            endpoint = ci.parameters.endpoint;
         }
 
         if (!ci.parameters.endpoint && !!ci.parameters.owner && !!ci.parameters.repo) {

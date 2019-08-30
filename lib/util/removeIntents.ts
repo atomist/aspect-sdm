@@ -17,6 +17,7 @@
 import { Configuration } from "@atomist/automation-client";
 import { isCommandHandlerMetadata } from "@atomist/automation-client/lib/internal/metadata/metadata";
 import { AutomationMetadataProcessor } from "@atomist/automation-client/lib/spi/env/MetadataProcessor";
+import { isInLocalMode } from "@atomist/sdm-core";
 
 const CommandWhitelist = [
     "SelfDescribe",
@@ -30,7 +31,7 @@ const CommandWhitelist = [
 export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcessor {
 
     public process<CommandHandlerMetadata>(metadata: CommandHandlerMetadata, configuration: Configuration): CommandHandlerMetadata {
-        if (isCommandHandlerMetadata(metadata)) {
+        if (isCommandHandlerMetadata(metadata) && !isInLocalMode()) {
             if (!CommandWhitelist.includes(metadata.name)) {
                 metadata.intent = [];
             }
