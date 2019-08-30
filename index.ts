@@ -27,6 +27,7 @@ import {
 } from "@atomist/sdm";
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
+import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import {
     DefaultTargetDiffHandler,
     RebaseFailure,
@@ -95,10 +96,6 @@ export const configuration: Configuration = configure(async sdm => {
                         pushImpact,
                     },
 
-                    undesirableUsageChecker: {
-                        check: () => undefined,
-                    },
-
                     exposeWeb: true,
                 }),
                 gitHubCommandSupport(
@@ -111,9 +108,17 @@ export const configuration: Configuration = configure(async sdm => {
                     }),
             );
 
+            const aspectRegistry = new DefaultAspectRegistry({
+                idealStore: undefined,
+                problemStore: undefined,
+                aspects,
+                undesirableUsageChecker: undefined,
+                configuration,
+            })
+
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [checkDiffHandler(sdm), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
+                .forEach(a => a.workflows = [checkDiffHandler(sdm, aspectRegistry), raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler)]);
 
             return {
                 analyze: {

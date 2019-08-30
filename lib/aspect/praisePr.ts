@@ -25,7 +25,7 @@ import {
     PushImpactListenerInvocation,
     SoftwareDeliveryMachine,
 } from "@atomist/sdm";
-import { getCategories } from "@atomist/sdm-pack-aspect/lib/customize/categories";
+import { AspectReportDetailsRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
 import { toName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
 import {
     ApplyAllFingerprintsName,
@@ -53,6 +53,7 @@ import {
  * opt-out is configured, the provided fallback handler will be invoked.
  */
 export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
+                                   aspectRegistry: AspectReportDetailsRegistry,
                                    fallback: FingerprintDiffHandler = async () => []): FingerprintDiffHandler {
     return async (pli, diffs, aspect) => {
         const repo = pli.push.repo;
@@ -132,6 +133,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
             applyFingerprintTitle(discrepancies[0], [aspect]) :
             `Apply all of ${discrepancies.map(d => displayName(aspect, d)).join(", ")}`;
 
+        const category = (await aspectRegistry.reportDetailsOf(aspect, pli.context.workspaceId)).category;
         // Schedule job to raise PR
         await createJob<ApplyTargetFingerprintsParameters>({
             command: ApplyAllFingerprintsName,
@@ -145,6 +147,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
                     await hasChatTeam(pli),
                     repo,
                     aspect,
+                    category,
                     discrepancies[0]),
                 branch: pli.push.branch,
                 fingerprints: discrepancies.map(d => toName(d.type, d.name)).join(","),
@@ -249,6 +252,7 @@ function addCommandsToPrBody(body: string,
                              hct: boolean,
                              repo: { owner?: string, name?: string },
                              aspect: Aspect,
+                             category: string,
                              fp: FP<any>): string {
     return `${body}
 
@@ -261,7 +265,7 @@ You can trigger Atomist commands by commenting on this PR:
 - \`@atomist opt out\` will stop raising automatic policy PRs for this repository
 - \`@atomist help\` start your comment with this to ask Atomist for help or provide feedback
 
-${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(getCategories(aspect)[0])}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`
+${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(category)}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`
         : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)}) to manage these updates directly from Slack.`}
 
 </details>`;

@@ -70,15 +70,16 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
     intent: ["register aspect", "deploy aspect"],
     parameterStyle: ParameterStyle.Dialog,
     parameters: {
-        owner: {}, // uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped },
-        repo: {}, // uri: MappedParameters.GitHubRepository, declarationType: DeclarationType.Mapped },
-        name: {},
-        displayName: {},
-        description: {},
-        category: {},
-        shortName: { required: false },
-        unit: { required: false },
-        endpoint: { required: false },
+        owner: { description: "Owner of the aspect repository to deploy", required: false },
+        repo: { description: "Repository of the aspect to deploy", required: false },
+        name: { description: "Aspect name (often referred to as type"},
+        displayName: { description: "Aspect display name using in PR bodies and on the web-app"},
+        description: { description: "Description of the aspect on the web-app"},
+        category: { description: "Category of the aspect (shows up as tab on the web-app)"},
+        shortName: { description: "Short name of the aspect (used in search boxes etc)", required: false },
+        unit: { description: "Unit of the aspect (version, tags etc)", required: false },
+
+        endpoint: { description: "HTTP endpoint of the backing aspect deployed as function", required: false },
 
         token: { uri: Secrets.userToken("repo"), declarationType: DeclarationType.Secret },
     },
@@ -86,6 +87,7 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
 
         const report = (await ci.promptFor<{ report: string }>({
             report: {
+                description: "Kind of report to make available on the web-app",
                 type: {
                     kind: "single",
                     options: [
@@ -96,17 +98,17 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
             },
         })).report;
 
-        // Deploy first
         let endpoint = ci.parameters.endpoint;
         let uuid;
-        if (!endpoint) {
-            const regs = await getAspectRegistrations(ci.context, ci.parameters.name);
-            if (regs.length > 0) {
-                uuid = regs[0].uuid;
-            } else {
-                uuid = guid();
-            }
 
+        const regs = await getAspectRegistrations(ci.context, ci.parameters.name);
+        if (regs.length > 0) {
+            uuid = regs[0].uuid;
+        } else {
+            uuid = guid();
+        }
+        
+        if (!endpoint && !!ci.parameters.owner && !!ci.parameters.repo) {
             await ci.addressChannels(
                 slackInfoMessage(
                     "Aspect Registration",
@@ -164,6 +166,7 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
                 return JSON.parse(result.stdout).httpsTrigger.url;
             });
         }
+
         // Store registration
         const aspectRegistration: AspectRegistrations.AspectRegistration = {
             name: ci.parameters.name,

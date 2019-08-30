@@ -27,7 +27,7 @@ import {
     SoftwareDeliveryMachine,
     updateGoal,
 } from "@atomist/sdm";
-import { getCategories } from "@atomist/sdm-pack-aspect/lib/customize/categories";
+import { AspectReportDetailsRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
 import { toName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
 import {
     Diff,
@@ -43,7 +43,8 @@ import { ChecksUpdateParamsOutput } from "@octokit/rest";
 import { ComplicanceData } from "../goal/compliance";
 import { api } from "../util/gitHubApi";
 
-export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffHandler {
+export function checkDiffHandler(sdm: SoftwareDeliveryMachine,
+                                 aspectRegistry: AspectReportDetailsRegistry): FingerprintDiffHandler {
     return async (pli, diffs, aspect) => {
         const { credentials, context, push } = pli;
         const repo = pli.push.repo;
@@ -104,11 +105,12 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffH
             output = check.data.output;
         }
 
+        const category = (await aspectRegistry.reportDetailsOf(aspect, context.workspaceId)).category;
         const text = `## ${aspect.displayName}
 
-${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (discrepancies.length / targetCount)) * 100).toFixed(0)}% - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/manage?category=${encodeURIComponent(getCategories(aspect)[0])}&aspect=${encodeURIComponent(aspect.displayName)})
+${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (discrepancies.length / targetCount)) * 100).toFixed(0)}% - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/manage?category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})
 
-${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${codeLine(displayValue(aspect, d.diff.to))} - Policy: ${codeLine(displayValue(aspect, d.target))} - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/enable?fingerprint=${encodeURIComponent(d.diff.to.name)}&category=${encodeURIComponent(getCategories(aspect)[0])}&aspect=${encodeURIComponent(aspect.displayName)})`).join("\n")}`;
+${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${codeLine(displayValue(aspect, d.diff.to))} - Policy: ${codeLine(displayValue(aspect, d.target))} - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/enable?fingerprint=${encodeURIComponent(d.diff.to.name)}&category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})`).join("\n")}`;
         output.text = `${output.text}\n\n${text}`;
 
         await github.checks.update({

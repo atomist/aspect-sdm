@@ -16,9 +16,9 @@
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
 import {
-    registerCategories,
-    registerReportDetails,
-} from "@atomist/sdm-pack-aspect/lib/customize/categories";
+    AspectReportDetails,
+    AspectWithReportDetails,
+} from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
@@ -41,90 +41,86 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const optionalAspects = isStaging ? [] : [];
 
     const aspects = [
-        DockerFrom,
-        DockerfilePath,
-        DockerPorts,
         SpringBootStarter,
-        TypeScriptVersion,
-        NpmDependencies,
+        enrich(TypeScriptVersion, {
+            shortName: "version",
+            category: "Node.js",
+            unit: "version",
+            url: "fingerprint/typescript-version/typescript-version?byOrg=true",
+            description: "TypeScript versions in use across all repositories in your workspace, " +
+                "broken out by version and repositories that use each version.",
+        }),
+        enrich(NpmDependencies, {
+            shortName: "dependency",
+            category: "Node.js",
+            unit: "version",
+            url: "drift?type=npm-project-deps&band=true&repos=true",
+            description: "Node direct dependencies in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+        }),
         TravisScriptsAspect,
         SpringBootVersion,
-        MavenDirectDependencies,
-        MavenParentPom,
+        enrich(MavenDirectDependencies, {
+            shortName: "dependency",
+            category: "Java",
+            unit: "version",
+            url: "drift?type=maven-direct-dep&band=true&repos=true",
+            description: "Maven declared dependencies in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+        }),
+        enrich(MavenParentPom, {
+            shortName: "parent",
+            category: "Java",
+            unit: "version",
+            url: `drift?type=${MavenParentPom.name}&band=true&repos=true`,
+            description: "Maven parent POM in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+        }),
+        enrich(LeinDeps, {
+            shortName: "dependency",
+            category: "Java",
+            unit: "version",
+            url: "drift?type=clojure-project-deps&band=true&repos=true",
+            description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+        }),
+        enrich(DockerFrom, {
+            shortName: "images",
+            category: "Docker",
+            unit: "tag",
+            url: "fingerprint/docker-base-image/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
+            description: "Docker base images in use across all repositories in your workspace, " +
+                "broken out by image label and repositories where used.",
+        }),
+        DockerfilePath,
+        enrich(DockerPorts, {
+            shortName: "ports",
+            category: "Docker",
+            unit: "port",
+            url: "fingerprint/docker-ports/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
+            description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
+                "broken out by port number and repositories where used.",
+            manage: false,
+        }),
         K8sSpecs,
-        branchCount,
-        LeinDeps,
+        enrich(branchCount, {
+            shortName: "branches",
+            category: "Git",
+            unit: "branch",
+            url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
+            description: "Number of Git branches across repositories in your workspace, " +
+                "grouped by Drift Level.",
+            manage: false,
+        }),
         ...optionalAspects,
     ];
 
-    // TODO cd merge into one call
-    registerCategories(TypeScriptVersion, "Node.js");
-    registerReportDetails(TypeScriptVersion, {
-        name: "TypeScript versions",
-        shortName: "version",
-        unit: "version",
-        url: "fingerprint/typescript-version/typescript-version?byOrg=true",
-        description: "TypeScript versions in use across all repositories in your workspace, " +
-            "broken out by version and repositories that use each version.",
-    });
-    registerCategories(NpmDependencies, "Node.js");
-    registerReportDetails(NpmDependencies, {
-        shortName: "dependency",
-        unit: "version",
-        url: "drift?type=npm-project-deps&band=true&repos=true",
-        description: "Node direct dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
-    });
-    registerCategories(MavenDirectDependencies, "Java");
-    registerReportDetails(MavenDirectDependencies, {
-        shortName: "dependency",
-        unit: "version",
-        url: "drift?type=maven-direct-dep&band=true&repos=true",
-        description: "Maven declared dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
-    });
-    registerCategories(MavenParentPom, "Java");
-    registerReportDetails(MavenParentPom, {
-        shortName: "parent",
-        unit: "version",
-        url: `drift?type=${MavenParentPom.name}&band=true&repos=true`,
-        description: "Maven parent POM in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
-    });
-    registerCategories(LeinDeps, "Java");
-    registerReportDetails(LeinDeps, {
-        shortName: "dependency",
-        unit: "version",
-        url: "drift?type=clojure-project-deps&band=true&repos=true",
-        description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
-    });
-    registerCategories(DockerFrom, "Docker");
-    registerReportDetails(DockerFrom, {
-        name: "Docker base images",
-        shortName: "images",
-        unit: "tag",
-        url: "fingerprint/docker-base-image/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
-        description: "Docker base images in use across all repositories in your workspace, " +
-            "broken out by image label and repositories where used.",
-    });
-    registerCategories(DockerPorts, "Docker");
-    registerReportDetails(DockerPorts, {
-        shortName: "ports",
-        unit: "port",
-        url: "fingerprint/docker-ports/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
-        description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
-            "broken out by port number and repositories where used.",
-        manage: false,
-    });
-    registerCategories(branchCount, "Git");
-    registerReportDetails(branchCount, {
-        shortName: "branches",
-        unit: "branch",
-        url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
-        description: "Number of Git branches across repositories in your workspace, " +
-            "grouped by Drift Level.",
-        manage: false,
-    });
     return aspects;
+}
+
+function enrich(aspect: Aspect, details: AspectReportDetails): AspectWithReportDetails {
+    return {
+        ...aspect,
+        details,
+    };
 }

@@ -112,7 +112,7 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
 };
 
 export const DockerFrom: Aspect<DockerBaseData> = {
-    displayName: "Docker base image",
+    displayName: "Docker base images",
     name: "docker-base-image",
     apply: applyDockerBaseFingerprint,
     extract: dockerBaseFingerprint,
