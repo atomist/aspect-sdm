@@ -46,7 +46,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "version",
             category: "Node.js",
             unit: "version",
-            url: "fingerprint/typescript-version/typescript-version?byOrg=true",
+            url: "fingerprint/typescript-version/typescript-version?byOrg=true&trim=false",
             description: "TypeScript versions in use across all repositories in your workspace, " +
                 "broken out by version and repositories that use each version.",
         }),
@@ -88,7 +88,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "images",
             category: "Docker",
             unit: "tag",
-            url: "fingerprint/docker-base-image/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
+            url: "fingerprint/docker-base-image/*?byOrg=true&trim=false",
             description: "Docker base images in use across all repositories in your workspace, " +
                 "broken out by image label and repositories where used.",
         }),
@@ -97,7 +97,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "ports",
             category: "Docker",
             unit: "port",
-            url: "fingerprint/docker-ports/*?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false",
+            url: "fingerprint/docker-ports/*?byOrg=true&trim=false",
             description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
                 "broken out by port number and repositories where used.",
             manage: false,
@@ -107,7 +107,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "branches",
             category: "Git",
             unit: "branch",
-            url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&presence=false&progress=false&otherLabel=false&trim=false`,
+            url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&trim=false`,
             description: "Number of Git branches across repositories in your workspace, " +
                 "grouped by Drift Level.",
             manage: false,

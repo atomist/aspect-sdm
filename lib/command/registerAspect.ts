@@ -179,7 +179,7 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
             category: ci.parameters.category,
             endpoint,
             uuid,
-            url: report === "drift" ? `drift?type=${ci.parameters.name}&band=true&repos=true` : `fingerprint/${ci.parameters.name}/*?byOrg=true`,
+            url: report === "drift" ? `drift?type=${ci.parameters.name}&band=true&repos=true` : `fingerprint/${ci.parameters.name}/*?byOrg=true&trim=false"`,
             enabled: "true",
         };
 
