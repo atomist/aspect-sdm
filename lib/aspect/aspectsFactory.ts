@@ -106,12 +106,8 @@ function createAspectProxy(reg: AspectRegistrations.AspectRegistration): Aspect 
                 return [];
             }
         },
-        toDisplayableFingerprint(fp: FP<any>): string {
-            return fp.data.displayValue;
-        },
-        toDisplayableFingerprintName(fingerprintName: string): string {
-            return reg.name;
-        },
+        toDisplayableFingerprint: fp => fp.data.displayValue,
+        toDisplayableFingerprintName: () => reg.displayName,
     };
 
 }
