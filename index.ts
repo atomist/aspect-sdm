@@ -161,7 +161,7 @@ export const configuration: Configuration = configure(async sdm => {
 
             cfg.cluster = {
                 enabled: false,
-            }
+            };
 
             const isStaging = cfg.endpoints.api.includes("staging");
             if (!isStaging) {
