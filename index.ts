@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
+import {
+    Configuration,
+    GraphQL,
+} from "@atomist/automation-client";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import {
     CachingProjectLoader,
@@ -30,6 +33,7 @@ import {
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprints";
 import { createAspects } from "./lib/aspect/aspects";
+import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
     checkDiffHandler,
     checkGoalExecutionListener,
@@ -40,6 +44,7 @@ import {
     OptInCommand,
     OptOutCommand,
 } from "./lib/command/manageOptOut";
+import { RegisterAspectCommand } from "./lib/command/registerAspect";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import { complianceGoal } from "./lib/goal/compliance";
 import {
@@ -65,13 +70,17 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
+            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql"}))
+
             sdm.addCommand(OptInCommand)
-                .addCommand(OptOutCommand);
+                .addCommand(OptOutCommand)
+                .addCommand(RegisterAspectCommand);
 
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
-
+                    aspectsFactory: RegistrationsBackedAspectsFactory,
+                    
                     rebase: {
                         rebase: true,
                         rebaseStrategy: RebaseStrategy.Ours,

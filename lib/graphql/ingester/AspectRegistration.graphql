@@ -1,0 +1,12 @@
+type AspectRegistration @rootType {
+    name: String @compositeId
+    displayName: String
+
+    description: String
+    category: String
+    url: String
+    shortName: String
+    unit: String
+
+    endpoint: String
+}
