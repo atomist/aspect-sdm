@@ -92,7 +92,8 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
                     kind: "single",
                     options: [
                         { value: "drift", description: "Drift Report" },
-                        { value: "org", description: "Report by Org" },
+                        { value: "sorg", description: "Report by Org (single name)" },
+                        { value: "morg", description: "Report by Org (multiple names)" },
                     ],
                 },
             },
@@ -179,7 +180,9 @@ export const RegisterAspectCommand: CommandHandlerRegistration<{ owner: string, 
             category: ci.parameters.category,
             endpoint,
             uuid,
-            url: report === "drift" ? `drift?type=${ci.parameters.name}&band=true&repos=true` : `fingerprint/${ci.parameters.name}/*?byOrg=true&trim=false"`,
+            url: report === "drift" ? `drift?type=${ci.parameters.name}&band=true&repos=true` :
+                (report === "morg" ? `fingerprint/${ci.parameters.name}/*?byOrg=true&trim=false` :
+                    `fingerprint/${ci.parameters.name}/${ci.parameters.name}?byOrg=true&trim=false` ),
             enabled: "true",
         };
 
