@@ -97,7 +97,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "ports",
             category: "Docker",
             unit: "port",
-            url: "fingerprint/docker-ports/*?byOrg=true&trim=false",
+            url: "fingerprint/docker-ports/docker-ports?byOrg=true&trim=false",
             description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
                 "broken out by port number and repositories where used.",
             manage: false,
