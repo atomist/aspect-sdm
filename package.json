@@ -21,12 +21,12 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/automation-client": "1.6.3-master.20190827162443",
+    "@atomist/automation-client": "1.6.3-master.20190831063433",
     "@atomist/automation-client-ext-dashboard": "1.1.1-master.20190810154215",
     "@atomist/automation-client-ext-humio": "^0.2.0",
     "@atomist/microgrammar": "^1.2.1",
-    "@atomist/sdm": "1.6.2-master.20190828145741",
-    "@atomist/sdm-core": "1.6.2-master.20190828144627",
+    "@atomist/sdm": "1.6.2-master.20190831070552",
+    "@atomist/sdm-core": "1.6.2-master.20190831070150",
     "@atomist/sdm-pack-aspect": "1.0.0-dynamic-aspects.20190831060327",
     "@atomist/sdm-pack-build": "^1.0.5",
     "@atomist/sdm-pack-clojure": "2.0.1-master.20190827125714",
@@ -57,7 +57,7 @@
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typedoc": "^0.15.0",
-    "typescript": "^3.5.3"
+    "typescript": "3.5.3"
   },
   "directories": {
     "test": "test"
