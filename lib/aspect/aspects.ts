@@ -25,6 +25,11 @@ import {
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
 import { Aspect } from "@atomist/sdm-pack-fingerprints";
+import {
+    CiAspect,
+    JavaBuild,
+    StackAspect,
+} from "./common/stackAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
 import { K8sSpecs } from "./k8s/specAspect";
@@ -112,6 +117,9 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
                 "grouped by Drift Level.",
             manage: false,
         }),
+        StackAspect,
+        CiAspect,
+        JavaBuild,
         ...optionalAspects,
     ];
 
