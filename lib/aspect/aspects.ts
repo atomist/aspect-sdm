@@ -15,10 +15,7 @@
  */
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
-import {
-    AspectReportDetails,
-    AspectWithReportDetails,
-} from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
+import { enrich } from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
@@ -124,11 +121,4 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     ];
 
     return aspects;
-}
-
-function enrich(aspect: Aspect, details: AspectReportDetails): AspectWithReportDetails {
-    return {
-        ...aspect,
-        details,
-    };
 }

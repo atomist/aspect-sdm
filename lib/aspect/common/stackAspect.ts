@@ -15,9 +15,8 @@
  */
 
 import { projectUtils } from "@atomist/automation-client";
-import { checkOutArtifact } from "@atomist/sdm";
-import { classificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprints";
+import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 
 const StackName = "stack";
 
@@ -25,7 +24,7 @@ const StackName = "stack";
  * Identify common stacks
  * @type {Aspect<ClassificationData>}
  */
-export const StackAspect: Aspect = classificationAspect(
+export const StackAspect: Aspect = projectClassificationAspect(
     {
         name: StackName,
         // Deliberately don't display
@@ -47,7 +46,7 @@ export const StackAspect: Aspect = classificationAspect(
     },
 );
 
-export const JavaBuild: Aspect = classificationAspect({
+export const JavaBuild: Aspect = projectClassificationAspect({
         name: "javaBuild",
         displayName: "Java build tool",
         toDisplayableFingerprintName: () => "Java build tool",
@@ -56,7 +55,7 @@ export const JavaBuild: Aspect = classificationAspect({
     { tags: "gradle", reason: "has build.gradle", test: async p => p.hasFile("build.gradle") },
 );
 
-export const CiAspect: Aspect = classificationAspect({
+export const CiAspect: Aspect = projectClassificationAspect({
         name: "ci",
         // Deliberately don't display
         displayName: undefined,

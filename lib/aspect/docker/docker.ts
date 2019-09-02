@@ -102,7 +102,7 @@ export const applyDockerBaseFingerprint: ApplyFingerprint<DockerBaseData> = asyn
     return p;
 };
 
-export const diffDockerBaseFingerprints: DiffSummaryFingerprint = (diff, target) => {
+export const diffDockerBaseFingerprints: DiffSummaryFingerprint<DockerBaseData> = (diff, target) => {
     return {
         title: "New Docker Base Image Tag Policy",
         description:
