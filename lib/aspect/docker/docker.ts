@@ -104,9 +104,9 @@ export const applyDockerBaseFingerprint: ApplyFingerprint<DockerBaseData> = asyn
 
 export const diffDockerBaseFingerprints: DiffSummaryFingerprint<DockerBaseData> = (diff, target) => {
     return {
-        title: "New Docker Base Image Tag Policy",
+        title: "New Docker Base Image Tag Update",
         description:
-            `Policy tag for Docker base image ${bold(diff.from.data.image)} is ${codeLine(target.data.version)}.
+            `Target tag for Docker base image ${bold(diff.from.data.image)} is ${codeLine(target.data.version)}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using tag ${codeLine(diff.to.data.version)}.`,
     };
 };

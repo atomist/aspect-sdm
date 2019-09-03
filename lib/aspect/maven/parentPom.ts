@@ -55,9 +55,9 @@ export const MavenParentPom: Aspect<VersionedArtifact> = {
     displayName: "Maven parent POM",
     summary: (diff, target) => {
         return {
-            title: "New Maven Parent POM Version Policy",
+            title: "New Maven Parent POM Version Update",
             description:
-                `Policy version for Maven dependency ${bold(`${diff.from.data.group}:${diff.from.data.artifact}`)} is ${codeLine(target.data.version)}.
+                `Target version for Maven dependency ${bold(`${diff.from.data.group}:${diff.from.data.artifact}`)} is ${codeLine(target.data.version)}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(diff.to.data.version)}.`,
         };
     },

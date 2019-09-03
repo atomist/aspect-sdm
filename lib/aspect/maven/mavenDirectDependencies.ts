@@ -68,9 +68,9 @@ export const MavenDirectDependencies: Aspect = {
     displayName: "Maven declared dependencies",
     summary: (diff, target) => {
         return {
-            title: "New Maven Dependency Version Policy",
+            title: "New Maven Dependency Version Update",
             description:
-                `Policy version for Maven dependency ${bold(`${dataToVersionedArtifact(diff.from).group}:${dataToVersionedArtifact(diff.from).artifact}`)} is ${codeLine(dataToVersionedArtifact(target).version)}.
+                `Target version for Maven dependency ${bold(`${dataToVersionedArtifact(diff.from).group}:${dataToVersionedArtifact(diff.from).artifact}`)} is ${codeLine(dataToVersionedArtifact(target).version)}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(dataToVersionedArtifact(diff.to).version)}.`,
         };
     },

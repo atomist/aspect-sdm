@@ -126,7 +126,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
 
         const description = discrepancies.length === 1 ?
             applyFingerprintTitle(discrepancies[0], [aspect]) :
-            `Applying ${discrepancies.length} ${discrepancies.length === 1 ? "policy" : "policies"} for ${
+            `Applying ${discrepancies.length} ${discrepancies.length === 1 ? "target" : "targets"} for ${
                 aspect.name} to ${repo.owner} /${repo.name}/${pli.push.branch}`;
 
         const title = discrepancies.length === 1 ?
@@ -262,7 +262,7 @@ function addCommandsToPrBody(body: string,
 <br/>
 
 You can trigger Atomist commands by commenting on this PR:
-- \`@atomist opt out\` will stop raising automatic policy PRs for this repository
+- \`@atomist opt out\` will stop raising automatic target PRs for this repository
 - \`@atomist help\` start your comment with this to ask Atomist for help or provide feedback
 
 ${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(category)}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`

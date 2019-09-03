@@ -97,8 +97,8 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine,
         let output: ChecksUpdateParamsOutput;
         if (!check.data.output.title) {
             output = {
-                title: "Policy differences",
-                summary: "The following differences from set policies have been detected:",
+                title: "Target differences",
+                summary: "The following differences from set targets have been detected:",
                 text: "",
             };
         } else {
@@ -108,9 +108,9 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine,
         const category = (await aspectRegistry.reportDetailsOf(aspect, context.workspaceId)).category;
         const text = `## ${aspect.displayName}
 
-${targetCount} ${targetCount === 1 ? "Policy" : "Polices"} set - Compliance ${((1 - (discrepancies.length / targetCount)) * 100).toFixed(0)}% - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/manage?category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})
+${targetCount} ${targetCount === 1 ? "Target" : "Targets"} set - Compliance ${((1 - (discrepancies.length / targetCount)) * 100).toFixed(0)}% - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/manage?category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})
 
-${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${codeLine(displayValue(aspect, d.diff.to))} - Policy: ${codeLine(displayValue(aspect, d.target))} - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/enable?fingerprint=${encodeURIComponent(d.diff.to.name)}&category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})`).join("\n")}`;
+${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${codeLine(displayValue(aspect, d.diff.to))} - Target: ${codeLine(displayValue(aspect, d.target))} - [Manage](https://app.atomist.com/workspace/${context.workspaceId}/analysis/enable?fingerprint=${encodeURIComponent(d.diff.to.name)}&category=${encodeURIComponent(category)}&aspect=${encodeURIComponent(aspect.displayName)})`).join("\n")}`;
         output.text = `${output.text}\n\n${text}`;
 
         await github.checks.update({
@@ -173,8 +173,8 @@ export function checkGoalExecutionListener(complianceGoal: Goal): GoalExecutionL
                 status: "completed",
                 conclusion,
                 output: conclusion === "success" ? {
-                    title: "Policy differences",
-                    summary: "No policy differences detected",
+                    title: "Target differences",
+                    summary: "No target differences detected",
                 } : undefined,
             });
 

@@ -141,8 +141,8 @@ export const diffK8sSpecsFingerprints: DiffSummaryFingerprint = (diff, target) =
     const resourceName = k8sSpecsFingerprintDisplayName(k8sSpecsFingerprintName(diff.from.data));
     const repo = `${diff.owner}/${diff.repo}/${diff.branch}`;
     return {
-        title: "New Kubernetes Spec Policy",
-        description: `Policy version for Kubernetes spec ${bold(resourceName)} differs from that in ${bold(repo)}.`,
+        title: "New Kubernetes Spec Update",
+        description: `Target for Kubernetes spec ${bold(resourceName)} differs from that in ${bold(repo)}.`,
     };
 };
 
