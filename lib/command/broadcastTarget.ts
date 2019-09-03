@@ -20,6 +20,7 @@ import {
     SoftwareDeliveryMachine,
 } from "@atomist/sdm";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { toName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
 import { getAspectOwner } from "./setTarget";
 
 interface BroadcastTargetParameters {
@@ -50,12 +51,12 @@ export function broadcastTargetCommand(sdm: SoftwareDeliveryMachine,
                 registration: owner,
                 command: "BroadcastFingerprintMandate",
                 parameters: [{
-                    type: ci.parameters.type,
-                    name: ci.parameters.name,
+                    fingerprint: toName(ci.parameters.type, ci.parameters.name),
                     title: ci.parameters.title,
                     body: ci.parameters.body,
                     branch: ci.parameters.branch,
                 }],
+                concurrentTasks: 1,
             }, ci.context);
         },
     };
