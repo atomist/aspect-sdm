@@ -21,7 +21,7 @@ import {
     DefaultTargetDiffHandler,
     FP,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import {
     bold,

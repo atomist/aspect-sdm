@@ -28,16 +28,16 @@ import {
     updateGoal,
 } from "@atomist/sdm";
 import { AspectReportDetailsRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
-import { toName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
+import { toName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
 import {
     Diff,
     FingerprintDiffHandler,
     FP,
-} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspect";
+} from "@atomist/sdm-pack-fingerprint/lib/machine/Aspect";
 import {
     displayName,
     displayValue,
-} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+} from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
 import { codeLine } from "@atomist/slack-messages";
 import { ChecksUpdateParamsOutput } from "@octokit/rest";
 import { ComplicanceData } from "../goal/compliance";

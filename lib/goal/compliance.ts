@@ -19,12 +19,12 @@ import {
     Goal,
     SdmGoalState,
 } from "@atomist/sdm";
-import { Aspect } from "@atomist/sdm-pack-fingerprints";
+import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import {
     aspectOf,
     displayName,
     displayValue,
-} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+} from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
 import * as _ from "lodash";
 
 export interface ComplicanceData {

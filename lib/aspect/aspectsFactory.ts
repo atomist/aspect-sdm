@@ -22,8 +22,8 @@ import {
 import {
     Aspect,
     FP,
-} from "@atomist/sdm-pack-fingerprints";
-import { AspectsFactory } from "@atomist/sdm-pack-fingerprints/lib/machine/fingerprintSupport";
+} from "@atomist/sdm-pack-fingerprint";
+import { AspectsFactory } from "@atomist/sdm-pack-fingerprint/lib/machine/fingerprintSupport";
 import { AspectRegistrations } from "../typings/types";
 
 export interface AspectRequest {

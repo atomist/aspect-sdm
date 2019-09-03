@@ -22,7 +22,7 @@ import {
     Aspect,
     DefaultTargetDiffHandler,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { PackageJson } from "@atomist/sdm-pack-node";
 import {
     bold,

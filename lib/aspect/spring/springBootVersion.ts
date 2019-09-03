@@ -17,7 +17,7 @@
 import {
     Aspect,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import {
     setSpringBootVersionTransform,
     SpringBootVersionInspection,

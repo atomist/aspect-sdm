@@ -20,17 +20,17 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { EventHandlerRegistration } from "@atomist/sdm";
-import { Aspect } from "@atomist/sdm-pack-fingerprints";
-import { fromName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
+import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { fromName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
 import {
     ApplyPolicyState,
     PolicyLog,
     sendPolicyLog,
-} from "@atomist/sdm-pack-fingerprints/lib/log/policyLog";
+} from "@atomist/sdm-pack-fingerprint/lib/log/policyLog";
 import {
     aspectOf,
     displayValue,
-} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+} from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
 import {
     GetFpBySha,
     OnPullRequest,

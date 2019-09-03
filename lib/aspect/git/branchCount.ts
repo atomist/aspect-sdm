@@ -26,7 +26,7 @@ import {
 import {
     Aspect,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 
 export const BranchCountType = "branch-count";
 

@@ -21,7 +21,7 @@ import {
     DockerfilePath,
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
-import { Aspect } from "@atomist/sdm-pack-fingerprints";
+import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import {
     CiAspect,
     JavaBuild,

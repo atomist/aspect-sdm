@@ -32,7 +32,7 @@ import {
     DefaultTargetDiffHandler,
     RebaseFailure,
     RebaseStrategy,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
