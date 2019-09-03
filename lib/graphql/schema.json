@@ -11325,6 +11325,20 @@
                 "defaultValue": null
               },
               {
+                "name": "owner",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "shortName",
                 "description": null,
                 "type": {
@@ -42688,6 +42702,18 @@
             "deprecationReason": null
           },
           {
+            "name": "owner",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "shortName",
             "description": null,
             "args": [],
@@ -56017,6 +56043,20 @@
               },
               {
                 "name": "name",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "owner",
                 "description": null,
                 "type": {
                   "kind": "LIST",

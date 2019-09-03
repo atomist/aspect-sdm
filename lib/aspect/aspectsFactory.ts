@@ -48,7 +48,7 @@ export async function getAspectRegistrations(ctx: HandlerContext, name?: string)
 }
 
 export const RegistrationsBackedAspectsFactory: AspectsFactory = async (p, pli) => {
-    return (await getAspectRegistrations(pli.context)).filter(a => a.enabled === "true").map(createAspectProxy);
+    return (await getAspectRegistrations(pli.context)).filter(a => a.enabled === "true" && !!a.endpoint).map(createAspectProxy);
 };
 
 function createAspectProxy(reg: AspectRegistrations.AspectRegistration): Aspect {
