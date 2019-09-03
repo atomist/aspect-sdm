@@ -40,6 +40,8 @@ import {
     checkGoalExecutionListener,
 } from "./lib/aspect/check";
 import { raisePrDiffHandler } from "./lib/aspect/praisePr";
+import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
+import { unsetTargetCommand } from "./lib/command/disableTarget";
 import { FeedbackCommand } from "./lib/command/feedback";
 import {
     OptInCommand,
@@ -49,6 +51,8 @@ import {
     DisableAspectCommand,
     RegisterAspectCommand,
 } from "./lib/command/registerAspect";
+import { setTargetCommand } from "./lib/command/setTarget";
+import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import { complianceGoal } from "./lib/goal/compliance";
 import {
@@ -79,7 +83,11 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addCommand(OptInCommand)
                 .addCommand(OptOutCommand)
                 .addCommand(RegisterAspectCommand)
-                .addCommand(DisableAspectCommand);
+                .addCommand(DisableAspectCommand)
+                .addCommand(tryTargetCommand(sdm, aspects))
+                .addCommand(setTargetCommand(sdm, aspects))
+                .addCommand(unsetTargetCommand(sdm, aspects))
+                .addCommand(broadcastTargetCommand(sdm, aspects));
 
             sdm.addExtensionPacks(
                 aspectSupport({
