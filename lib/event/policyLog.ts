@@ -20,17 +20,17 @@ import {
     Success,
 } from "@atomist/automation-client";
 import { EventHandlerRegistration } from "@atomist/sdm";
-import { Aspect } from "@atomist/sdm-pack-fingerprints";
-import { fromName } from "@atomist/sdm-pack-fingerprints/lib/adhoc/preferences";
+import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { fromName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
 import {
     ApplyPolicyState,
     PolicyLog,
     sendPolicyLog,
-} from "@atomist/sdm-pack-fingerprints/lib/log/policyLog";
+} from "@atomist/sdm-pack-fingerprint/lib/log/policyLog";
 import {
     aspectOf,
     displayValue,
-} from "@atomist/sdm-pack-fingerprints/lib/machine/Aspects";
+} from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
 import {
     GetFpBySha,
     OnPullRequest,
@@ -83,8 +83,8 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
 
                     const value = displayValue(aspectOf(fingerprint, aspects), fingerprint);
                     const message = pr.action === PullRequestAction.closed ?
-                        `PR of policy ${value} application to ${pr.repo.owner}/${pr.repo.name} was ${pr.merged ? "merged" : "closed without merging"}` :
-                        `Application of policy ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
+                        `PR of target ${value} application to ${pr.repo.owner}/${pr.repo.name} was ${pr.merged ? "merged" : "closed without merging"}` :
+                        `Application of target ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
                     const log: PolicyLog = {
                         type,
                         name,

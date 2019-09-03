@@ -22,7 +22,7 @@ import {
     Aspect,
     DefaultTargetDiffHandler,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { PackageJson } from "@atomist/sdm-pack-node";
 import {
     bold,
@@ -49,9 +49,9 @@ export const TypeScriptVersion: Aspect = {
             "https://atomist-blogs.github.io/org-visualizer/modules/_lib_feature_node_typescriptversionfeature_.html#typescriptversionfeature",
         summary: (diff, target) => {
             return {
-                title: "New TypeScript Version Policy",
+                title: "New TypeScript Version Update",
                 description:
-                    `Policy version for TypeScript is ${codeLine(target.data[0])}.
+                    `Target version for TypeScript is ${codeLine(target.data[0])}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(diff.to.data[0])}.`,
             };
         },

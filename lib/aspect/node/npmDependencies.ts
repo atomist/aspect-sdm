@@ -33,8 +33,8 @@ import {
     FP,
     sha256,
     Vote,
-} from "@atomist/sdm-pack-fingerprints";
-import { setNewTargetFingerprint } from "@atomist/sdm-pack-fingerprints/lib/handlers/commands/updateTarget";
+} from "@atomist/sdm-pack-fingerprint";
+import { setNewTargetFingerprint } from "@atomist/sdm-pack-fingerprint/lib/handlers/commands/updateTarget";
 import {
     bold,
     codeLine,
@@ -146,9 +146,9 @@ export const applyNpmDepsFingerprint: ApplyFingerprint<NpmDepData> = async (p, p
 /* tslint:disable:max-line-length */
 export const diffNpmDepsFingerprints: DiffSummaryFingerprint = (diff, target) => {
     return {
-        title: "New NPM Package Version Policy",
+        title: "New NPM Package Version Update",
         description:
-            `Policy version for NPM package ${bold(diff.from.data[0])} is ${codeLine(target.data[1])}.
+            `Target version for NPM package ${bold(diff.from.data[0])} is ${codeLine(target.data[1])}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(diff.to.data[1])}.`,
     };
 };

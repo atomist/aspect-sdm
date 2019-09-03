@@ -27,7 +27,7 @@ import {
     ExtractFingerprint,
     FP,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { bold } from "@atomist/slack-messages";
 import * as yaml from "js-yaml";
 import * as stringify from "json-stable-stringify";
@@ -141,8 +141,8 @@ export const diffK8sSpecsFingerprints: DiffSummaryFingerprint = (diff, target) =
     const resourceName = k8sSpecsFingerprintDisplayName(k8sSpecsFingerprintName(diff.from.data));
     const repo = `${diff.owner}/${diff.repo}/${diff.branch}`;
     return {
-        title: "New Kubernetes Spec Policy",
-        description: `Policy version for Kubernetes spec ${bold(resourceName)} differs from that in ${bold(repo)}.`,
+        title: "New Kubernetes Spec Update",
+        description: `Target for Kubernetes spec ${bold(resourceName)} differs from that in ${bold(repo)}.`,
     };
 };
 

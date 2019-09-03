@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { Configuration } from "@atomist/automation-client";
+import {
+    Configuration,
+    GraphQL,
+} from "@atomist/automation-client";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
 import {
     CachingProjectLoader,
@@ -24,12 +27,14 @@ import {
 } from "@atomist/sdm";
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
+import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import {
     DefaultTargetDiffHandler,
     RebaseFailure,
     RebaseStrategy,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import { createAspects } from "./lib/aspect/aspects";
+import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
     checkDiffHandler,
     checkGoalExecutionListener,
@@ -40,6 +45,10 @@ import {
     OptInCommand,
     OptOutCommand,
 } from "./lib/command/manageOptOut";
+import {
+    DisableAspectCommand,
+    RegisterAspectCommand,
+} from "./lib/command/registerAspect";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import { complianceGoal } from "./lib/goal/compliance";
 import {
@@ -65,12 +74,17 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
+            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql"}));
+
             sdm.addCommand(OptInCommand)
-                .addCommand(OptOutCommand);
+                .addCommand(OptOutCommand)
+                .addCommand(RegisterAspectCommand)
+                .addCommand(DisableAspectCommand);
 
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
+                    aspectsFactory: RegistrationsBackedAspectsFactory,
 
                     rebase: {
                         rebase: true,
@@ -80,10 +94,6 @@ export const configuration: Configuration = configure(async sdm => {
 
                     goals: {
                         pushImpact,
-                    },
-
-                    undesirableUsageChecker: {
-                        check: () => undefined,
                     },
 
                     exposeWeb: true,
@@ -98,9 +108,17 @@ export const configuration: Configuration = configure(async sdm => {
                     }),
             );
 
+            const aspectRegistry = new DefaultAspectRegistry({
+                idealStore: undefined,
+                problemStore: undefined,
+                aspects,
+                undesirableUsageChecker: undefined,
+                configuration,
+            });
+
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [checkDiffHandler(sdm), raisePrDiffHandler(sdm, DefaultTargetDiffHandler)]);
+                .forEach(a => a.workflows = [checkDiffHandler(sdm, aspectRegistry), raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler)]);
 
             return {
                 analyze: {

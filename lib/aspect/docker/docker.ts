@@ -29,7 +29,7 @@ import {
     ExtractFingerprint,
     FP,
     sha256,
-} from "@atomist/sdm-pack-fingerprints";
+} from "@atomist/sdm-pack-fingerprint";
 import {
     bold,
     codeLine,
@@ -102,17 +102,17 @@ export const applyDockerBaseFingerprint: ApplyFingerprint<DockerBaseData> = asyn
     return p;
 };
 
-export const diffDockerBaseFingerprints: DiffSummaryFingerprint = (diff, target) => {
+export const diffDockerBaseFingerprints: DiffSummaryFingerprint<DockerBaseData> = (diff, target) => {
     return {
-        title: "New Docker Base Image Tag Policy",
+        title: "New Docker Base Image Tag Update",
         description:
-            `Policy tag for Docker base image ${bold(diff.from.data.image)} is ${codeLine(target.data.version)}.
+            `Target tag for Docker base image ${bold(diff.from.data.image)} is ${codeLine(target.data.version)}.
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using tag ${codeLine(diff.to.data.version)}.`,
     };
 };
 
 export const DockerFrom: Aspect<DockerBaseData> = {
-    displayName: "Docker base image",
+    displayName: "Docker base images",
     name: "docker-base-image",
     apply: applyDockerBaseFingerprint,
     extract: dockerBaseFingerprint,

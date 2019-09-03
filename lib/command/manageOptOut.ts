@@ -28,7 +28,7 @@ import {
 
 export const OptOutCommand: CommandHandlerRegistration<{ owner: string, repo: string }> = {
     name: "OptOut",
-    description: "Opt out of automatic policy PRs",
+    description: "Opt out of automatic target PRs",
     intent: ["opt out", "opt-out"],
     parameters: {
         owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped },
@@ -39,13 +39,13 @@ export const OptOutCommand: CommandHandlerRegistration<{ owner: string, repo: st
             raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
             { disabled: true },
             { scope: PreferenceScope.Sdm });
-        await ci.addressChannels(`Opted out of automatic policy PRs for this ${ci.parameters.repo ? "repository" : "organization"}. To opt back in, run ${codeLine("@atomist opt-in")}.`);
+        await ci.addressChannels(`Opted out of automatic target PRs for this ${ci.parameters.repo ? "repository" : "organization"}. To opt back in, run ${codeLine("@atomist opt-in")}.`);
     },
 };
 
 export const OptInCommand: CommandHandlerRegistration<{ always?: boolean, owner: string, repo: string }> = {
     name: "OptIn",
-    description: "Opt in to automatic policy PRs",
+    description: "Opt in to automatic target PRs",
     intent: ["opt in", "opt-in"],
     parameters: {
         always: { description: "Opt in to automatic PRs regardless of linked channels", required: false, type: "boolean" },
@@ -63,6 +63,6 @@ export const OptInCommand: CommandHandlerRegistration<{ always?: boolean, owner:
                 raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
                 { scope: PreferenceScope.Sdm });
         }
-        await ci.addressChannels(`Opted in to automatic policy PRs for this ${ci.parameters.repo ? "repository" : "organization"}.`);
+        await ci.addressChannels(`Opted in to automatic target PRs for this ${ci.parameters.repo ? "repository" : "organization"}.`);
     },
 };

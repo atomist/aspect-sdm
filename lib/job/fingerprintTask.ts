@@ -31,9 +31,9 @@ import {
 import {
     Aspect,
     fingerprintRunner,
-} from "@atomist/sdm-pack-fingerprints";
-import { sendFingerprintsToAtomist } from "@atomist/sdm-pack-fingerprints/lib/adhoc/fingerprints";
-import { createFingerprintComputer } from "@atomist/sdm-pack-fingerprints/lib/machine/runner";
+} from "@atomist/sdm-pack-fingerprint";
+import { sendFingerprintsToAtomist } from "@atomist/sdm-pack-fingerprint/lib/adhoc/fingerprints";
+import { createFingerprintComputer } from "@atomist/sdm-pack-fingerprint/lib/machine/runner";
 import * as _ from "lodash";
 import {
     GitHubAppInstallationByOwner,
