@@ -27,13 +27,13 @@ import { AspectsFactory } from "@atomist/sdm-pack-fingerprint/lib/machine/finger
 import { AspectRegistrations } from "../typings/types";
 
 export interface AspectRequest {
-    method: "extract" | "apply";
     configuration: {
-        apiKey: string;
-        workspaceIds: string[];
+        github: {
+            token: string;
+        };
     };
-    repo: { owner: string, name: string, branch: string, providerId: string, apiUrl: string };
-    token: string;
+    repo: { owner: string, name: string, providerId: string, apiUrl: string, defaultBranch: string };
+    branch: string;
     commit: { sha: string, message: string };
 }
 
@@ -62,29 +62,29 @@ function createAspectProxy(reg: AspectRegistrations.AspectRegistration): Aspect 
             }
 
             const payload: AspectRequest = {
-                method: "extract",
                 configuration: {
-                    apiKey: papi.configuration.apiKey,
-                    workspaceIds: [papi.context.workspaceId],
+                    github: {
+                        token: (papi.credentials as TokenCredentials).token,
+                    },
                 },
                 repo: {
                     owner: p.id.owner,
                     name: p.id.repo,
-                    branch: p.id.branch,
                     providerId: papi.push.repo.org.provider.providerId,
                     apiUrl: papi.push.repo.org.provider.apiUrl,
+                    defaultBranch: papi.push.repo.defaultBranch,
                 },
-                token: (papi.credentials as TokenCredentials).token,
+                branch: papi.push.branch,
                 commit: {
                     sha: papi.push.after.sha,
                     message: papi.push.after.message,
                 },
             };
-
-            const client = papi.configuration.http.client.factory.create(reg.endpoint);
+            const url = `${reg.endpoint}/extract/${papi.context.workspaceId}/${encodeURIComponent(reg.name)}`;
+            const client = papi.configuration.http.client.factory.create(url);
             try {
-                return (await client.exchange<FP[]>(reg.endpoint, {
-                    method: HttpMethod.Post,
+                return (await client.exchange<FP[]>(url, {
+                    method: HttpMethod.Put,
                     body: payload,
                     headers: {
                         "Content-Type": "application/json",
