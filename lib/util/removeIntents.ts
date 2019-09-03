@@ -19,18 +19,20 @@ import { isCommandHandlerMetadata } from "@atomist/automation-client/lib/interna
 import { AutomationMetadataProcessor } from "@atomist/automation-client/lib/spi/env/MetadataProcessor";
 import { isInLocalMode } from "@atomist/sdm-core";
 
-const CommandWhitelist = [
-    "SelfDescribe",
-    "CreateFingerprintJob",
-    "OptIn",
-    "OptOut",
-    "RegisterAspect",
-    "DisableAspect",
-];
-
 export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcessor {
 
     public process<CommandHandlerMetadata>(metadata: CommandHandlerMetadata, configuration: Configuration): CommandHandlerMetadata {
+
+        const isStaging = configuration.endpoints.api.includes("staging");
+
+        const CommandWhitelist = [
+            "SelfDescribe",
+            "CreateFingerprintJob",
+            "OptIn",
+            "OptOut",
+            ...(isStaging ? ["RegisterAspect", "DisableAspect"] : []),
+        ];
+
         if (isCommandHandlerMetadata(metadata) && !isInLocalMode()) {
             if (!CommandWhitelist.includes(metadata.name)) {
                 metadata.intent = [];
