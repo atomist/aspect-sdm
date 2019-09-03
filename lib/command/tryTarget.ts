@@ -65,9 +65,9 @@ export function tryTargetCommand(sdm: SoftwareDeliveryMachine,
                 registration: owner,
                 command: "ApplyTargetFingerprintBySha",
                 parameters: [{
-                    sha: ci.parameters.sha,
-                    targetfingerprint: toName(ci.parameters.type, ci.parameters.name),
-                    targets: {
+                    "sha": ci.parameters.sha,
+                    "targetfingerprint": toName(ci.parameters.type, ci.parameters.name),
+                    "targets": {
                         owner: ci.parameters.owner,
                         repo: ci.parameters.repo,
                         branch: ci.parameters.branch,
