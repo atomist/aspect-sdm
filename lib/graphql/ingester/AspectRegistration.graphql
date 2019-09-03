@@ -1,7 +1,8 @@
 type AspectRegistration @rootType {
     name: String @compositeId
+    owner: String
+    
     displayName: String
-
     description: String
     category: String
     url: String
