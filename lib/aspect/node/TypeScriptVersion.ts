@@ -44,7 +44,7 @@ const PackageJsonName = "package.json";
  */
 export const TypeScriptVersion: Aspect = {
         name: TypeScriptVersionType,
-        displayName: "TypeScript Version",
+        displayName: "TypeScript version",
         documentationUrl:
             "https://atomist-blogs.github.io/org-visualizer/modules/_lib_feature_node_typescriptversionfeature_.html#typescriptversionfeature",
         summary: (diff, target) => {
