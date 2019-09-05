@@ -34,6 +34,7 @@ import { bold } from "@atomist/slack-messages";
 import {
     OnDiscoveryJob,
     OnGitHubAppInstallation,
+    ReposByOrg,
     ReposByProvider,
 } from "../typings/types";
 import {
@@ -47,6 +48,55 @@ export const CreateFingerprintJobCommand: CommandHandlerRegistration = {
     description: "Trigger a background job to calculate all fingerprints across a given org",
     listener: async ci => {
         await fingerprintGitHubResourceProvider(ci.context, true);
+    },
+};
+
+interface ReAnalyzeJobCommandParameters {
+    owner: string;
+}
+
+export const ReAnalyzeJobCommand: CommandHandlerRegistration<ReAnalyzeJobCommandParameters> = {
+    name: "ReAnalyze",
+    intent: "re-analyze github",
+    description: "Trigger a background job to re-analyze all of the head commits for a GitHub app installation",
+    parameters: {
+        owner: {
+            required: true,
+        },
+    },
+    listener: async ci => {
+        try {
+            const org: ReposByOrg.Query = await ci.context.graphClient.query<ReposByOrg.Query, ReposByOrg.Variables>(
+                {
+                    name: "ReposByOrg",
+                    variables: {
+                        org: ci.parameters.owner,
+                    },
+                },
+            );
+            const owner: string = org.Org[0].owner;
+            const providerId: string = org.Org[0].scmProvider.providerId;
+            const tasks: CalculateFingerprintTaskParameters[] = org.Org[0].repos.map(x => {
+                return {
+                    owner: x.owner,
+                    name: x.name,
+                    providerId,
+                    repoId: x.id,
+                    branch: x.defaultBranch,
+                };
+            });
+            await createJob<CalculateFingerprintTaskParameters>(
+                {
+                    command: calculateFingerprintTask([]),
+                    parameters: tasks,
+                    name: `OrganizationAnalysisRun/${(new Date()).getTime().toString()}/${org.Org[0].scmProvider.providerId}/${owner}`,
+                    description: `Analyzing repositories in ${bold(owner)}`,
+                    concurrentTasks: 2,
+                },
+                ci.context);
+        } catch (e) {
+            logger.warn("Failed to create job for org '%s': %s", ci.parameters.owner, e.message);
+        }
     },
 };
 
@@ -102,12 +152,12 @@ async function fingerprintGitHubAppInstallation(event: OnGitHubAppInstallation.S
     if (!analyzed) {
         try {
             await createJob<CalculateFingerprintTaskParameters>({
-                    command: calculateFingerprintTask([]),
-                    parameters: repos.tasks,
-                    name: `OrganizationAnalysis/${provider.providerId}/${org.owner}`,
-                    description: `Analyzing repositories in ${bold(org.owner)}`,
-                    concurrentTasks: 2,
-                },
+                command: calculateFingerprintTask([]),
+                parameters: repos.tasks,
+                name: `OrganizationAnalysis/${provider.providerId}/${org.owner}`,
+                description: `Analyzing repositories in ${bold(org.owner)}`,
+                concurrentTasks: 2,
+            },
                 ctx);
             await prefs.put<boolean>(preferenceKey(org.owner), true, { scope: PreferenceScope.Sdm });
         } catch (e) {
@@ -148,12 +198,12 @@ async function fingerprintGitHubResourceProvider(ctx: HandlerContext, rerun: boo
         if (!analyzed || rerun) {
             try {
                 await createJob<CalculateFingerprintTaskParameters>({
-                        command: calculateFingerprintTask([]),
-                        parameters: org.tasks,
-                        name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
-                        description: `Analyzing repositories in ${bold(org.name)}`,
-                        concurrentTasks: 2,
-                    },
+                    command: calculateFingerprintTask([]),
+                    parameters: org.tasks,
+                    name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
+                    description: `Analyzing repositories in ${bold(org.name)}`,
+                    concurrentTasks: 2,
+                },
                     ctx);
                 await prefs.put<boolean>(preferenceKey(org.name), true, { scope: PreferenceScope.Sdm });
             } catch (e) {

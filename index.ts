@@ -58,6 +58,7 @@ import { complianceGoal } from "./lib/goal/compliance";
 import {
     CreateFingerprintJob,
     CreateFingerprintJobCommand,
+    ReAnalyzeJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
@@ -141,6 +142,7 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addEvent(createPolicyLogOnPullRequest(aspects));
             sdm.addCommand(CreateFingerprintJobCommand);
             sdm.addCommand(calculateFingerprintTask(aspects));
+            sdm.addCommand(ReAnalyzeJobCommand);
 
             return {};
         }

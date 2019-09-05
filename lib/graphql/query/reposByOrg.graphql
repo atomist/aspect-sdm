@@ -1,0 +1,15 @@
+query ReposByOrg($org: String) {
+    Org(owner: $org) {
+        owner
+        repos {
+            id
+            owner
+            name
+            defaultBranch
+        }
+        scmProvider @required {
+            id
+            providerId
+        }
+    }
+}
