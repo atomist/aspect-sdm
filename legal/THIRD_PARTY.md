@@ -11,7 +11,7 @@ This page details all runtime OSS dependencies of `@atomist/aspect-sdm`.
 | License | Count |
 |---------|-------|
 |[AFLv2.1](#aflv21)|1|
-|[Apache-2.0](#apache-20)|32|
+|[Apache-2.0](#apache-20)|33|
 |[BSD-2-Clause](#bsd-2-clause)|9|
 |[BSD-3-Clause](#bsd-3-clause)|58|
 |[BSD](#bsd)|6|
@@ -42,16 +42,16 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`@atomist/automation-client-ext-dashboard`|`1.1.1-master.20190810154215`|Atomist|[https://github.com/atomist/automation-client-ext-dashboard](https://github.com/atomist/automation-client-ext-dashboard)|
 |`@atomist/automation-client-ext-humio`|`0.2.0`|Atomist|[https://github.com/atomist/automation-client-ext-humio](https://github.com/atomist/automation-client-ext-humio)|
 |`@atomist/clj-editors`|`0.8.2-master.20190816115246`||[https://github.com/atomisthq/clj-editors](https://github.com/atomisthq/clj-editors)|
-|`@atomist/sdm-core`|`1.6.2-graphql-code-generator-1.20190903073553`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
-|`@atomist/sdm-pack-aspect`|`1.0.0-master.20190903125234`|Atomist Inc.|[https://github.com/atomist/sdm-pack-aspect](https://github.com/atomist/sdm-pack-aspect)|
+|`@atomist/sdm-core`|`1.6.2-master.20190903201907`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
+|`@atomist/sdm-pack-aspect`|`1.0.0-master.20190905095751`|Atomist Inc.|[https://github.com/atomist/sdm-pack-aspect](https://github.com/atomist/sdm-pack-aspect)|
 |`@atomist/sdm-pack-build`|`1.0.6-graphql-code-generator-1.20190902194339`|Atomist|[https://github.com/atomist/sdm-pack-build](https://github.com/atomist/sdm-pack-build)|
 |`@atomist/sdm-pack-clojure`|`2.0.1-master.20190903063949`|Atomist, Inc.|[https://github.com/atomist/sdm-pack-clojure](https://github.com/atomist/sdm-pack-clojure)|
 |`@atomist/sdm-pack-docker`|`2.0.3-master.20190903064256`|Atomist|[https://github.com/atomist/sdm-pack-docker](https://github.com/atomist/sdm-pack-docker)|
-|`@atomist/sdm-pack-fingerprint`|`5.0.0-master.20190903165024`|Atomist|[https://github.com/atomist/sdm-pack-fingerprints](https://github.com/atomist/sdm-pack-fingerprints)|
+|`@atomist/sdm-pack-fingerprint`|`5.0.0-master.20190903062633`|Atomist|[https://github.com/atomist/sdm-pack-fingerprints](https://github.com/atomist/sdm-pack-fingerprints)|
 |`@atomist/sdm-pack-node`|`1.1.1`|Atomist|[https://github.com/atomist/sdm-pack-node](https://github.com/atomist/sdm-pack-node)|
 |`@atomist/sdm-pack-sloc`|`1.0.3-master.20190502175705`|Atomist|[https://github.com/atomist/sdm-pack-sloc](https://github.com/atomist/sdm-pack-sloc)|
 |`@atomist/sdm-pack-spring`|`2.0.1-graphql-code-generator-1.20190903074650`|Atomist|[https://github.com/atomist/sdm-pack-spring](https://github.com/atomist/sdm-pack-spring)|
-|`@atomist/sdm`|`1.6.2-graphql-code-generator-1.20190902160514`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
+|`@atomist/sdm`|`1.6.2-master.20190903184656`|Atomist|[https://github.com/atomist/sdm](https://github.com/atomist/sdm)|
 |`@atomist/slack-messages`|`1.1.1`|Atomist|[https://github.com/atomist/slack-messages](https://github.com/atomist/slack-messages)|
 |`@kubernetes/client-node`|`0.10.2`|Kubernetes Authors|[https://github.com/kubernetes-client/javascript](https://github.com/kubernetes-client/javascript)|
 |`JSONStream`|`1.3.5`|Dominic Tarr|[https://github.com/dominictarr/JSONStream](https://github.com/dominictarr/JSONStream)|
@@ -70,6 +70,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`tslib`|`1.10.0`|Microsoft Corp.|[https://github.com/Microsoft/tslib](https://github.com/Microsoft/tslib)|
 |`tunnel-agent`|`0.6.0`|Mikeal Rogers|[https://github.com/mikeal/tunnel-agent](https://github.com/mikeal/tunnel-agent)|
 |`typescript`|`3.5.3`|Microsoft Corp.|[https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)|
+|`typescript`|`3.6.2`|Microsoft Corp.|[https://github.com/Microsoft/TypeScript](https://github.com/Microsoft/TypeScript)|
 |`validate-npm-package-license`|`3.0.4`|Kyle E. Mitchell|[https://github.com/kemitchell/validate-npm-package-license.js](https://github.com/kemitchell/validate-npm-package-license.js)|
 
 #### BSD
@@ -204,7 +205,7 @@ GNU General Public License v3.0 only - [http://www.gnu.org/licenses/gpl-3.0-stan
 | Name | Version | Publisher | Repository |
 |------|---------|-----------|------------|
 |`@atomist/antlr`|`1.0.2`|Atomist|[https://github.com/atomist/antlr-ts](https://github.com/atomist/antlr-ts)|
-|`@atomist/automation-client`|`1.6.3-graphql-code-generator-1.20190902141916`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
+|`@atomist/automation-client`|`1.6.3-master.20190904061426`|Atomist|[https://github.com/atomist/automation-client](https://github.com/atomist/automation-client)|
 |`@atomist/microgrammar`|`1.2.1`|Atomist|[https://github.com/atomist/microgrammar](https://github.com/atomist/microgrammar)|
 |`@atomist/tree-path`|`1.0.3`|Atomist|[https://github.com/atomist/tree-path](https://github.com/atomist/tree-path)|
 
@@ -373,7 +374,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`@types/power-assert-formatter`|`1.4.28`|vvakame|[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/power-assert`|`1.5.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/promise-retry`|`1.1.3`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
-|`@types/prop-types`|`15.7.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
+|`@types/prop-types`|`15.7.2`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/proper-lockfile`|`4.1.1`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/range-parser`|`1.2.3`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
 |`@types/react-dom`|`16.9.0`||[https://github.com/DefinitelyTyped/DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped)|
@@ -500,7 +501,7 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`bluebird`|`3.5.5`|Petka Antonov|[https://github.com/petkaantonov/bluebird](https://github.com/petkaantonov/bluebird)|
 |`body-parser`|`1.19.0`||[https://github.com/expressjs/body-parser](https://github.com/expressjs/body-parser)|
 |`bottleneck`|`2.19.5`|Simon Grondin|[https://github.com/SGrondin/bottleneck](https://github.com/SGrondin/bottleneck)|
-|`bowser`|`2.5.3`|Dustin Diaz|[https://github.com/lancedikson/bowser](https://github.com/lancedikson/bowser)|
+|`bowser`|`2.5.4`|Dustin Diaz|[https://github.com/lancedikson/bowser](https://github.com/lancedikson/bowser)|
 |`brace-expansion`|`1.1.11`|Julian Gruber|[https://github.com/juliangruber/brace-expansion](https://github.com/juliangruber/brace-expansion)|
 |`braces`|`2.3.2`|Jon Schlinkert|[https://github.com/micromatch/braces](https://github.com/micromatch/braces)|
 |`braces`|`3.0.2`|Jon Schlinkert|[https://github.com/micromatch/braces](https://github.com/micromatch/braces)|
@@ -738,8 +739,8 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`hasha`|`5.0.0`|Sindre Sorhus|[https://github.com/sindresorhus/hasha](https://github.com/sindresorhus/hasha)|
 |`header-case`|`1.0.1`|Blake Embrey|[https://github.com/blakeembrey/header-case](https://github.com/blakeembrey/header-case)|
 |`helmet-crossdomain`|`0.4.0`|Evan Hahn|[https://github.com/helmetjs/crossdomain](https://github.com/helmetjs/crossdomain)|
-|`helmet-csp`|`2.9.0`|Adam Baldwin|[https://github.com/helmetjs/csp](https://github.com/helmetjs/csp)|
-|`helmet`|`3.20.1`|Adam Baldwin|[https://github.com/helmetjs/helmet](https://github.com/helmetjs/helmet)|
+|`helmet-csp`|`2.9.1`|Adam Baldwin|[https://github.com/helmetjs/csp](https://github.com/helmetjs/csp)|
+|`helmet`|`3.21.0`|Adam Baldwin|[https://github.com/helmetjs/helmet](https://github.com/helmetjs/helmet)|
 |`heroku-client`|`3.0.7`|Jeff Dickey|[https://github.com/heroku/node-heroku-client](https://github.com/heroku/node-heroku-client)|
 |`hide-powered-by`|`1.1.0`|Adam Baldwin|[https://github.com/helmetjs/hide-powered-by](https://github.com/helmetjs/hide-powered-by)|
 |`hot-shots`|`6.3.0`|Steve Ivy|[https://github.com/brightcove/hot-shots](https://github.com/brightcove/hot-shots)|
@@ -1212,18 +1213,18 @@ MIT License - [http://www.opensource.org/licenses/MIT](http://www.opensource.org
 |`wrap-ansi`|`5.1.0`|Sindre Sorhus|[https://github.com/chalk/wrap-ansi](https://github.com/chalk/wrap-ansi)|
 |`ws`|`6.2.1`|Einar Otto Stangvik|[https://github.com/websockets/ws](https://github.com/websockets/ws)|
 |`ws`|`7.1.2`|Einar Otto Stangvik|[https://github.com/websockets/ws](https://github.com/websockets/ws)|
-|`x-xss-protection`|`1.2.0`|Adam Baldwin|[https://github.com/helmetjs/x-xss-protection](https://github.com/helmetjs/x-xss-protection)|
+|`x-xss-protection`|`1.3.0`|Adam Baldwin|[https://github.com/helmetjs/x-xss-protection](https://github.com/helmetjs/x-xss-protection)|
 |`xml-js`|`1.6.11`|Yousuf Almarzooqi|[https://github.com/nashwaan/xml-js](https://github.com/nashwaan/xml-js)|
 |`xmldoc`|`1.1.2`|Nick Farina|[https://github.com/nfarina/xmldoc](https://github.com/nfarina/xmldoc)|
 |`xtend`|`4.0.2`|Raynos|[https://github.com/Raynos/xtend](https://github.com/Raynos/xtend)|
 |`yamljs`|`0.3.0`|Jeremy Faivre|[https://github.com/jeremyfa/yaml.js](https://github.com/jeremyfa/yaml.js)|
 |`yargs`|`12.0.5`||[https://github.com/yargs/yargs](https://github.com/yargs/yargs)|
-|`yargs`|`13.3.0`||[https://github.com/yargs/yargs](https://github.com/yargs/yargs)|
+|`yargs`|`14.0.0`||[https://github.com/yargs/yargs](https://github.com/yargs/yargs)|
 |`yauzl`|`2.10.0`|Josh Wolfe|[https://github.com/thejoshwolfe/yauzl](https://github.com/thejoshwolfe/yauzl)|
 |`yn`|`3.1.0`|Sindre Sorhus|[https://github.com/sindresorhus/yn](https://github.com/sindresorhus/yn)|
 |`zen-observable-ts`|`0.8.19`|Evans Hauser|[https://github.com/apollographql/apollo-link](https://github.com/apollographql/apollo-link)|
 |`zen-observable`|`0.8.14`||[https://github.com/zenparsing/zen-observable](https://github.com/zenparsing/zen-observable)|
-|`zip-a-folder`|`0.0.8`|Marius Augenstein|[https://github.com/maugenst/zip-a-folder](https://github.com/maugenst/zip-a-folder)|
+|`zip-a-folder`|`0.0.9`|Marius Augenstein|[https://github.com/maugenst/zip-a-folder](https://github.com/maugenst/zip-a-folder)|
 |`zip-stream`|`2.1.2`|Chris Talkington|[https://github.com/archiverjs/node-zip-stream](https://github.com/archiverjs/node-zip-stream)|
 
 #### MIT AND BSD-3-Clause
