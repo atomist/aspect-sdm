@@ -20,11 +20,13 @@ import {
     GraphQL,
     HandlerContext,
     logger,
+    MappedParameters,
     Success,
 } from "@atomist/automation-client";
 import {
     CommandHandlerRegistration,
     createJob,
+    DeclarationType,
     EventHandlerRegistration,
     PreferenceScope,
     PreferenceStore,
@@ -34,7 +36,6 @@ import { bold } from "@atomist/slack-messages";
 import {
     OnDiscoveryJob,
     OnGitHubAppInstallation,
-    ReposByOrg,
     ReposByProvider,
 } from "../typings/types";
 import {
@@ -42,61 +43,19 @@ import {
     CalculateFingerprintTaskParameters,
 } from "./fingerprintTask";
 
-export const CreateFingerprintJobCommand: CommandHandlerRegistration = {
-    name: "CreateFingerprintJob",
-    intent: "calculate fingerprints",
-    description: "Trigger a background job to calculate all fingerprints across a given org",
-    listener: async ci => {
-        await fingerprintGitHubResourceProvider(ci.context, true);
-    },
-};
-
-interface ReAnalyzeJobCommandParameters {
+interface CreateFingerprintJobParameters {
     owner: string;
 }
 
-export const ReAnalyzeJobCommand: CommandHandlerRegistration<ReAnalyzeJobCommandParameters> = {
-    name: "ReAnalyze",
-    intent: "re-analyze github",
-    description: "Trigger a background job to re-analyze all of the head commits for a GitHub app installation",
+export const CreateFingerprintJobCommand: CommandHandlerRegistration<CreateFingerprintJobParameters> = {
+    name: "CreateFingerprintJob",
+    intent: "calculate fingerprints",
+    description: "Trigger a background job to calculate all fingerprints across a given org",
     parameters: {
-        owner: {
-            required: true,
-        },
+        owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped, required: false },
     },
     listener: async ci => {
-        try {
-            const org: ReposByOrg.Query = await ci.context.graphClient.query<ReposByOrg.Query, ReposByOrg.Variables>(
-                {
-                    name: "ReposByOrg",
-                    variables: {
-                        org: ci.parameters.owner,
-                    },
-                },
-            );
-            const owner: string = org.Org[0].owner;
-            const providerId: string = org.Org[0].scmProvider.providerId;
-            const tasks: CalculateFingerprintTaskParameters[] = org.Org[0].repos.map(x => {
-                return {
-                    owner: x.owner,
-                    name: x.name,
-                    providerId,
-                    repoId: x.id,
-                    branch: x.defaultBranch,
-                };
-            });
-            await createJob<CalculateFingerprintTaskParameters>(
-                {
-                    command: calculateFingerprintTask([]),
-                    parameters: tasks,
-                    name: `OrganizationAnalysisRun/${(new Date()).getTime().toString()}/${org.Org[0].scmProvider.providerId}/${owner}`,
-                    description: `Analyzing repositories in ${bold(owner)}`,
-                    concurrentTasks: 2,
-                },
-                ci.context);
-        } catch (e) {
-            logger.warn("Failed to create job for org '%s': %s", ci.parameters.owner, e.message);
-        }
+        await fingerprintGitHubAppInstallation(ci.parameters.owner, undefined, true, ci.context);
     },
 };
 
@@ -111,7 +70,9 @@ export const CreateFingerprintJob: EventHandlerRegistration<OnDiscoveryJob.Subsc
             const event = JSON.parse(job.data) as EventFired<OnGitHubAppInstallation.Subscription>;
 
             if (!!event.data && !!event.data.GitHubAppInstallation) {
-                await fingerprintGitHubAppInstallation(event.data, ctx);
+                const owner = event.data.GitHubAppInstallation[0].owner;
+                const providerId = event.data.GitHubAppInstallation[0].gitHubAppResourceProvider.providerId;
+                await fingerprintGitHubAppInstallation(owner, providerId, false, ctx);
             } else {
                 await fingerprintGitHubResourceProvider(ctx);
             }
@@ -120,24 +81,22 @@ export const CreateFingerprintJob: EventHandlerRegistration<OnDiscoveryJob.Subsc
     },
 };
 
-async function fingerprintGitHubAppInstallation(event: OnGitHubAppInstallation.Subscription, ctx: HandlerContext): Promise<void> {
-    const org = event.GitHubAppInstallation[0];
-    const provider = event.GitHubAppInstallation[0].gitHubAppResourceProvider;
+async function fingerprintGitHubAppInstallation(owner: string, providerId: string, rerun: boolean, ctx: HandlerContext): Promise<void> {
 
     const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
         name: "ReposByProvider",
         variables: {
-            providerId: provider.providerId,
-            org: org.owner,
+            providerId,
+            org: owner,
         },
     });
 
     const repos = {
-        providerId: provider.providerId,
-        name: org.owner,
+        providerId: result.Org[0].scmProvider.providerId,
+        name: owner,
         tasks: result.Org[0].repos.map(repo => {
             return {
-                providerId: provider.providerId,
+                providerId: result.Org[0].scmProvider.providerId,
                 repoId: repo.id,
                 owner: repo.owner,
                 name: repo.name,
@@ -148,25 +107,25 @@ async function fingerprintGitHubAppInstallation(event: OnGitHubAppInstallation.S
 
     const prefs: PreferenceStore = configurationValue<PreferenceStoreFactory>("sdm.preferenceStoreFactory")(ctx);
 
-    const analyzed = await prefs.get<boolean>(preferenceKey(org.owner), { scope: PreferenceScope.Sdm, defaultValue: false });
-    if (!analyzed) {
+    const analyzed = await prefs.get<boolean>(preferenceKey(owner), { scope: PreferenceScope.Sdm, defaultValue: false });
+    if (!analyzed || rerun) {
         try {
             await createJob<CalculateFingerprintTaskParameters>({
-                command: calculateFingerprintTask([]),
-                parameters: repos.tasks,
-                name: `OrganizationAnalysis/${provider.providerId}/${org.owner}`,
-                description: `Analyzing repositories in ${bold(org.owner)}`,
-                concurrentTasks: 2,
-            },
+                    command: calculateFingerprintTask([]),
+                    parameters: repos.tasks,
+                    name: `OrganizationAnalysis/${result.Org[0].scmProvider.providerId}/${owner}`,
+                    description: `Analyzing repositories in ${bold(owner)}`,
+                    concurrentTasks: 2,
+                },
                 ctx);
-            await prefs.put<boolean>(preferenceKey(org.owner), true, { scope: PreferenceScope.Sdm });
+            await prefs.put<boolean>(preferenceKey(owner), true, { scope: PreferenceScope.Sdm });
         } catch (e) {
-            logger.warn("Failed to create job for org '%s': %s", org.owner, e.message);
+            logger.warn("Failed to create job for org '%s': %s", owner, e.message);
         }
     }
 }
 
-async function fingerprintGitHubResourceProvider(ctx: HandlerContext, rerun: boolean = false): Promise<void> {
+async function fingerprintGitHubResourceProvider(ctx: HandlerContext): Promise<void> {
     const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
         name: "ReposByProvider",
         variables: {
@@ -195,15 +154,15 @@ async function fingerprintGitHubResourceProvider(ctx: HandlerContext, rerun: boo
 
     for (const org of orgs) {
         const analyzed = await prefs.get<boolean>(preferenceKey(org.name), { scope: PreferenceScope.Sdm, defaultValue: false });
-        if (!analyzed || rerun) {
+        if (!analyzed) {
             try {
                 await createJob<CalculateFingerprintTaskParameters>({
-                    command: calculateFingerprintTask([]),
-                    parameters: org.tasks,
-                    name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
-                    description: `Analyzing repositories in ${bold(org.name)}`,
-                    concurrentTasks: 2,
-                },
+                        command: calculateFingerprintTask([]),
+                        parameters: org.tasks,
+                        name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
+                        description: `Analyzing repositories in ${bold(org.name)}`,
+                        concurrentTasks: 2,
+                    },
                     ctx);
                 await prefs.put<boolean>(preferenceKey(org.name), true, { scope: PreferenceScope.Sdm });
             } catch (e) {
