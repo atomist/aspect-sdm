@@ -1,6 +1,6 @@
 {
   "name": "@atomist/aspect-sdm",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "SDM for calculating fingerprints and serving up drift reports",
   "author": "Atomist Inc.",
   "license": "Apache-2.0",
