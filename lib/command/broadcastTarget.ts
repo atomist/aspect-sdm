@@ -56,7 +56,6 @@ export function broadcastTargetCommand(sdm: SoftwareDeliveryMachine,
                     body: ci.parameters.body,
                     branch: ci.parameters.branch,
                 }],
-                concurrentTasks: 1,
             }, ci.context);
         },
     };

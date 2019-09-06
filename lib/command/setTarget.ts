@@ -53,7 +53,6 @@ export function setTargetCommand(sdm: SoftwareDeliveryMachine,
                     sha: ci.parameters.sha,
                     targetfingerprint: toName(ci.parameters.type, ci.parameters.name),
                 }],
-                concurrentTasks: 1,
             }, ci.context);
         },
     };

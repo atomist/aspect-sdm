@@ -76,7 +76,6 @@ export function tryTargetCommand(sdm: SoftwareDeliveryMachine,
                     "job.name": ci.parameters.title,
                     "job.description": ci.parameters.description,
                 }],
-                concurrentTasks: 1,
             }, ci.context);
         },
     };
