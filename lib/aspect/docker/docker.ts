@@ -65,10 +65,10 @@ export function createDockerBaseFingerprint(image: string, version: string, path
     return {
         type: DockerFrom.name,
         name: image,
-        abbreviation: `dbi-${image}`,
+        abbreviation: "dbi",
         version: "0.0.1",
         data,
-        sha: sha256(JSON.stringify(data)),
+        sha: sha256(JSON.stringify({ image, version })),
     };
 }
 
@@ -95,7 +95,7 @@ export const applyDockerBaseFingerprint: ApplyFingerprint<DockerBaseData> = asyn
     await astUtils.doWithAllMatches(
         p,
         DockerFileParser,
-        fp.data.path,
+        "**/Dockerfile",
         "//FROM/image/tag",
         n => n.$value = fp.data.version,
     );
