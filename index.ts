@@ -78,7 +78,7 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
-            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql"}));
+            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
 
             sdm.addCommand(OptInCommand)
                 .addCommand(OptOutCommand)
@@ -105,6 +105,7 @@ export const configuration: Configuration = configure(async sdm => {
                     },
 
                     exposeWeb: true,
+                    secureWeb: true,
                 }),
                 gitHubCommandSupport(
                     {
@@ -137,10 +138,10 @@ export const configuration: Configuration = configure(async sdm => {
                 },
             };
         } else {
-            sdm.addEvent(CreateFingerprintJob);
-            sdm.addEvent(createPolicyLogOnPullRequest(aspects));
-            sdm.addCommand(CreateFingerprintJobCommand);
-            sdm.addCommand(calculateFingerprintTask(aspects));
+            sdm.addEvent(CreateFingerprintJob)
+                .addEvent(createPolicyLogOnPullRequest(aspects))
+                .addCommand(CreateFingerprintJobCommand)
+                .addCommand(calculateFingerprintTask(aspects));
 
             return {};
         }

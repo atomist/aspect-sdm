@@ -20,11 +20,13 @@ import {
     GraphQL,
     HandlerContext,
     logger,
+    MappedParameters,
     Success,
 } from "@atomist/automation-client";
 import {
     CommandHandlerRegistration,
     createJob,
+    DeclarationType,
     EventHandlerRegistration,
     PreferenceScope,
     PreferenceStore,
@@ -41,12 +43,19 @@ import {
     CalculateFingerprintTaskParameters,
 } from "./fingerprintTask";
 
-export const CreateFingerprintJobCommand: CommandHandlerRegistration = {
+interface CreateFingerprintJobParameters {
+    owner: string;
+}
+
+export const CreateFingerprintJobCommand: CommandHandlerRegistration<CreateFingerprintJobParameters> = {
     name: "CreateFingerprintJob",
-    intent: "calculate fingerprints",
+    intent: "analyze org",
     description: "Trigger a background job to calculate all fingerprints across a given org",
+    parameters: {
+        owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped, required: false },
+    },
     listener: async ci => {
-        await fingerprintGitHubResourceProvider(ci.context, true);
+        await fingerprintGitHubAppInstallation(ci.parameters.owner, undefined, true, ci.context);
     },
 };
 
@@ -61,66 +70,24 @@ export const CreateFingerprintJob: EventHandlerRegistration<OnDiscoveryJob.Subsc
             const event = JSON.parse(job.data) as EventFired<OnGitHubAppInstallation.Subscription>;
 
             if (!!event.data && !!event.data.GitHubAppInstallation) {
-                await fingerprintGitHubAppInstallation(event.data, ctx);
+                const owner = event.data.GitHubAppInstallation[0].owner;
+                const providerId = event.data.GitHubAppInstallation[0].gitHubAppResourceProvider.providerId;
+                await fingerprintGitHubAppInstallation(owner, providerId, false, ctx);
             } else {
-                await fingerprintGitHubResourceProvider(ctx);
+                await fingerprintGitHubAppInstallation(undefined, undefined, false, ctx);
             }
         }
         return Success;
     },
 };
 
-async function fingerprintGitHubAppInstallation(event: OnGitHubAppInstallation.Subscription, ctx: HandlerContext): Promise<void> {
-    const org = event.GitHubAppInstallation[0];
-    const provider = event.GitHubAppInstallation[0].gitHubAppResourceProvider;
+async function fingerprintGitHubAppInstallation(owner: string, providerId: string, rerun: boolean, ctx: HandlerContext): Promise<void> {
 
     const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
         name: "ReposByProvider",
         variables: {
-            providerId: provider.providerId,
-            org: org.owner,
-        },
-    });
-
-    const repos = {
-        providerId: provider.providerId,
-        name: org.owner,
-        tasks: result.Org[0].repos.map(repo => {
-            return {
-                providerId: provider.providerId,
-                repoId: repo.id,
-                owner: repo.owner,
-                name: repo.name,
-                branch: repo.defaultBranch || "master",
-            };
-        }),
-    };
-
-    const prefs: PreferenceStore = configurationValue<PreferenceStoreFactory>("sdm.preferenceStoreFactory")(ctx);
-
-    const analyzed = await prefs.get<boolean>(preferenceKey(org.owner), { scope: PreferenceScope.Sdm, defaultValue: false });
-    if (!analyzed) {
-        try {
-            await createJob<CalculateFingerprintTaskParameters>({
-                    command: calculateFingerprintTask([]),
-                    parameters: repos.tasks,
-                    name: `OrganizationAnalysis/${provider.providerId}/${org.owner}`,
-                    description: `Analyzing repositories in ${bold(org.owner)}`,
-                    concurrentTasks: 2,
-                },
-                ctx);
-            await prefs.put<boolean>(preferenceKey(org.owner), true, { scope: PreferenceScope.Sdm });
-        } catch (e) {
-            logger.warn("Failed to create job for org '%s': %s", org.owner, e.message);
-        }
-    }
-}
-
-async function fingerprintGitHubResourceProvider(ctx: HandlerContext, rerun: boolean = false): Promise<void> {
-    const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
-        name: "ReposByProvider",
-        variables: {
-            providerId: "zjlmxjzwhurspem",
+            providerId,
+            org: owner,
         },
     });
 
