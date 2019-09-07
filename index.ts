@@ -126,7 +126,10 @@ export const configuration: Configuration = configure(async sdm => {
 
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [checkDiffHandler(sdm, aspectRegistry), raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler)]);
+                .forEach(a => a.workflows = [
+                    checkDiffHandler(sdm, aspectRegistry),
+                    raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler),
+                ]);
 
             return {
                 analyze: {
