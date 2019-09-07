@@ -59,7 +59,6 @@ import {
     CreateFingerprintJob,
     CreateFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
-import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
@@ -140,8 +139,7 @@ export const configuration: Configuration = configure(async sdm => {
         } else {
             sdm.addEvent(CreateFingerprintJob)
                 .addEvent(createPolicyLogOnPullRequest(aspects))
-                .addCommand(CreateFingerprintJobCommand)
-                .addCommand(calculateFingerprintTask(aspects));
+                .addCommand(CreateFingerprintJobCommand);
 
             return {};
         }
