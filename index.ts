@@ -28,6 +28,7 @@ import {
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
+import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
 import {
     DefaultTargetDiffHandler,
     RebaseFailure,
@@ -59,7 +60,6 @@ import {
     CreateFingerprintJob,
     CreateFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
-import { calculateFingerprintTask } from "./lib/job/fingerprintTask";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
@@ -127,7 +127,10 @@ export const configuration: Configuration = configure(async sdm => {
 
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [checkDiffHandler(sdm, aspectRegistry), raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler)]);
+                .forEach(a => a.workflows = [
+                    checkDiffHandler(sdm, aspectRegistry),
+                    raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler),
+                ]);
 
             return {
                 analyze: {
@@ -140,8 +143,8 @@ export const configuration: Configuration = configure(async sdm => {
         } else {
             sdm.addEvent(CreateFingerprintJob)
                 .addEvent(createPolicyLogOnPullRequest(aspects))
-                .addCommand(CreateFingerprintJobCommand)
-                .addCommand(calculateFingerprintTask(aspects));
+                .addCommand(calculateFingerprintTask(aspects))
+                .addCommand(CreateFingerprintJobCommand);
 
             return {};
         }
