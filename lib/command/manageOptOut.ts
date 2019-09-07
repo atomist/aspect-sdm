@@ -39,7 +39,9 @@ export const OptOutCommand: CommandHandlerRegistration<{ owner: string, repo: st
             raisePrPreferenceKey(ci.parameters.owner, ci.parameters.repo),
             { disabled: true },
             { scope: PreferenceScope.Sdm });
-        await ci.addressChannels(`Opted out of automatic target PRs for this ${ci.parameters.repo ? "repository" : "organization"}. To opt back in, run ${codeLine("@atomist opt-in")}.`);
+        await ci.addressChannels(
+            `Opted out of automatic target PRs for this ${ci.parameters.repo ? "repository" : "organization"}.
+To opt back in, run ${codeLine("@atomist opt-in")}.`);
     },
 };
 
