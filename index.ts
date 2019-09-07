@@ -28,6 +28,7 @@ import {
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
+import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
 import {
     DefaultTargetDiffHandler,
     RebaseFailure,
@@ -142,6 +143,7 @@ export const configuration: Configuration = configure(async sdm => {
         } else {
             sdm.addEvent(CreateFingerprintJob)
                 .addEvent(createPolicyLogOnPullRequest(aspects))
+                .addCommand(calculateFingerprintTask(aspects))
                 .addCommand(CreateFingerprintJobCommand);
 
             return {};
