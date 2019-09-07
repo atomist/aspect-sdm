@@ -46,7 +46,7 @@ Apache License 2.0 - [http://www.apache.org/licenses/LICENSE-2.0](http://www.apa
 |`@atomist/automation-client-ext-humio`|`0.2.0`|Atomist|[https://github.com/atomist/automation-client-ext-humio](https://github.com/atomist/automation-client-ext-humio)|
 |`@atomist/clj-editors`|`0.8.2-master.20190816115246`||[https://github.com/atomisthq/clj-editors](https://github.com/atomisthq/clj-editors)|
 |`@atomist/sdm-core`|`1.6.2-master.20190905165129`|Atomist|[https://github.com/atomist/sdm-core](https://github.com/atomist/sdm-core)|
-|`@atomist/sdm-pack-aspect`|`1.0.0-master.20190905231019`|Atomist Inc.|[https://github.com/atomist/sdm-pack-aspect](https://github.com/atomist/sdm-pack-aspect)|
+|`@atomist/sdm-pack-aspect`|`1.0.0-fingerprinting-job.20190907070844`|Atomist Inc.|[https://github.com/atomist/sdm-pack-aspect](https://github.com/atomist/sdm-pack-aspect)|
 |`@atomist/sdm-pack-build`|`1.0.6-master.20190903202948`|Atomist|[https://github.com/atomist/sdm-pack-build](https://github.com/atomist/sdm-pack-build)|
 |`@atomist/sdm-pack-clojure`|`2.0.1-master.20190903063949`|Atomist, Inc.|[https://github.com/atomist/sdm-pack-clojure](https://github.com/atomist/sdm-pack-clojure)|
 |`@atomist/sdm-pack-docker`|`2.0.3-master.20190903064256`|Atomist|[https://github.com/atomist/sdm-pack-docker](https://github.com/atomist/sdm-pack-docker)|
@@ -141,7 +141,7 @@ BSD 3-Clause "New" or "Revised" License - [http://www.opensource.org/licenses/BS
 |`d3-transition`|`1.2.0`|Mike Bostock|[https://github.com/d3/d3-transition](https://github.com/d3/d3-transition)|
 |`d3-voronoi`|`1.1.4`|Mike Bostock|[https://github.com/d3/d3-voronoi](https://github.com/d3/d3-voronoi)|
 |`d3-zoom`|`1.8.3`|Mike Bostock|[https://github.com/d3/d3-zoom](https://github.com/d3/d3-zoom)|
-|`d3`|`5.11.0`|Mike Bostock|[https://github.com/d3/d3](https://github.com/d3/d3)|
+|`d3`|`5.12.0`|Mike Bostock|[https://github.com/d3/d3](https://github.com/d3/d3)|
 |`diff`|`4.0.1`||[https://github.com/kpdecker/jsdiff](https://github.com/kpdecker/jsdiff)|
 |`duplexer2`|`0.1.4`|Conrad Pankoff|[https://github.com/deoxxa/duplexer2](https://github.com/deoxxa/duplexer2)|
 |`duplexer3`|`0.1.4`|Conrad Pankoff|[https://github.com/floatdrop/duplexer3](https://github.com/floatdrop/duplexer3)|
