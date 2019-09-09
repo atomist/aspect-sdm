@@ -17,6 +17,7 @@
 import {
     HandlerContext,
     HttpMethod,
+    QueryNoCacheOptions,
     TokenCredentials,
 } from "@atomist/automation-client";
 import {
@@ -46,6 +47,7 @@ export async function getAspectRegistrations(ctx: HandlerContext, name?: string)
         variables: {
             name: !!name ? [name] : undefined,
         },
+        options: QueryNoCacheOptions,
     }));
     return !!aspects ? aspects.AspectRegistration : [];
 }
