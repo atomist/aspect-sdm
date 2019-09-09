@@ -11283,7 +11283,7 @@
                 "defaultValue": null
               },
               {
-                "name": "enabled",
+                "name": "endpoint",
                 "description": null,
                 "type": {
                   "kind": "LIST",
@@ -11297,14 +11297,14 @@
                 "defaultValue": null
               },
               {
-                "name": "endpoint",
+                "name": "manageable",
                 "description": null,
                 "type": {
                   "kind": "LIST",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 },
@@ -11347,6 +11347,20 @@
                   "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "state",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "AspectRegistrationState",
                     "ofType": null
                   }
                 },
@@ -35406,6 +35420,18 @@
             "deprecationReason": null
           },
           {
+            "name": "description",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "gitHubAppResourceProvider",
             "description": "",
             "args": [],
@@ -42625,6 +42651,29 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "AspectRegistrationState",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "Disabled",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "Enabled",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "AspectRegistration",
         "description": null,
@@ -42666,7 +42715,7 @@
             "deprecationReason": null
           },
           {
-            "name": "enabled",
+            "name": "endpoint",
             "description": null,
             "args": [],
             "type": {
@@ -42678,12 +42727,12 @@
             "deprecationReason": null
           },
           {
-            "name": "endpoint",
+            "name": "manageable",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,
@@ -42720,6 +42769,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "state",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "AspectRegistrationState",
               "ofType": null
             },
             "isDeprecated": false,
@@ -56014,7 +56075,7 @@
                 "defaultValue": null
               },
               {
-                "name": "enabled",
+                "name": "endpoint",
                 "description": null,
                 "type": {
                   "kind": "LIST",
@@ -56028,14 +56089,14 @@
                 "defaultValue": null
               },
               {
-                "name": "endpoint",
+                "name": "manageable",
                 "description": null,
                 "type": {
                   "kind": "LIST",
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Boolean",
                     "ofType": null
                   }
                 },
@@ -56078,6 +56139,20 @@
                   "ofType": {
                     "kind": "SCALAR",
                     "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "state",
+                "description": null,
+                "type": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "AspectRegistrationState",
                     "ofType": null
                   }
                 },

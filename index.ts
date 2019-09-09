@@ -49,8 +49,8 @@ import {
     OptOutCommand,
 } from "./lib/command/manageOptOut";
 import {
-    DisableAspectCommand,
-    RegisterAspectCommand,
+    DisableAspectReportCommand,
+    EnableAspectReportCommand,
 } from "./lib/command/registerAspect";
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
@@ -78,12 +78,14 @@ export const configuration: Configuration = configure(async sdm => {
             const pushImpact = new PushImpact()
                 .withExecutionListener(checkGoalExecutionListener(compliance));
 
-            sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
+            if (process.env.NODE_ENV === "production") {
+                sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
+            }
 
             sdm.addCommand(OptInCommand)
                 .addCommand(OptOutCommand)
-                .addCommand(RegisterAspectCommand)
-                .addCommand(DisableAspectCommand)
+                .addCommand(DisableAspectReportCommand)
+                .addCommand(EnableAspectReportCommand)
                 .addCommand(tryTargetCommand(sdm, aspects))
                 .addCommand(setTargetCommand(sdm, aspects))
                 .addCommand(unsetTargetCommand(sdm, aspects))

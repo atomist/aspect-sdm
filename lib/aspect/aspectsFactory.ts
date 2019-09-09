@@ -24,7 +24,10 @@ import {
     FP,
 } from "@atomist/sdm-pack-fingerprint";
 import { AspectsFactory } from "@atomist/sdm-pack-fingerprint/lib/machine/fingerprintSupport";
-import { AspectRegistrations } from "../typings/types";
+import {
+    AspectRegistrations,
+    AspectRegistrationState,
+} from "../typings/types";
 
 export interface AspectRequest {
     configuration: {
@@ -48,7 +51,7 @@ export async function getAspectRegistrations(ctx: HandlerContext, name?: string)
 }
 
 export const RegistrationsBackedAspectsFactory: AspectsFactory = async (p, pli) => {
-    return (await getAspectRegistrations(pli.context)).filter(a => a.enabled === "true" && !!a.endpoint).map(createAspectProxy);
+    return (await getAspectRegistrations(pli.context)).filter(a => a.state === AspectRegistrationState.Enabled && !!a.endpoint).map(createAspectProxy);
 };
 
 function createAspectProxy(reg: AspectRegistrations.AspectRegistration): Aspect {

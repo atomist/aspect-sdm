@@ -111,8 +111,8 @@ async function fingerprintProvider(owner: string, providerId: string, rerun: boo
 
     const prefs: PreferenceStore = configurationValue<PreferenceStoreFactory>("sdm.preferenceStoreFactory")(ctx);
 
-    const aspects = (await getAspectRegistrations(ctx)).filter(a => a.enabled === "true");
-    const owners = _.uniq(aspects.map(a => a.owner));
+    const aspects = await getAspectRegistrations(ctx);
+    const owners = _.uniq(aspects.map(a => a.owner)).filter(o => !!o);
 
     for (const org of orgs) {
         const analyzed = await prefs.get<boolean>(preferenceKey(org.name), { scope: PreferenceScope.Sdm, defaultValue: false });
