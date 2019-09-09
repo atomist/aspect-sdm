@@ -31,6 +31,7 @@ import {
     PreferenceScope,
     PreferenceStore,
     PreferenceStoreFactory,
+    SoftwareDeliveryMachine,
 } from "@atomist/sdm";
 import {
     calculateFingerprintTask,
@@ -48,41 +49,49 @@ interface CreateFingerprintJobParameters {
     owner: string;
 }
 
-export const CreateFingerprintJobCommand: CommandHandlerRegistration<CreateFingerprintJobParameters> = {
-    name: "CreateFingerprintJob",
-    intent: "analyze org",
-    description: "Trigger a background job to calculate all fingerprints across a given org",
-    parameters: {
-        owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped, required: false },
-    },
-    listener: async ci => {
-        await fingerprintProvider(ci.parameters.owner, undefined, true, ci.context);
-    },
-};
+export function createFingerprintJobCommand(sdm: SoftwareDeliveryMachine): CommandHandlerRegistration<CreateFingerprintJobParameters> {
+    return {
+        name: "CreateFingerprintJob",
+        intent: "analyze org",
+        description: "Trigger a background job to calculate all fingerprints across a given org",
+        parameters: {
+            owner: { uri: MappedParameters.GitHubOwner, declarationType: DeclarationType.Mapped, required: false },
+        },
+        listener: async ci => {
+            await fingerprintProvider(ci.parameters.owner, undefined, true, ci.context, sdm);
+        },
+    };
+}
 
-export const CreateFingerprintJob: EventHandlerRegistration<OnDiscoveryJob.Subscription> = {
-    name: "CreateFingerprintJob",
-    description: "Creates a job that calculates the fingerprints on every repo of an org",
-    subscription: GraphQL.subscription("OnDiscoveryJob"),
-    listener: async (e, ctx) => {
-        const job = e.data.AtmJob[0];
+export function createFingerprintJob(sdm: SoftwareDeliveryMachine): EventHandlerRegistration<OnDiscoveryJob.Subscription> {
+    return {
+        name: "CreateFingerprintJob",
+        description: "Creates a job that calculates the fingerprints on every repo of an org",
+        subscription: GraphQL.subscription("OnDiscoveryJob"),
+        listener: async (e, ctx) => {
+            const job = e.data.AtmJob[0];
 
-        if (job.name.startsWith("RepositoryDiscovery")) {
-            const event = JSON.parse(job.data) as EventFired<OnGitHubAppInstallation.Subscription>;
+            if (job.name.startsWith("RepositoryDiscovery")) {
+                const event = JSON.parse(job.data) as EventFired<OnGitHubAppInstallation.Subscription>;
 
-            if (!!event.data && !!event.data.GitHubAppInstallation) {
-                const owner = event.data.GitHubAppInstallation[0].owner;
-                const providerId = event.data.GitHubAppInstallation[0].gitHubAppResourceProvider.providerId;
-                await fingerprintProvider(owner, providerId, false, ctx);
-            } else {
-                await fingerprintProvider(undefined, undefined, false, ctx);
+                if (!!event.data && !!event.data.GitHubAppInstallation) {
+                    const owner = event.data.GitHubAppInstallation[0].owner;
+                    const providerId = event.data.GitHubAppInstallation[0].gitHubAppResourceProvider.providerId;
+                    await fingerprintProvider(owner, providerId, false, ctx, sdm);
+                } else {
+                    await fingerprintProvider(undefined, undefined, false, ctx, sdm);
+                }
             }
-        }
-        return Success;
-    },
-};
+            return Success;
+        },
+    };
+}
 
-async function fingerprintProvider(owner: string, providerId: string, rerun: boolean, ctx: HandlerContext): Promise<void> {
+async function fingerprintProvider(owner: string,
+                                   providerId: string,
+                                   rerun: boolean,
+                                   ctx: HandlerContext,
+                                   sdm: SoftwareDeliveryMachine): Promise<void> {
 
     const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
         name: "ReposByProvider",
@@ -119,11 +128,11 @@ async function fingerprintProvider(owner: string, providerId: string, rerun: boo
 
         if (!analyzed || rerun) {
             // Create the fingerprinting job for this SDM
-            await createFingerprintJob(ctx, org.tasks, org);
+            await createFpJob(ctx, sdm, org.tasks, org);
 
             // Now create fingerprinting jobs for all SDMs that are registered owners
             for (const o of owners) {
-                await createFingerprintJob(ctx, org.tasks, org, o);
+                await createFpJob(ctx, sdm, org.tasks, org, o);
             }
 
             await prefs.put<boolean>(preferenceKey(org.name), true, { scope: PreferenceScope.Sdm });
@@ -131,14 +140,15 @@ async function fingerprintProvider(owner: string, providerId: string, rerun: boo
     }
 }
 
-async function createFingerprintJob(ctx: HandlerContext,
-                                    parameters: any[],
-                                    org: { name: string, providerId: string },
-                                    owner?: string): Promise<void> {
+async function createFpJob(ctx: HandlerContext,
+                           sdm: SoftwareDeliveryMachine,
+                           parameters: any[],
+                           org: { name: string, providerId: string },
+                           owner?: string): Promise<void> {
     try {
         await createJob<CalculateFingerprintTaskParameters>({
                 registration: owner,
-                command: calculateFingerprintTask([]),
+                command: calculateFingerprintTask(sdm, []),
                 parameters,
                 name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
                 description: `Analyzing repositories in ${org.name}`,

@@ -57,8 +57,8 @@ import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import { complianceGoal } from "./lib/goal/compliance";
 import {
-    CreateFingerprintJob,
-    CreateFingerprintJobCommand,
+    createFingerprintJob,
+    createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
@@ -143,10 +143,10 @@ export const configuration: Configuration = configure(async sdm => {
                 },
             };
         } else {
-            sdm.addEvent(CreateFingerprintJob)
+            sdm.addEvent(createFingerprintJob(sdm))
+                .addCommand(createFingerprintJobCommand(sdm))
                 .addEvent(createPolicyLogOnPullRequest(aspects))
-                .addCommand(calculateFingerprintTask(aspects))
-                .addCommand(CreateFingerprintJobCommand);
+                .addCommand(calculateFingerprintTask(sdm, aspects));
 
             return {};
         }
