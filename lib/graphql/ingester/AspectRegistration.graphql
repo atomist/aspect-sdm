@@ -9,7 +9,7 @@ type AspectRegistration @rootType {
     url: String
     shortName: String
     unit: String
-    managable: Boolean
+    manageable: Boolean
 
     state: AspectRegistrationState
 
