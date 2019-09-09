@@ -51,7 +51,7 @@ import {
 import {
     DisableAspectReportCommand,
     EnableAspectReportCommand,
-} from "./lib/command/registerAspect";
+} from "./lib/command/manageAspectReport";
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
