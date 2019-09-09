@@ -45,13 +45,13 @@ import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
 import { FeedbackCommand } from "./lib/command/feedback";
 import {
-    OptInCommand,
-    OptOutCommand,
-} from "./lib/command/manageOptOut";
-import {
     DisableAspectReportCommand,
     EnableAspectReportCommand,
 } from "./lib/command/manageAspectReport";
+import {
+    OptInCommand,
+    OptOutCommand,
+} from "./lib/command/manageOptOut";
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
