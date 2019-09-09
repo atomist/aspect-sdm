@@ -1,4 +1,5 @@
 type AspectRegistration @rootType {
+
     name: String @compositeId
     owner: String
     
@@ -8,9 +9,16 @@ type AspectRegistration @rootType {
     url: String
     shortName: String
     unit: String
+    managable: Boolean
 
+    state: AspectRegistrationState
+
+    # Those are used for dynamic aspects
     endpoint: String
     uuid: String
+}
 
-    enabled: String
+enum AspectRegistrationState {
+    Enabled,
+    Disabled
 }
