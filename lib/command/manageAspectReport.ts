@@ -27,7 +27,6 @@ import {
     AspectRegistrationState,
 } from "../typings/types";
 
-
 export const DisableAspectReportCommand: CommandHandlerRegistration = {
     name: "DisableAspectReport",
     description: "Disable an aspect report",
