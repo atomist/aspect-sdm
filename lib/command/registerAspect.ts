@@ -31,12 +31,13 @@ export const DisableAspectReportCommand: CommandHandlerRegistration = {
     name: "DisableAspectReport",
     description: "Disable an aspect report",
     intent: ["disable report"],
+    autoSubmit: true,
     listener: async ci => {
         const regs = (await getAspectRegistrations(ci.context) || []).filter(a => a.state === AspectRegistrationState.Enabled);
         if (regs.length === 0) {
             return ci.addressChannels(
                 slackInfoMessage(
-                    "Disable Aspect",
+                    "Disable Report",
                     "This workspace currently doesn't have any aspects reports to disable"));
         }
 
@@ -60,7 +61,7 @@ export const DisableAspectReportCommand: CommandHandlerRegistration = {
             await ci.context.messageClient.send(aspectRegistration, addressEvent("AspectRegistration"));
             await ci.addressChannels(
                 slackSuccessMessage(
-                    "Aspect Registration",
+                    "Disable Report",
                     `Successfully disabled report for aspect ${italic(aspectRegistration.displayName)}`),
             );
         }
@@ -71,12 +72,13 @@ export const EnableAspectReportCommand: CommandHandlerRegistration = {
     name: "EnableAspectReport",
     description: "Enable an aspect report",
     intent: ["enable report"],
+    autoSubmit: true,
     listener: async ci => {
         const regs = (await getAspectRegistrations(ci.context) || []).filter(a => a.state === AspectRegistrationState.Disabled);
         if (regs.length === 0) {
             return ci.addressChannels(
                 slackInfoMessage(
-                    "Enable Aspect",
+                    "Enable Report",
                     "This workspace currently doesn't have any aspects reports to enable"));
         }
         const params = await ci.promptFor<{ name: string }>(
@@ -99,7 +101,7 @@ export const EnableAspectReportCommand: CommandHandlerRegistration = {
             await ci.context.messageClient.send(aspectRegistration, addressEvent("AspectRegistration"));
             await ci.addressChannels(
                 slackSuccessMessage(
-                    "Aspect Registration",
+                    "Enable Report",
                     `Successfully enabled report for aspect ${italic(aspectRegistration.displayName)}`),
             );
         }
