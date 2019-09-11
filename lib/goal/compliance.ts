@@ -30,7 +30,7 @@ import * as _ from "lodash";
 export interface ComplicanceData {
     owner: string;
     state: string;
-    
+
     _sha: string;
     _branch: string;
 
