@@ -29,7 +29,7 @@
     "@atomist/sdm-core": "^1.7.0",
     "@atomist/sdm-pack-aspect": "1.0.0-master.20190909105225",
     "@atomist/sdm-pack-build": "^1.0.6",
-    "@atomist/sdm-pack-clojure": "2.0.1-master.20190903063949",
+    "@atomist/sdm-pack-clojure": "^2.0.2",
     "@atomist/sdm-pack-docker": "2.0.3-master.20190903064256",
     "@atomist/sdm-pack-fingerprint": "5.0.0-master.20190911150624",
     "@atomist/sdm-pack-node": "^1.1.1",
