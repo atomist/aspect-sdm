@@ -40,6 +40,10 @@ import {
     checkDiffHandler,
     checkGoalExecutionListener,
 } from "./lib/aspect/check";
+import {
+    complianceDiffHandler,
+    complianceGoalExecutionListener,
+} from "./lib/aspect/compliance";
 import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
@@ -73,10 +77,9 @@ export const configuration: Configuration = configure(async sdm => {
 
         if (mode === "online") {
 
-            const compliance = complianceGoal(aspects);
-
             const pushImpact = new PushImpact()
-                .withExecutionListener(checkGoalExecutionListener(compliance));
+                .withExecutionListener(complianceGoalExecutionListener())
+                .withExecutionListener(checkGoalExecutionListener());
 
             if (process.env.NODE_ENV === "production") {
                 sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
@@ -130,15 +133,15 @@ export const configuration: Configuration = configure(async sdm => {
             // Install default workflow
             aspects.filter(a => !!a.workflows && a.workflows.length > 0)
                 .forEach(a => a.workflows = [
+                    complianceDiffHandler(sdm),
                     checkDiffHandler(sdm, aspectRegistry),
-                    raisePrDiffHandler(sdm, aspectRegistry, DefaultTargetDiffHandler),
+                    raisePrDiffHandler(sdm, aspectRegistry, async () => []),
                 ]);
 
             return {
                 analyze: {
                     goals: [
                         [pushImpact],
-                        [compliance],
                     ],
                 },
             };

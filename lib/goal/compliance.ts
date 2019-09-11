@@ -28,19 +28,34 @@ import {
 import * as _ from "lodash";
 
 export interface ComplicanceData {
-    policies: Array<{
+    owner: string;
+    state: string;
+    
+    _sha: string;
+    _branch: string;
+
+    targets: Array<{
         type: string;
         name: string;
         sha: string;
         data: string;
+
+        displayName: string;
+        displayValue: string;
+
+        aspectName: string;
     }>;
     differences: Array<{
         type: string;
         name: string;
         sha: string;
         data: string;
+
+        displayName: string;
+        displayValue: string;
+
+        aspectName: string;
     }>;
-    url: string;
 }
 
 export function complianceGoal(aspects: Aspect[]): Goal {
@@ -59,13 +74,13 @@ export function complianceGoal(aspects: Aspect[]): Goal {
             // Write to rolar log
             const rows = _.map(_.groupBy(data.differences, "type"), (v, k) => {
                 const aspect = aspectOf({ type: k }, aspects);
-                const targetCount = data.policies.filter(p => p.type === k).length;
+                const targetCount = data.targets.filter(p => p.type === k).length;
                 return `## ${aspectOf({ type: k }, aspects).displayName}
 
 ${targetCount} ${targetCount === 1 ? "Target" : "Targets"} set - Compliance ${((1 - (v.length / targetCount)) * 100).toFixed(0)}%
 
 ${v.map(d => {
-                    const target = data.policies.find(p => p.type === d.type && p.name === d.name);
+                    const target = data.targets.find(p => p.type === d.type && p.name === d.name);
                     return `* ${displayName(aspect, d)} at ${displayValue(aspect, d)} - Target: ${displayValue(aspect, target)}`;
                 }).join("\n")}`;
             });
@@ -79,11 +94,7 @@ ${rows.join("\n\n")}`);
             return {
                 description: `${data.differences.length} target ${data.differences.length === 1 ? "difference" : "differences"}`,
                 state: data.differences.length === 0 ? SdmGoalState.success : SdmGoalState.failure,
-                phase: `Compliance ${((1 - (data.differences.length / data.policies.length)) * 100).toFixed(0)}%`,
-                externalUrls: [{
-                    label: "Details",
-                    url: data.url,
-                }],
+                phase: `Compliance ${((1 - (data.differences.length / data.targets.length)) * 100).toFixed(0)}%`,
             };
         }
         return {

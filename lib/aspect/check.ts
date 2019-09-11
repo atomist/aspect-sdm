@@ -20,12 +20,10 @@ import {
 } from "@atomist/automation-client";
 import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import {
-    findSdmGoalOnCommit,
     Goal,
     GoalExecutionListener,
     SdmGoalState,
     SoftwareDeliveryMachine,
-    updateGoal,
 } from "@atomist/sdm";
 import { AspectReportDetailsRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/AspectReportDetailsRegistry";
 import { toName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
@@ -40,7 +38,6 @@ import {
 } from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
 import { codeLine } from "@atomist/slack-messages";
 import { ChecksUpdateParamsOutput } from "@octokit/rest";
-import { ComplicanceData } from "../goal/compliance";
 import { api } from "../util/gitHubApi";
 
 export function checkDiffHandler(sdm: SoftwareDeliveryMachine,
@@ -78,18 +75,6 @@ export function checkDiffHandler(sdm: SoftwareDeliveryMachine,
             repo: push.repo.name,
         });
 
-        let data = getFromContext<ComplicanceData>("compliance", context);
-        if (!data) {
-            data = {
-                policies: [],
-                differences: [],
-                url: check.data.html_url,
-            };
-        }
-        data.policies.push(...targets.map(t => JSON.parse(t.value)));
-        data.differences.push(...discrepancies.map(d => d.diff.to));
-        storeInContext<ComplicanceData>("compliance", data, context);
-
         if (discrepancies.length === 0) {
             return [];
         }
@@ -124,9 +109,9 @@ ${discrepancies.map(d => `* ${codeLine(displayName(aspect, d.diff.to))} at ${cod
     };
 }
 
-export function checkGoalExecutionListener(complianceGoal: Goal): GoalExecutionListener {
+export function checkGoalExecutionListener(): GoalExecutionListener {
     return async li => {
-        const { credentials, goalEvent, context, id } = li;
+        const { credentials, goalEvent, context } = li;
 
         if (!checkToken(credentials)) {
             return;
@@ -177,16 +162,6 @@ export function checkGoalExecutionListener(complianceGoal: Goal): GoalExecutionL
                     summary: "No target differences detected",
                 } : undefined,
             });
-
-            const cGoalEvent = await findSdmGoalOnCommit(context, id, goalEvent.push.repo.org.provider.providerId, complianceGoal);
-            const data = getFromContext<ComplicanceData>("compliance", context);
-            if (!!cGoalEvent && !!data) {
-                await updateGoal(context, cGoalEvent, {
-                    state: SdmGoalState.planned,
-                    description: complianceGoal.plannedDescription,
-                    data: JSON.stringify(data),
-                });
-            }
         }
     };
 }
