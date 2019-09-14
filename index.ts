@@ -191,21 +191,6 @@ export const configuration: Configuration = configure(async sdm => {
             }
 
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
-
-            cfg.sdm.postgres = {
-                ...cfg.sdm.postgres,
-                user: "squirrel",
-                password: "AJg3TR3Wwnym8LM",
-                database: "org_viz",
-                port: 5433,
-                ssl: {
-                    rejectUnauthorized: false,
-                    ca: fs.readFileSync("/Users/cdupuis/Downloads/server-ca.pem").toString(),
-                    key: fs.readFileSync("/Users/cdupuis/Downloads/client-key.pem").toString(),
-                    cert: fs.readFileSync("/Users/cdupuis/Downloads/client-cert.pem").toString(),
-                },
-            };
-
             return cfg;
         },
 
