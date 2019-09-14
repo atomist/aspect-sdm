@@ -51,6 +51,7 @@ import { FeedbackCommand } from "./lib/command/feedback";
 import {
     DisableAspectReportCommand,
     EnableAspectReportCommand,
+    UpdateAspectCommand,
 } from "./lib/command/manageAspectReport";
 import {
     OptInCommand,
@@ -89,6 +90,7 @@ export const configuration: Configuration = configure(async sdm => {
                 .addCommand(OptOutCommand)
                 .addCommand(DisableAspectReportCommand)
                 .addCommand(EnableAspectReportCommand)
+                .addCommand(UpdateAspectCommand)
                 .addCommand(tryTargetCommand(sdm, aspects))
                 .addCommand(setTargetCommand(sdm, aspects))
                 .addCommand(unsetTargetCommand(sdm, aspects))
