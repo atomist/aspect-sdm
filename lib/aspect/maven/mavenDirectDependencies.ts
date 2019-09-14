@@ -16,18 +16,10 @@
 
 import { projectUtils } from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar";
-import {
-    Aspect,
-    DefaultTargetDiffHandler,
-    FP,
-    sha256,
-} from "@atomist/sdm-pack-fingerprint";
+import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256, } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
-import {
-    bold,
-    codeLine,
-} from "@atomist/slack-messages";
+import { bold, codeLine, } from "@atomist/slack-messages";
 
 const MavenDirectDep = "maven-direct-dep";
 
@@ -60,6 +52,40 @@ export const DEPENDENCY_WITHOUT_VERSION_GRAMMAR = Microgrammar.fromDefinitions({
     rx: "</artifactId>",
 });
 
+const applyDependencyFingerprint: ApplyFingerprint<VersionedArtifact> = async (p, papi) => {
+    await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
+        const pom = await f.getContent();
+
+        const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
+        matches.push(...DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[]);
+        if (matches.length === 0) {
+            return;
+        }
+
+        const fp = papi.parameters.fp;
+        const artifact = dataToVersionedArtifact(fp);
+        const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
+        if (!!artifactToUpdate) {
+            const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
+            if (artifact.version === "managed") {
+                // Delete existing version
+                if (!!artifactToUpdate.version) {
+                    const indent = indentationFromMatch((artifactToUpdate as any).$matched);
+                    updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>`);
+                }
+            } else if (!!artifactToUpdate.version) {
+                updater.version = artifact.version;
+            } else {
+                // Add version in
+                const indent = indentationFromMatch((artifactToUpdate as any).$matched);
+                updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>${indent}<version>${artifact.version}</version>`);
+            }
+            await f.setContent(updater.newContent());
+        }
+    });
+    return p;
+};
+
 /**
  * Emits direct dependencies only
  */
@@ -78,39 +104,7 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
         const deps = await findDeclaredDependencies(p, "**/pom.xml");
         return deps.dependencies.map(gavToFingerprint);
     },
-    apply: async (p, papi) => {
-        await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
-            const pom = await f.getContent();
-
-            const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
-            matches.push(...DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[]);
-            if (matches.length === 0) {
-                return;
-            }
-
-            const fp = papi.parameters.fp;
-            const artifact = dataToVersionedArtifact(fp);
-            const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
-            if (!!artifactToUpdate) {
-                const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
-                if (artifact.version === "managed") {
-                    // Delete existing version
-                    if (!!artifactToUpdate.version) {
-                        const indent = indentationFromMatch((artifactToUpdate as any).$matched);
-                        updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>`);
-                    }
-                } else if (!!artifactToUpdate.version) {
-                    updater.version = artifact.version;
-                } else {
-                    // Add version in
-                    const indent = indentationFromMatch((artifactToUpdate as any).$matched);
-                    updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>${indent}<version>${artifact.version}</version>`);
-                }
-                await f.setContent(updater.newContent());
-            }
-        });
-        return p;
-    },
+    apply: applyDependencyFingerprint,
     toDisplayableFingerprintName: name => name,
     toDisplayableFingerprint: fp => dataToVersionedArtifact(fp).version,
     workflows: [
@@ -144,3 +138,5 @@ function indentationFromMatch(match: string): string {
     const regexp = />([\s]*)</m;
     return regexp.exec(match)[1];
 }
+
+
