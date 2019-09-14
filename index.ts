@@ -30,10 +30,10 @@ import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
 import {
-    DefaultTargetDiffHandler,
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
+import * as fs from "fs";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
@@ -60,7 +60,6 @@ import {
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
-import { complianceGoal } from "./lib/goal/compliance";
 import {
     createFingerprintJob,
     createFingerprintJobCommand,
@@ -192,6 +191,20 @@ export const configuration: Configuration = configure(async sdm => {
             }
 
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
+
+            cfg.sdm.postgres = {
+                ...cfg.sdm.postgres,
+                user: "squirrel",
+                password: "AJg3TR3Wwnym8LM",
+                database: "org_viz",
+                port: 5433,
+                ssl: {
+                    rejectUnauthorized: false,
+                    ca: fs.readFileSync("/Users/cdupuis/Downloads/server-ca.pem").toString(),
+                    key: fs.readFileSync("/Users/cdupuis/Downloads/client-key.pem").toString(),
+                    cert: fs.readFileSync("/Users/cdupuis/Downloads/client-cert.pem").toString(),
+                },
+            };
 
             return cfg;
         },
