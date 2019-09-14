@@ -63,7 +63,7 @@ export const DEPENDENCY_WITHOUT_VERSION_GRAMMAR = Microgrammar.fromDefinitions({
 /**
  * Emits direct dependencies only
  */
-export const MavenDirectDependencies: Aspect = {
+export const MavenDirectDependencies: Aspect<VersionedArtifact> = {
     name: MavenDirectDep,
     displayName: "Maven declared dependencies",
     summary: (diff, target) => {
@@ -118,7 +118,7 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
     ],
 };
 
-function gavToFingerprint(gav: VersionedArtifact): FP {
+function gavToFingerprint(gav: VersionedArtifact): FP<VersionedArtifact> {
     const data = {
         ...gav,
         version: !gav.version ? "managed" : gav.version,
