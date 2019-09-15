@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-import { astUtils, MatchResult } from "@atomist/automation-client";
+import {
+    astUtils,
+    MatchResult,
+} from "@atomist/automation-client";
 import { microgrammar } from "@atomist/microgrammar";
 import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
 import { XmldocFileParser } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
-import { bold, codeLine } from "@atomist/slack-messages";
+import {
+    bold,
+    codeLine,
+} from "@atomist/slack-messages";
 
 const MavenDirectDep = "maven-direct-dep";
 
