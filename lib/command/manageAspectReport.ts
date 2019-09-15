@@ -21,6 +21,7 @@ import {
     slackSuccessMessage,
 } from "@atomist/sdm";
 import { italic } from "@atomist/slack-messages";
+import * as _ from "lodash";
 import { getAspectRegistrations } from "../aspect/aspectsFactory";
 import {
     AspectRegistrations,
@@ -112,31 +113,26 @@ export const UpdateAspectCommand: CommandHandlerRegistration<{ owner: string, na
     name: "UpdateAspect",
     description: "Register a new aspect",
     parameters: {
-        owner: { description: "Name of SDM that owns this aspect", required: true},
-        name: { description: "Aspect name (often referred to as type", required: true},
-        displayName: { description: "Aspect display name using in PR bodies and on the web-app", required: false},
+        owner: { description: "Name of SDM that owns this aspect", required: true },
+        name: { description: "Aspect name (often referred to as type", required: true },
+        displayName: { description: "Aspect display name using in PR bodies and on the web-app", required: false },
         description: { description: "Description of the aspect on the web-app", required: false },
-        category: { description: "Category of the aspect (shows up as tab on the web-app)", required: false},
+        category: { description: "Category of the aspect (shows up as tab on the web-app)", required: false },
         shortName: { description: "Short name of the aspect (used in search boxes etc)", required: false },
         unit: { description: "Unit of the aspect (version, tags etc)", required: false },
         report: { description: "Report type", required: true },
-        state: { description: "Enable or Disable", required: false},
+        state: { description: "Enable or Disable", required: false },
     },
     listener: async ci => {
 
         const regs = await getAspectRegistrations(ci.context, ci.parameters.name);
 
         // Store registration
-        const aspectRegistration: AspectRegistrations.AspectRegistration = {
-            ... regs[0],
-            ...ci.parameters as any,
+        const aspectRegistration: AspectRegistrations.AspectRegistration = _.merge(regs[0], ci.parameters, {
             url: ci.parameters.report === "drift" ? `drift?type=${ci.parameters.name}&band=true&repos=true` :
                 (ci.parameters.report === "morg" ? `fingerprint/${ci.parameters.name}/*?byOrg=true&trim=false` :
                     `fingerprint/${ci.parameters.name}/${ci.parameters.name}?byOrg=true&trim=false`),
-        };
-
-        delete aspectRegistration.owner;
-        delete aspectRegistration.name;
+        });
 
         await ci.context.messageClient.send(aspectRegistration, addressEvent("AspectRegistration"));
     },

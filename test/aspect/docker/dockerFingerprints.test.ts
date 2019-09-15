@@ -18,10 +18,10 @@ import { InMemoryProject } from "@atomist/automation-client";
 import assert = require("power-assert");
 import {
     applyDockerBaseFingerprint,
-    dockerBaseFingerprint, DockerPathType, DockerPortsType, extractDockerPathFingerprint,
+    dockerBaseFingerprint, DockerFrom, DockerPathType, DockerPortsType, extractDockerPathFingerprint,
     extractDockerPortsFingerprint
 } from "../../../lib/aspect/docker/docker";
-import { FP } from "@atomist/sdm-pack-fingerprint";
+import { FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 
 const dummyDockerFile = `
 FROM sforzando-dockerv2-local.jfrog.io/java-atomist:0.11.1-20181115141152
@@ -68,27 +68,33 @@ EXPOSE 8080
 const expectedResult = [{
     type: "docker-base-image",
     name: "sforzando-dockerv2-local.jfrog.io/java-atomist",
-    abbreviation: "dbi-sforzando-dockerv2-local.jfrog.io/java-atomist",
+    abbreviation: "dbi",
     version: "0.0.1",
     data: {
         image: "sforzando-dockerv2-local.jfrog.io/java-atomist",
         version: "0.11.1-20181115141152",
         path: "docker/Dockerfile",
     },
-    sha: "95fd745f74af001eda2d76abf5ac1889224dc46bdb5e703d7612a2b67c5c1dc4",
+    sha: sha256(JSON.stringify({
+        image: "sforzando-dockerv2-local.jfrog.io/java-atomist",
+        version: "0.11.1-20181115141152",
+    })),
 }];
 
 const expectedResultOtherLocation = [{
     type: "docker-base-image",
     name: "sforzando-dockerv2-local.jfrog.io/java-atomist",
-    abbreviation: "dbi-sforzando-dockerv2-local.jfrog.io/java-atomist",
+    abbreviation: "dbi",
     version: "0.0.1",
     data: {
         image: "sforzando-dockerv2-local.jfrog.io/java-atomist",
         version: "0.11.1-20181115141152",
         path: "Dockerfile",
     },
-    sha: "127826c5dfbf26f638ab53c8910c6f19ffd60f2adc25d5ec01f34e8688ee1eb6",
+    sha: sha256(JSON.stringify({
+        image: "sforzando-dockerv2-local.jfrog.io/java-atomist",
+        version: "0.11.1-20181115141152"
+    })),
 }];
 
 describe("docker fingerprints", () => {
@@ -141,6 +147,7 @@ describe("docker fingerprints", () => {
     });
 
     describe("applyDockerBaseFingerprint", async () => {
+
         it("should successfully update the base image", async () => {
             const p = InMemoryProject.from({
                 repo: "foo",
@@ -148,10 +155,11 @@ describe("docker fingerprints", () => {
                 branch: "master",
                 owner: "foo",
                 url: "https://fake.com/foo/foo.git",
-            }, ({ path: "docker/Dockerfile", content: updateMeDockerfile })) as any;
+            }, ({ path: "docker/Dockerfile", content: updateMeDockerfile }));
 
-            const result = await applyDockerBaseFingerprint(p, { parameters: { fp: expectedResult[0] } } as any);
-            assert.strictEqual(result, true);
+            await applyDockerBaseFingerprint(p, { parameters: { fp: expectedResult[0] } } as any);
+            const dockerFileNow = p.findFileSync("docker/Dockerfile").getContentSync();
+            assert(dockerFileNow.includes("sforzando-dockerv2-local.jfrog.io/java-atomist"));
         });
 
         it("should have updated the dockerfile content", async () => {
@@ -181,16 +189,19 @@ COPY resources/public /usr/share/nginx/html
 EXPOSE 8080
 `;
 
+    const nginxData = { image: "nginx", version: "latest", path: "docker/Dockerfile" };
+
     const nginxResult = [{
-        type: "docker-base-image",
+        type: DockerFrom.name,
         name: "nginx",
-        abbreviation: "dbi-nginx",
+        abbreviation: "dbi",
         version: "0.0.1",
-        data: { image: "nginx", version: "latest", path: "docker/Dockerfile" },
-        sha: "2dc8ec5e6659046426425a2ee77de420b0bd3af693ddbed5ee333844edd9824a",
+        data: nginxData,
+        sha: sha256(JSON.stringify({ image: nginxData.image, version: nginxData.version })),
     }];
 
     describe("taglessImage", async () => {
+
         it("should work with a latest image", async () => {
             const p = InMemoryProject.from({
                 repo: "foo",
