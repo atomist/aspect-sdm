@@ -191,6 +191,7 @@ export const configuration: Configuration = configure(async sdm => {
             }
 
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
+
             return cfg;
         },
 
