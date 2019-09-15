@@ -14,77 +14,67 @@
  * limitations under the License.
  */
 
-import { projectUtils } from "@atomist/automation-client";
-import { Microgrammar } from "@atomist/microgrammar";
-import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256, } from "@atomist/sdm-pack-fingerprint";
+import { astUtils, MatchResult } from "@atomist/automation-client";
+import { microgrammar } from "@atomist/microgrammar";
+import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
-import { bold, codeLine, } from "@atomist/slack-messages";
+import { XmldocFileParser } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
+import { bold, codeLine } from "@atomist/slack-messages";
 
 const MavenDirectDep = "maven-direct-dep";
 
-export const LEGAL_VALUE = /[\[\]\(\),a-zA-Z_\.0-9\-]+/;
-
-const VERSION = {
-    lx2: "<version>",
-    version: LEGAL_VALUE,
-    rx2: "</version>",
-};
-
-export const DEPENDENCY_GRAMMAR = Microgrammar.fromDefinitions({
-    _lx1: "<dependency>",
-    lx1: "<groupId>",
-    group: LEGAL_VALUE,
-    rx1: "</groupId>",
-    lx: "<artifactId>",
-    artifact: LEGAL_VALUE,
-    rx: "</artifactId>",
-    ...VERSION,
-});
-
-export const DEPENDENCY_WITHOUT_VERSION_GRAMMAR = Microgrammar.fromDefinitions({
-    _lx1: "<dependency>",
-    lx1: "<groupId>",
-    group: LEGAL_VALUE,
-    rx1: "</groupId>",
-    lx: "<artifactId>",
-    artifact: LEGAL_VALUE,
-    rx: "</artifactId>",
-});
-
 const applyDependencyFingerprint: ApplyFingerprint<VersionedArtifact> = async (p, papi) => {
-    await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
-        const pom = await f.getContent();
+    const fp = papi.parameters.fp;
+    const artifact = dataToVersionedArtifact(fp);
 
-        const matches = DEPENDENCY_GRAMMAR.findMatches(pom) as any as VersionedArtifact[];
-        matches.push(...DEPENDENCY_WITHOUT_VERSION_GRAMMAR.findMatches(pom) as any as VersionedArtifact[]);
-        if (matches.length === 0) {
-            return;
-        }
-
-        const fp = papi.parameters.fp;
-        const artifact = dataToVersionedArtifact(fp);
-        const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
-        if (!!artifactToUpdate) {
-            const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
-            if (artifact.version === "managed") {
-                // Delete existing version
-                if (!!artifactToUpdate.version) {
-                    const indent = indentationFromMatch((artifactToUpdate as any).$matched);
-                    updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>`);
-                }
-            } else if (!!artifactToUpdate.version) {
-                updater.version = artifact.version;
-            } else {
-                // Add version in
-                const indent = indentationFromMatch((artifactToUpdate as any).$matched);
-                updater.replaceAll(`<dependency>${indent}<groupId>${artifact.group}</groupId>${indent}<artifactId>${artifact.artifact}</artifactId>${indent}<version>${artifact.version}</version>`);
+    await astUtils.doWithAllMatches(p,
+        new XmldocFileParser(),
+        "**/pom.xml",
+        // TODO could zero in here with path literals
+        `//project/dependencies/dependency[/artifactId][/groupId]`,
+        dep => {
+            const groupId = dep.$children.find(c => c.$value.startsWith("<groupId>"));
+            const artifactId = dep.$children.find(c => c.$value.startsWith("<artifactId>"));
+            if (groupId.$value.includes(">" + artifact.group + "<") && artifactId.$value.includes(">" + artifact.artifact + "<")) {
+                updateDependencyStanza(dep, artifact);
             }
-            await f.setContent(updater.newContent());
-        }
-    });
+        });
+
     return p;
 };
+
+const LegalValue = /[\[\]\(\),a-zA-Z_\.0-9\-]+/;
+
+// Match the version element and preceding whitespace
+const versionGrammar = microgrammar<{version: string}>({
+    pre: /\s+/,
+    lx2: "<version>",
+    version: LegalValue,
+    rx2: "</version>",
+    // Ensure that we pick up the whitespace before the <version>
+    $consumeWhiteSpaceBetweenTokens: false,
+});
+
+function updateDependencyStanza(dep: MatchResult, to: VersionedArtifact): void {
+    const versionMatch = versionGrammar.firstMatch(dep.$value);
+
+    if (to.version === "managed") {
+        // Delete existing version
+        if (!!versionMatch) {
+            dep.$value = dep.$value.replace(versionMatch.$matched, "");
+        }
+    } else if (!!to.version) {
+        const newVersionValue = `<version>${to.version}</version>`;
+        if (versionMatch) {
+            // Replace an existing version
+            dep.$value = dep.$value.replace(versionMatch.$matched, newVersionValue);
+        } else {
+            dep.$value = dep.$value.replace("</artifactId>",
+                "</artifactId>\n" + indentationOf(dep.$value, "<artifactId>") + newVersionValue);
+        }
+    }
+}
 
 /**
  * Emits direct dependencies only
@@ -134,9 +124,11 @@ function dataToVersionedArtifact(fp: Pick<FP, "data">): VersionedArtifact {
     return fp.data as VersionedArtifact;
 }
 
-function indentationFromMatch(match: string): string {
-    const regexp = />([\s]*)</m;
-    return regexp.exec(match)[1];
+function indentationOf(content: string, what: string): string {
+    const lines = content.split("\n");
+    const line = lines.find(l => l.includes(what));
+    if (line) {
+        return line.substr(0, line.indexOf(what));
+    }
+    return "";
 }
-
-

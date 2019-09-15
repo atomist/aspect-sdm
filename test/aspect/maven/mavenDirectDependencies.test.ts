@@ -19,10 +19,10 @@ import {
     Project,
 } from "@atomist/automation-client";
 import { InMemoryFile } from "@atomist/automation-client/lib/project/mem/InMemoryFile";
-import * as assert from "power-assert";
-import { MavenDirectDependencies } from "../../../lib/aspect/maven/mavenDirectDependencies";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
+import * as assert from "power-assert";
+import { MavenDirectDependencies } from "../../../lib/aspect/maven/mavenDirectDependencies";
 
 const artifactFirst = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
@@ -63,13 +63,13 @@ describe("mavenDirectDependencies", () => {
     describe("extract", () => {
 
         it("should cope with group id before artifact", async () => {
-            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: groupFirst}), undefined) as FP<VersionedArtifact>[];
+            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: groupFirst}), undefined) as Array<FP<VersionedArtifact>>;
             assert.strictEqual(1, deps.length);
             validate(deps[0].data);
         });
 
         it("should cope with artifact id before groupId", async () => {
-            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: artifactFirst}), undefined) as FP<VersionedArtifact>[];
+            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: artifactFirst}), undefined) as Array<FP<VersionedArtifact>>;
             assert.strictEqual(1, deps.length);
             validate(deps[0].data);
         });
@@ -115,7 +115,9 @@ describe("mavenDirectDependencies", () => {
                 } as any) as Project;
 
                 const pf = await np.getFile("pom.xml");
-                assert(pf.getContentSync().includes("<version>1.0.0</version>"));
+                const result = pf.getContentSync();
+                assert(result.includes("<version>1.0.0</version>"),
+                    result);
             },
         );
 
@@ -208,7 +210,7 @@ describe("mavenDirectDependencies", () => {
             assert.deepStrictEqual(pf.getContentSync(), epom);
         });
 
-        it("should correctly update dependency no version to new version", async () => {
+        it("should correctly update dependency with no version to new version", async () => {
             const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
@@ -436,8 +438,6 @@ describe("mavenDirectDependencies", () => {
 </project>`;
             assert.deepStrictEqual(pf.getContentSync(), epom);
         });
-
-        it("should add dependency if it does not exist");
 
     });
 
