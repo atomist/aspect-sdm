@@ -23,10 +23,8 @@ import {
 } from "@atomist/sdm-pack-docker";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import {
-    CiAspect,
-    JavaBuild,
-    StackAspect,
-} from "./common/stackAspect";
+    FrameworkAspect,
+} from "./common/frameworkAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
 import { K8sSpecs } from "./k8s/specAspect";
@@ -37,6 +35,9 @@ import { TypeScriptVersion } from "./node/TypeScriptVersion";
 import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { BuildToolAspect } from "./common/buildToolAspect";
+import { CiAspect } from "./common/ciAspect";
+import { LanguageAspect } from "./common/languageAspect";
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
@@ -114,9 +115,10 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
                 "grouped by Drift Level.",
             manage: false,
         }),
-        StackAspect,
+        FrameworkAspect,
         CiAspect,
-        JavaBuild,
+        BuildToolAspect,
+        LanguageAspect,
         ...optionalAspects,
     ];
 
