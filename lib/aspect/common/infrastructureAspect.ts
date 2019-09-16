@@ -35,7 +35,7 @@ export const InfrastructureAspect: Aspect = projectClassificationAspect({
         reason: "has app.yaml",
         test: async p => {
             return (await projectUtils.fileExists(p, ["**/app.y{,a}ml"]))
-                || (await projectUtils.fileExists(p, ["**/app.json"]));
+                || (projectUtils.fileExists(p, ["**/app.json"]));
         },
     },
 );
