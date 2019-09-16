@@ -20,6 +20,7 @@ import {
     ProjectFile,
     projectUtils,
 } from "@atomist/automation-client";
+import { firstOf, microgrammar, optional } from "@atomist/microgrammar";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
 import {
     ApplyFingerprint,
@@ -34,7 +35,6 @@ import {
     bold,
     codeLine,
 } from "@atomist/slack-messages";
-import { firstOf, microgrammar, optional } from "@atomist/microgrammar";
 
 import * as _ from "lodash";
 
@@ -89,7 +89,7 @@ export async function parseDockerfile(p: Project, f: ProjectFile): Promise<FP<Do
     const match = DockerFromGrammar.firstMatch(await f.getContent());
     return match ?
         createDockerBaseFingerprint(match.image, _.get(match, "version.version", "latest"), f.path)
-        : undefined
+        : undefined;
 }
 
 export const dockerBaseFingerprint: ExtractFingerprint<DockerBaseData> = async p => {

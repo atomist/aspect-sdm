@@ -15,13 +15,13 @@
  */
 
 import { InMemoryProject } from "@atomist/automation-client";
+import { FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import assert = require("power-assert");
 import {
     applyDockerBaseFingerprint,
     dockerBaseFingerprint, DockerFrom, DockerPathType, DockerPortsType, extractDockerPathFingerprint,
-    extractDockerPortsFingerprint
+    extractDockerPortsFingerprint,
 } from "../../../lib/aspect/docker/docker";
-import { FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 
 const dummyDockerFile = `
 FROM sforzando-dockerv2-local.jfrog.io/java-atomist:0.11.1-20181115141152
@@ -93,7 +93,7 @@ const expectedResultOtherLocation = [{
     },
     sha: sha256(JSON.stringify({
         image: "sforzando-dockerv2-local.jfrog.io/java-atomist",
-        version: "0.11.1-20181115141152"
+        version: "0.11.1-20181115141152",
     })),
 }];
 
@@ -118,7 +118,7 @@ describe("docker fingerprints", () => {
             async function extract(lowerCasify: boolean, insertComment: boolean = false) {
                 let content = dummyDockerFile;
                 if (insertComment) {
-                    content = dummyDockerFile.replace("FROM ", "# FROM xxxxx:latest\nFROM ")
+                    content = dummyDockerFile.replace("FROM ", "# FROM xxxxx:latest\nFROM ");
                 }
                 if (lowerCasify) {
                     content = dummyDockerFile.replace("FROM ", "from ");
