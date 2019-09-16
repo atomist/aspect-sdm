@@ -19,7 +19,11 @@ import { FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import assert = require("power-assert");
 import {
     applyDockerBaseFingerprint,
-    dockerBaseFingerprint, DockerFrom, DockerPathType, DockerPortsType, extractDockerPathFingerprint,
+    dockerBaseFingerprint,
+    DockerFrom,
+    DockerPathType,
+    DockerPortsType,
+    extractDockerPathFingerprint,
     extractDockerPortsFingerprint,
 } from "../../../lib/aspect/docker/docker";
 

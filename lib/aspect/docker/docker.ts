@@ -15,12 +15,17 @@
  */
 
 import {
-    astUtils, MicrogrammarBasedFileParser,
+    astUtils,
+    MicrogrammarBasedFileParser,
     Project,
     ProjectFile,
     projectUtils,
 } from "@atomist/automation-client";
-import { firstOf, microgrammar, optional } from "@atomist/microgrammar";
+import {
+    firstOf,
+    microgrammar,
+    optional,
+} from "@atomist/microgrammar";
 import { DockerFileParser } from "@atomist/sdm-pack-docker";
 import {
     ApplyFingerprint,
