@@ -15,10 +15,10 @@
  */
 
 import { projectUtils } from "@atomist/automation-client";
-import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
+import { ClassificationAspect, projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 
-export const CiAspect: Aspect = projectClassificationAspect(
+export const CiAspect: ClassificationAspect = projectClassificationAspect(
     {
         name: "ci",
         displayName: "CI",
@@ -48,5 +48,10 @@ export const CiAspect: Aspect = projectClassificationAspect(
         tags: "github-actions",
         reason: "has .github/workflows YAML",
         test: async p => projectUtils.fileExists(p, [".github/workflows/*.y{,a}ml"]),
+    },
+    {
+        tags: "azure-devops",
+        reason: "",
+        test: async p => projectUtils.fileExists(p, ""),
     },
 );
