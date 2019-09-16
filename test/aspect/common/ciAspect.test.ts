@@ -19,7 +19,10 @@ import {
     Project,
 } from "@atomist/automation-client";
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
-import { ClassificationAspect, ClassificationData } from "@atomist/sdm-pack-aspect";
+import {
+    ClassificationAspect,
+    ClassificationData,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { CiAspect } from "../../../lib/aspect/common/ciAspect";
