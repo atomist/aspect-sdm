@@ -15,10 +15,10 @@
  */
 
 import { InMemoryProject, Project } from "@atomist/automation-client";
-import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
-import { FP } from "@atomist/sdm-pack-fingerprint";
 import { ClassificationData } from "@atomist/sdm-pack-aspect";
+import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
+import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
 
 describe("frameworkAspect", () => {
 
