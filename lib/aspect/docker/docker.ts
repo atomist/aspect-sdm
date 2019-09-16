@@ -76,7 +76,8 @@ export function createDockerBaseFingerprint(image: string, version: string, path
 }
 
 const DockerFromGrammar = microgrammar<{ image: string, version?: { version: string } }>({
-    _from: firstOf("FROM", "from"),
+    // Ensure this is not a comment line
+    _from: firstOf(/^[^#]*FROM/, /^[^#]*from/),
     image: /[A-Za-z0-9\.\/\-]+/,
     version: optional({
         _colon: ":",

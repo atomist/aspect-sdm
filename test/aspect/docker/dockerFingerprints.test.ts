@@ -111,8 +111,18 @@ describe("docker fingerprints", () => {
                 await extract(true);
             });
 
-            async function extract(lowerCasify: boolean) {
-                const content = lowerCasify ? dummyDockerFile.replace("FROM ", "from ") : dummyDockerFile;
+            it("should extract valid fingerprint with inserted comment", async () => {
+                await extract(false, true);
+            });
+
+            async function extract(lowerCasify: boolean, insertComment: boolean = false) {
+                let content = dummyDockerFile;
+                if (insertComment) {
+                    content = dummyDockerFile.replace("FROM ", "# FROM xxxxx:latest\nFROM ")
+                }
+                if (lowerCasify) {
+                    content = dummyDockerFile.replace("FROM ", "from ");
+                }
                 const p = InMemoryProject.from({
                     repo: "foo",
                     sha: "26e18ee3e30c0df0f0f2ff0bc42a4bd08a7024b9",
