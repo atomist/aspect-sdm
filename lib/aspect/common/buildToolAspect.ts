@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import {projectUtils} from "@atomist/automation-client";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 
@@ -25,6 +26,18 @@ export const BuildToolAspect: Aspect = projectClassificationAspect({
         displayName: undefined,
         toDisplayableFingerprintName: () => "Build tool",
     },
-    { tags: "maven", reason: "has Maven POM", test: async p => p.hasFile("pom.xml") },
-    { tags: "gradle", reason: "has build.gradle", test: async p => p.hasFile("build.gradle") },
+    { tags: "maven", reason: "has Maven POM", test: async p => projectUtils.fileExists(p, "**/pom.xml")},
+    {
+      tags: "gradle",
+      reason: "has build.gradle",
+      test: async p => projectUtils.fileExists(p, ["**/build.gradle", "**/build.gradle.kts"]),
+    },
+    { tags: "ivy", reason: "has Ivy XML", test: async p => projectUtils.fileExists(p, "**/ivy.xml")},
+    { tags: "ant", reason: "has ANT XML", test: async p => projectUtils.fileExists(p, "**/build.xml")},
+    { tags: "sbt", reason: "has Scala SBT File", test: async p => projectUtils.fileExists(p, "**/build.sbt")},
+    { tags: "npm", reason: "has NPM Package File", test: async p => projectUtils.fileExists(p, "**/package.json")},
+    { tags: "grunt", reason: "has Gruntfile", test: async p => projectUtils.fileExists(p, "**/Gruntfile")},
+    { tags: "nant", reason: "has NAnt Configuration", test: async p => projectUtils.fileExists(p, "**/NAnt.build")},
+    { tags: "cake", reason: "has Cake Configuration", test: async p => projectUtils.fileExists(p, "**/build.cake")},
+    { tags: "make", reason: "has Makefile", test: async p => projectUtils.fileExists(p, "**/Makefile")},
 );
