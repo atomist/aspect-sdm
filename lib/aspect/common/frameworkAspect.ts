@@ -25,6 +25,7 @@ export const FrameworkName = "framework";
  */
 export const FrameworkAspect: Aspect = projectClassificationAspect(
     {
+        alwaysFingerprint: true,
         name: FrameworkName,
         // Deliberately don't display
         displayName: undefined,
