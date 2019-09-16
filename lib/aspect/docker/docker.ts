@@ -15,7 +15,7 @@
  */
 
 import {
-    astUtils,
+    astUtils, MicrogrammarBasedFileParser,
     Project,
     ProjectFile,
     projectUtils,
@@ -34,6 +34,9 @@ import {
     bold,
     codeLine,
 } from "@atomist/slack-messages";
+import { microgrammar, optional } from "@atomist/microgrammar";
+
+import * as _ from "lodash";
 
 export const DockerPathType = "docker-path";
 export const DockerPortsType = "docker-ports";
@@ -72,12 +75,20 @@ export function createDockerBaseFingerprint(image: string, version: string, path
     };
 }
 
+const DockerFromGrammar = microgrammar<{ image: string, version?: { version: string } }>({
+    _from: "FROM",
+    image: /[A-Za-z0-9\.\/\-]+/,
+    version: optional({
+        _colon: ":",
+        version: /[^\s]+/,
+    }),
+});
+
 export async function parseDockerfile(p: Project, f: ProjectFile): Promise<FP<DockerBaseData>> {
-    const imageName: string[] = await astUtils.findValues(
-        p, DockerFileParser, f.path, "//FROM/image/name");
-    const imageVersion: string[] = await astUtils.findValues(
-        p, DockerFileParser, f.path, "//FROM/image/tag");
-    return createDockerBaseFingerprint(imageName[0], imageVersion[0] || "latest", f.path);
+    const match = DockerFromGrammar.firstMatch(await f.getContent());
+    return match ?
+        createDockerBaseFingerprint(match.image, _.get(match, "version.version", "latest"), f.path)
+        : undefined
 }
 
 export const dockerBaseFingerprint: ExtractFingerprint<DockerBaseData> = async p => {
@@ -94,9 +105,9 @@ export const applyDockerBaseFingerprint: ApplyFingerprint<DockerBaseData> = asyn
     const fp = papi.parameters.fp;
     await astUtils.doWithAllMatches(
         p,
-        DockerFileParser,
+        new MicrogrammarBasedFileParser("dockerFile", "from", DockerFromGrammar),
         "**/Dockerfile",
-        "//FROM/image/tag",
+        "//version",
         n => n.$value = fp.data.version,
     );
     return p;
