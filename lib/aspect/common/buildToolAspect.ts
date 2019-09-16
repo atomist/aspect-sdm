@@ -40,4 +40,8 @@ export const BuildToolAspect: Aspect = projectClassificationAspect({
     { tags: "nant", reason: "has NAnt Configuration", test: async p => projectUtils.fileExists(p, "**/NAnt.build")},
     { tags: "cake", reason: "has Cake Configuration", test: async p => projectUtils.fileExists(p, "**/build.cake")},
     { tags: "make", reason: "has Makefile", test: async p => projectUtils.fileExists(p, "**/Makefile")},
+    { tags: "leiningen", reason: "has Leiningen", test: async p => projectUtils.fileExists(p, "project.clj")},
+    { tags: "rake", reason: "has Rakefile", test: async p => projectUtils.fileExists(p, "**/Rakefile")},
+    { tags: "buck", reason: "has Buck buildfile", test: async p => projectUtils.fileExists(p, "**/.buckconfig")},
+    { tags: "gulp", reason: "has Gulp", test: async p => projectUtils.fileExists(p, "**/gulpfile.js")},
 );
