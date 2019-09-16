@@ -31,5 +31,20 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
         displayName: undefined,
         toDisplayableFingerprintName: () => "Framework",
     },
-    { tags: "node", reason: "has package.json", test: async p => p.hasFile("package.json") },
+    {
+        tags: "node",
+        reason: "has package.json",
+        test: async p => p.hasFile("package.json"),
+    },
+    {
+        tags: "spring-boot",
+        reason: "POM file references Spring Boot",
+        test: async p => {
+            const pom = await p.getFile("pom.xml");
+            if (!pom) {
+                return false;
+            }
+            return (await pom.getContent()).includes("org.springframework.boot");
+        },
+    },
 );

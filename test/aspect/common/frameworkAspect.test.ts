@@ -22,6 +22,7 @@ import { ClassificationData } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
+import { NonSpringPom, springBootPom } from "./testPoms";
 
 describe("frameworkAspect", () => {
 
@@ -39,6 +40,32 @@ describe("frameworkAspect", () => {
             });
             const fp = await doExtract(p);
             return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+    });
+
+    describe("spring boot", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("doesn't find in non spring project", async () => {
+            const p = InMemoryProject.of({
+                path: "pom.xml", content: NonSpringPom,
+            });
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds spring boot from pom", async () => {
+            const p = InMemoryProject.of({
+                path: "pom.xml", content: springBootPom(),
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["spring-boot"]);
         });
 
     });
