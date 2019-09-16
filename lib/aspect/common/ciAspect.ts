@@ -14,21 +14,39 @@
  * limitations under the License.
  */
 
+import { projectUtils } from "@atomist/automation-client";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 
-export const CiAspect: Aspect = projectClassificationAspect({
+export const CiAspect: Aspect = projectClassificationAspect(
+    {
         name: "ci",
-        // Deliberately don't display
-        displayName: undefined,
+        displayName: "CI",
         toDisplayableFingerprintName: () => "CI tool",
     },
-    { tags: "travis", reason: "has .travis.yml", test: async p => p.hasFile(".travis.yml") },
-    { tags: "jenkins", reason: "has JenkinsFile", test: async p => p.hasFile("Jenkinsfile") },
+    {
+        tags: "travis",
+        reason: "has .travis.yml",
+        test: async p => p.hasFile(".travis.yml"),
+    },
+    {
+        tags: "jenkins",
+        reason: "has JenkinsFile",
+        test: async p => p.hasFile("Jenkinsfile"),
+    },
     {
         tags: "circle",
         reason: "has .circleci/config.yml",
         test: async p => p.hasFile(".circleci/config.yml"),
     },
-    { tags: "concourse", reason: "has pipeline.yml", test: async p => p.hasFile("pipeline.yml") },
+    {
+        tags: "concourse",
+        reason: "has pipeline.yml",
+        test: async p => p.hasFile("pipeline.yml"),
+    },
+    {
+        tags: "github-actions",
+        reason: "has .github/workflows YAML",
+        test: async p => projectUtils.fileExists(p, [".github/workflows/*.y{,a}ml"]),
+    },
 );
