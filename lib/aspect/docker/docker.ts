@@ -34,7 +34,7 @@ import {
     bold,
     codeLine,
 } from "@atomist/slack-messages";
-import { microgrammar, optional } from "@atomist/microgrammar";
+import { firstOf, microgrammar, optional } from "@atomist/microgrammar";
 
 import * as _ from "lodash";
 
@@ -76,7 +76,7 @@ export function createDockerBaseFingerprint(image: string, version: string, path
 }
 
 const DockerFromGrammar = microgrammar<{ image: string, version?: { version: string } }>({
-    _from: "FROM",
+    _from: firstOf("FROM", "from"),
     image: /[A-Za-z0-9\.\/\-]+/,
     version: optional({
         _colon: ":",

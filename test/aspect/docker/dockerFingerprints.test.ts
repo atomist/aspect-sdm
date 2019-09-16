@@ -100,19 +100,30 @@ const expectedResultOtherLocation = [{
 describe("docker fingerprints", () => {
 
     describe("dockerBaseFingerprint", () => {
+
         describe("extract valid fingerprint", () => {
+
             it("should extract valid fingerprint", async () => {
+                await extract(false);
+            });
+
+            it("should extract valid fingerprint with lowercase FROM", async () => {
+                await extract(true);
+            });
+
+            async function extract(lowerCasify: boolean) {
+                const content = lowerCasify ? dummyDockerFile.replace("FROM ", "from ") : dummyDockerFile;
                 const p = InMemoryProject.from({
                     repo: "foo",
                     sha: "26e18ee3e30c0df0f0f2ff0bc42a4bd08a7024b9",
                     branch: "master",
                     owner: "foo",
                     url: "https://fake.com/foo/foo.git",
-                }, ({ path: "docker/Dockerfile", content: dummyDockerFile })) as any;
+                }, ({ path: "docker/Dockerfile", content })) as any;
 
                 const result = await dockerBaseFingerprint(p, undefined);
                 assert.deepEqual(result, expectedResult);
-            });
+            }
         });
 
         describe("extract valid fingerprint from different location", () => {
