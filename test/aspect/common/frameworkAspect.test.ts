@@ -18,14 +18,14 @@ import {
     InMemoryProject,
     Project,
 } from "@atomist/automation-client";
+import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { ClassificationData } from "@atomist/sdm-pack-aspect";
 import { FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
-import { NonSpringPom, springBootPom } from "./testPoms";
-import { angularPackageJson, pokedexPackageJson } from "./testPackageJsons";
-import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { adoptAHydrantGemfile, gemnasiumGemfile } from "./testGemfiles";
+import { angularPackageJson, pokedexPackageJson } from "./testPackageJsons";
+import { NonSpringPom, springBootPom } from "./testPoms";
 
 describe("frameworkAspect", () => {
 
