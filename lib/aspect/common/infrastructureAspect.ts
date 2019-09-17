@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { projectUtils } from "@atomist/automation-client";
+import { Project, projectUtils, RegexFileParser } from "@atomist/automation-client";
+import { matchIterator } from "@atomist/automation-client/lib/tree/ast/astUtils";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 
+const likelyPlacesForDeployCommands = ["**/*.sh", "*.md", "bin/*", "script/*"];
+
 export const InfrastructureAspect: Aspect = projectClassificationAspect({
-        name: "infrastructure",
-        // Deliberately don't display
-        displayName: undefined,
-        toDisplayableFingerprintName: () => "Infrastructure",
-    },
+    name: "infrastructure",
+    // Deliberately don't display
+    displayName: undefined,
+    toDisplayableFingerprintName: () => "Infrastructure",
+},
     { tags: "terraform", reason: "has *.tf file", test: async p => projectUtils.fileExists(p, ["**/*.tf"]) },
     // add cloud formation
     { tags: "docker", reason: "has Dockerfile", test: async p => projectUtils.fileExists(p, ["**/Dockerfile"]) },
@@ -38,4 +41,38 @@ export const InfrastructureAspect: Aspect = projectClassificationAspect({
                 || (projectUtils.fileExists(p, ["**/app.json"]));
         },
     },
+    {
+        tags: "openshift",
+        reason: ".openshift directory detected",
+        test: p => projectUtils.fileExists(p, ["**/.openshift"]),
+    },
+    {
+        tags: "heroku",
+        reason: "a script pushes to heroku",
+        test: p => containsRegex(p, likelyPlacesForDeployCommands, /git push (--force)? heroku/),
+    },
+    {
+        tags: "ansible",
+        reason: "a script references ansible-playbook",
+        test: p => containsRegex(p, likelyPlacesForDeployCommands, /ansible-playbook/),
+    },
 );
+
+// Rod: is there a more efficient way?
+async function containsRegex(project: Project, globPatterns: string[], regex: RegExp): Promise<boolean> {
+    const parser = new RegexFileParser({
+        rootName: "whatevers",
+        matchName: "whatever",
+        regex,
+        captureGroupNames: ["name"],
+    });
+    const it = matchIterator<{ name: string }>(project, {
+        parseWith: parser,
+        globPatterns,
+        pathExpression: "//whatevers/whatever",
+    });
+    for await (const anything of it) {
+        return true;
+    }
+    return false;
+}
