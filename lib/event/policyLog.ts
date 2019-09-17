@@ -46,7 +46,7 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
             const pr = e.data.PullRequest[0];
             if (pr.action === PullRequestAction.opened || pr.action === PullRequestAction.closed) {
                 if (!pr.branchName.startsWith(`atomist/${ctx.workspaceId.toLowerCase()}/`)) {
-                     return Success;
+                    return Success;
                 }
 
                 const tagRegex = /\[fingerprint:([-\w:\/\.]+)=([-\w]+)\]/g;
@@ -82,8 +82,9 @@ export function createPolicyLogOnPullRequest(aspects: Aspect[]): EventHandlerReg
                     };
 
                     const value = displayValue(aspectOf(fingerprint, aspects), fingerprint);
+                    const prStatus = pr.merged ? "merged" : "closed without merging";
                     const message = pr.action === PullRequestAction.closed ?
-                        `PR of target ${value} application to ${pr.repo.owner}/${pr.repo.name} was ${pr.merged ? "merged" : "closed without merging"}` :
+                        `PR of target ${value} application to ${pr.repo.owner}/${pr.repo.name} was ${prStatus}` :
                         `Application of target ${value} to ${pr.repo.owner}/${pr.repo.name} raised PR`;
                     const log: PolicyLog = {
                         type,

@@ -111,7 +111,8 @@ export function invokeCommandOnComment(sdm: SoftwareDeliveryMachine,
                 return Success;
             }
 
-            const credentials = await resolveCredentialsPromise(sdm.configuration.sdm.credentialsResolver.eventHandlerCredentials(ctx)) as TokenCredentials;
+            const credentials = await
+                resolveCredentialsPromise(sdm.configuration.sdm.credentialsResolver.eventHandlerCredentials(ctx)) as TokenCredentials;
             const github = api(credentials.token, repo.org.provider.apiUrl);
 
             // Check the comment author's permission on the repo
@@ -201,10 +202,11 @@ function decorateMessageClient(cmd: CommandHandlerRegistration<any>): void {
                     body: `> ${parameters[CommandParameter.name].split("\n")[0]}\n\n${msg}`,
                 });
             };
-            const credentials = await resolveCredentialsPromise(cli.configuration.sdm.credentialsResolver.commandHandlerCredentials(cli.context, GitHubRepoRef.from({
-                owner: parameters[OwnerParameter.name],
-                repo: parameters[RepoParameter.name],
-            }))) as TokenCredentials;
+            const credentials = await
+                resolveCredentialsPromise(cli.configuration.sdm.credentialsResolver.commandHandlerCredentials(cli.context, GitHubRepoRef.from({
+                    owner: parameters[OwnerParameter.name],
+                    repo: parameters[RepoParameter.name],
+                }))) as TokenCredentials;
 
             const github = api(credentials.token, parameters[ApiUrlParameter.name]);
             try {

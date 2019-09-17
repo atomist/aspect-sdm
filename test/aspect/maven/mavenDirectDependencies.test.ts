@@ -63,13 +63,15 @@ describe("mavenDirectDependencies", () => {
     describe("extract", () => {
 
         it("should cope with group id before artifact", async () => {
-            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: groupFirst}), undefined) as Array<FP<VersionedArtifact>>;
+            const p = InMemoryProject.of({ path: "pom.xml", content: groupFirst });
+            const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
             assert.strictEqual(1, deps.length);
             validate(deps[0].data);
         });
 
         it("should cope with artifact id before groupId", async () => {
-            const deps = await MavenDirectDependencies.extract(InMemoryProject.of({path: "pom.xml", content: artifactFirst}), undefined) as Array<FP<VersionedArtifact>>;
+            const p = InMemoryProject.of({ path: "pom.xml", content: artifactFirst });
+            const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
             assert.strictEqual(1, deps.length);
             validate(deps[0].data);
         });
@@ -84,7 +86,7 @@ describe("mavenDirectDependencies", () => {
     describe("apply", () => {
 
         it("should correctly update dependency with version to new version", async () => {
-                const pom = `<?xml version="1.0" encoding="UTF-8"?>
+            const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
    <groupId>atomist</groupId>
@@ -101,28 +103,28 @@ describe("mavenDirectDependencies", () => {
    </dependencies>
 </project>`;
 
-                const p = InMemoryProject.of(new InMemoryFile("pom.xml", pom));
-                const np = await MavenDirectDependencies.apply(p, {
-                    parameters: {
-                        fp: {
-                            data: {
-                                group: "com.atomist",
-                                artifact: "spring-boot-agent",
-                                version: "1.0.0",
-                            },
+            const p = InMemoryProject.of(new InMemoryFile("pom.xml", pom));
+            const np = await MavenDirectDependencies.apply(p, {
+                parameters: {
+                    fp: {
+                        data: {
+                            group: "com.atomist",
+                            artifact: "spring-boot-agent",
+                            version: "1.0.0",
                         },
                     },
-                } as any) as Project;
+                },
+            } as any) as Project;
 
-                const pf = await np.getFile("pom.xml");
-                const result = pf.getContentSync();
-                assert(result.includes("<version>1.0.0</version>"),
-                    result);
-            },
+            const pf = await np.getFile("pom.xml");
+            const result = pf.getContentSync();
+            assert(result.includes("<version>1.0.0</version>"),
+                result);
+        },
         );
 
         it("should correctly update dependency with version to new version with artifact before group", async () => {
-                const pom = `<?xml version="1.0" encoding="UTF-8"?>
+            const pom = `<?xml version="1.0" encoding="UTF-8"?>
 <project>
    <modelVersion>4.0.0</modelVersion>
    <groupId>atomist</groupId>
@@ -139,22 +141,22 @@ describe("mavenDirectDependencies", () => {
    </dependencies>
 </project>`;
 
-                const p = InMemoryProject.of(new InMemoryFile("pom.xml", pom));
-                const np = await MavenDirectDependencies.apply(p, {
-                    parameters: {
-                        fp: {
-                            data: {
-                                group: "com.atomist",
-                                artifact: "spring-boot-agent",
-                                version: "1.0.0",
-                            },
+            const p = InMemoryProject.of(new InMemoryFile("pom.xml", pom));
+            const np = await MavenDirectDependencies.apply(p, {
+                parameters: {
+                    fp: {
+                        data: {
+                            group: "com.atomist",
+                            artifact: "spring-boot-agent",
+                            version: "1.0.0",
                         },
                     },
-                } as any) as Project;
+                },
+            } as any) as Project;
 
-                const pf = await np.getFile("pom.xml");
-                assert(pf.getContentSync().includes("<version>1.0.0</version>"));
-            },
+            const pf = await np.getFile("pom.xml");
+            assert(pf.getContentSync().includes("<version>1.0.0</version>"));
+        },
         );
 
         it("should correctly update dependency with version to managed", async () => {

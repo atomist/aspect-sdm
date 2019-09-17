@@ -54,12 +54,12 @@ export const CiAspect: ClassificationAspect = projectClassificationAspect(
     },
     {
         tags: "gitlab-ci",
-        reason: "has a .gitlab-ci.yml file in the root of the repository",
+        reason: "has .gitlab-ci.yml",
         test: async p => p.hasFile(".gitlab-ci.yml"),
     },
     {
-        tags: "azure-devops",
-        reason: "has an azure-pipelines.yml file in the root of the repository",
+        tags: "azure-devops-pipeline",
+        reason: "has azure-pipelines.yml",
         test: async p => p.hasFile("azure-pipelines.yml"),
     },
 );

@@ -119,7 +119,7 @@ describe("docker fingerprints", () => {
                 await extract(false, true);
             });
 
-            async function extract(lowerCasify: boolean, insertComment: boolean = false) {
+            async function extract(lowerCasify: boolean, insertComment: boolean = false): Promise<void> {
                 let content = dummyDockerFile;
                 if (insertComment) {
                     content = dummyDockerFile.replace("FROM ", "# FROM xxxxx:latest\nFROM ");

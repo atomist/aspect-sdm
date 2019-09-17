@@ -18,10 +18,26 @@ import {
     InMemoryProject,
     Project,
 } from "@atomist/automation-client";
+import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { ClassificationData } from "@atomist/sdm-pack-aspect";
-import { FP } from "@atomist/sdm-pack-fingerprint";
+import {
+    FP,
+    NpmDeps,
+} from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
+import {
+    adoptAHydrantGemfile,
+    gemnasiumGemfile,
+} from "./testGemfiles";
+import {
+    angularPackageJson,
+    pokedexPackageJson,
+} from "./testPackageJsons";
+import {
+    NonSpringPom,
+    springBootPom,
+} from "./testPoms";
 
 describe("frameworkAspect", () => {
 
@@ -39,6 +55,164 @@ describe("frameworkAspect", () => {
             });
             const fp = await doExtract(p);
             return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+    });
+
+    describe("spring boot", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("doesn't find in non spring project", async () => {
+            const p = InMemoryProject.of({
+                path: "pom.xml", content: NonSpringPom,
+            });
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds spring boot from pom", async () => {
+            const p = InMemoryProject.of({
+                path: "pom.xml", content: springBootPom(),
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["spring-boot"]);
+        });
+
+        it("should find spring boot from Gradle");
+
+    });
+
+    describe("react", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no react in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: "i am package json",
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+        it("finds react in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: pokedexPackageJson,
+            });
+            const fps = await NpmDeps.extract(p, undefined);
+            const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
+            assert.strictEqual(result.length, 1);
+            const fp = result[0];
+            return assert.deepStrictEqual(fp.data.tags, ["react"]);
+        });
+
+    });
+
+    describe("angular", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no angular in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: pokedexPackageJson,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+        it("finds angular in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: angularPackageJson,
+            });
+            const fps = await NpmDeps.extract(p, undefined);
+            const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
+            assert.strictEqual(result.length, 1);
+            const fp = result[0];
+            return assert.deepStrictEqual(fp.data.tags, ["angular"]);
+        });
+
+    });
+
+    describe("rails", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no rails in gemfile", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: gemnasiumGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds rails in gemfile with single quotes", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: adoptAHydrantGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
+        });
+
+        it("finds rails in gemfile with double quotes", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: `gem "rails"`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
+        });
+
+    });
+
+    describe("Django", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no Django in gemfile", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: gemnasiumGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds no Django in non Django-ey requirements.txt", async () => {
+            const p = InMemoryProject.of({
+                path: "requirements.txt",
+                content: `notDjango==2.2.1
+docutils==0.14`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds Django in Django-ey requirements.txt", async () => {
+            const p = InMemoryProject.of({
+                path: "requirements.txt",
+                content: `Django==2.2.1
+docutils==0.14`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["django"]);
         });
 
     });

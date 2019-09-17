@@ -27,6 +27,7 @@ import { CiAspect } from "./common/ciAspect";
 import {
     FrameworkAspect,
 } from "./common/frameworkAspect";
+import { InfrastructureAspect } from "./common/infrastructureAspect";
 import { LanguageAspect } from "./common/languageAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
@@ -119,6 +120,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         CiAspect,
         BuildToolAspect,
         LanguageAspect,
+        InfrastructureAspect,
         ...optionalAspects,
     ];
 
