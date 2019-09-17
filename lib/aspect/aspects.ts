@@ -40,6 +40,9 @@ import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { SpringBootAppClass } from "./spring/springBootApps";
+import { LogbackAspect } from "./spring/logbackAspect";
+import { ConsoleLogging } from "./spring/consoleLogging";
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
@@ -123,6 +126,9 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         LanguageAspect,
         InfrastructureAspect,
         XmlBeanDefinitions,
+        SpringBootAppClass,
+        LogbackAspect,
+        ConsoleLogging,
         ...optionalAspects,
     ];
 
