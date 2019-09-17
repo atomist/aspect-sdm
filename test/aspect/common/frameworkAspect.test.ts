@@ -25,6 +25,7 @@ import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
 import { NonSpringPom, springBootPom } from "./testPoms";
 import { angularPackageJson, pokedexPackageJson } from "./testPackageJsons";
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
+import { adoptAHydrantGemfile, gemnasiumGemfile } from "./testGemfiles";
 
 describe("frameworkAspect", () => {
 
@@ -128,6 +129,40 @@ describe("frameworkAspect", () => {
             assert.strictEqual(result.length, 1);
             const fp = result[0];
             return assert.deepStrictEqual(fp.data.tags, ["angular"]);
+        });
+
+    });
+
+    describe("rails", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no rails in gemfile", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: gemnasiumGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds rails in gemfile with single quotes", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: adoptAHydrantGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
+        });
+
+        it("finds rails in gemfile with double quotes", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: `gem "rails"`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
         });
 
     });

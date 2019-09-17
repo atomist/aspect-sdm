@@ -57,8 +57,21 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
         reason: "package.json references angular",
         testFingerprints: async fps => hasNpmDep(fps, fp => fp.data[0].startsWith("@angular/")),
     },
+    {
+        tags: "rails",
+        reason: "Gemfile references Rails",
+        test: async p => {
+            const gemfile = await p.getFile("Gemfile");
+            if (!gemfile) {
+                return false;
+            }
+            const gemMatch = /gem[\s+]['"]rails['"]/;
+            const content = await gemfile.getContent();
+            return gemMatch.test(content);
+        },
+    },
 );
 
 function hasNpmDep(fps: FP[], test: (fp: FP<NpmDepData>) => boolean): boolean {
-    return fps.some(fp => fp.type === NpmDeps.name && test(fp));
+    return fps && fps.some(fp => fp.type === NpmDeps.name && test(fp));
 }
