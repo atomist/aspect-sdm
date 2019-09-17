@@ -15,7 +15,11 @@
  */
 
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
-import { Aspect, FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
+import {
+    Aspect,
+    FP,
+    NpmDeps,
+} from "@atomist/sdm-pack-fingerprint";
 import { NpmDepData } from "@atomist/sdm-pack-fingerprint/lib/fingerprints/npmDeps";
 
 export const FrameworkName = "framework";
