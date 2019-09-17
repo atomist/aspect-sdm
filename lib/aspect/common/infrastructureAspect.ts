@@ -40,15 +40,12 @@ export const InfrastructureAspect: Aspect = projectClassificationAspect({
     {
         tags: "google-app-engine",
         reason: "has app.yaml",
-        test: async p => {
-            return (await projectUtils.fileExists(p, ["**/app.y{,a}ml"]))
-                || (projectUtils.fileExists(p, ["**/app.json"]));
-        },
+        test: p => projectUtils.fileExists(p, ["**/app.y{,a}ml", "**/app.json"]),
     },
     {
         tags: "openshift",
         reason: ".openshift directory detected",
-        test: p => projectUtils.fileExists(p, ["**/.openshift"]),
+        test: p => projectUtils.fileExists(p, ["**/.openshift/*"]),
     },
     {
         tags: "heroku",
