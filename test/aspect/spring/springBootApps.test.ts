@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { InMemoryProject, Project } from "@atomist/automation-client";
+import {
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import {
     SpringBootAppClass,
