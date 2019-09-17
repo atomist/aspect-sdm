@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { InMemoryProject, Project } from "@atomist/automation-client";
+import {
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import { GlobAspectData } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import { XmlBeanDefinitions } from "../../../lib/aspect/spring/xmlBeans";
