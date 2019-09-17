@@ -20,16 +20,93 @@ import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { LogbackAspect, LogbackData } from "../../../lib/aspect/spring/logbackAspect";
 
+export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ 
+    <property name="LOGS" value="./logs" />
+ 
+    <appender name="Console"
+        class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %black(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%C{1.}): %msg%n%throwable
+            </Pattern>
+        </layout>
+    </appender>
+     
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="Console" />
+    </root>
+ 
+    <!-- LOG "com.baeldung*" at TRACE level -->
+    <logger name="com.baeldung" level="trace" additivity="false">
+        <appender-ref ref="Console" />
+    </logger>
+ 
+</configuration>`;
+
+export const LogbackNoConsole = `
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+ 
+    <property name="LOGS" value="./logs" />
+ 
+    <appender name="RollingFile"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>spring-boot-logger.log</file>
+        <encoder
+            class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+ 
+       
+    </appender>
+     
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+        <appender-ref ref="RollingFile" />
+    </root>
+ 
+    <!-- LOG "com.baeldung*" at TRACE level -->
+    <logger name="com.baeldung" level="trace" additivity="false">
+        <appender-ref ref="RollingFile" />
+    </logger>
+ 
+</configuration>
+`;
+
 describe("Logback aspect", () => {
 
-    it("should not find in empty project", async () => {
-        const p = InMemoryProject.of();
-        const fp = await doExtract(p);
-        assert.deepStrictEqual(fp.data.configFiles, []);
+    describe("extraction", () => {
+
+        it("should not find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtractLogback(p);
+            assert.deepStrictEqual(fp.data.configFiles, []);
+        });
+
+        it("should find logback-spring", async () => {
+            const p = InMemoryProject.of({
+                path: "src/main/resources/logback-spring.xml",
+                content: LogbackWithConsole,
+            });
+            const fp = await doExtractLogback(p);
+            assert.strictEqual(fp.data.configFiles.length, 1);
+            assert.deepStrictEqual(fp.data.configFiles[0].appenders,
+                [
+                    { name: "Console", appenderClass: "ch.qos.logback.core.ConsoleAppender" },
+                ]);
+            assert.deepStrictEqual(fp.data.configFiles[0].loggers,
+                [
+                    { name: "root", appenderNames: ["Console"] },
+                    { name: "com.baeldung", appenderNames: ["Console"] },
+                ]);
+        });
     });
 
 });
 
-async function doExtract(p: Project): Promise<FP<LogbackData>> {
+export async function doExtractLogback(p: Project): Promise<FP<LogbackData>> {
     return LogbackAspect.extract(p, undefined) as any;
 }
