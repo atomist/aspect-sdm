@@ -27,7 +27,7 @@
     "@atomist/microgrammar": "^1.2.1",
     "@atomist/sdm": "^1.7.0",
     "@atomist/sdm-core": "1.7.1-master.20190911161431",
-    "@atomist/sdm-pack-aspect": "^1.0.0-master.20190917000018",
+    "@atomist/sdm-pack-aspect": "^1.0.0-master.20190917215509",
     "@atomist/sdm-pack-build": "^1.0.6",
     "@atomist/sdm-pack-clojure": "^2.0.2",
     "@atomist/sdm-pack-docker": "2.0.3-master.20190903064256",
