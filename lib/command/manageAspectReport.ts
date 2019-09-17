@@ -109,7 +109,17 @@ export const EnableAspectReportCommand: CommandHandlerRegistration = {
     },
 };
 
-export const UpdateAspectCommand: CommandHandlerRegistration<{ owner: string, name: string, displayName: string, shortName?: string, unit?: string, description: string, category: string, report: string, state: string }> = {
+export const UpdateAspectCommand: CommandHandlerRegistration<{
+    owner: string,
+    name: string,
+    displayName: string,
+    shortName?: string,
+    unit?: string,
+    description: string,
+    category: string,
+    report: string,
+    state: string,
+}> = {
     name: "UpdateAspect",
     description: "Register a new aspect",
     parameters: {

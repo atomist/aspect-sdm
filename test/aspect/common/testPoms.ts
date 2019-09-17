@@ -26,7 +26,7 @@ export const NonSpringPom = `<project>
   </modules>
 </project>`;
 
-export function springBootPom(bootVersion: string = "2.0.0.RELEASE", parent: string = "spring-boot-starter-parent") {
+export function springBootPom(bootVersion: string = "2.0.0.RELEASE", parent: string = "spring-boot-starter-parent"): string {
     return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -38,7 +38,6 @@ describe("ciAspect", () => {
         it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await doExtract(p);
-            console.log(JSON.stringify(fp));
             assert.deepStrictEqual(fp.data.tags, []);
         });
 

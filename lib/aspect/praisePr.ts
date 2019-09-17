@@ -112,7 +112,10 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
                         `${url}/issues/${pr.number}/comments`,
                         {
                             method: HttpMethod.Post,
-                            body: { body: `PR closed because all polices of ${italic(aspect.displayName)} have been applied to branch ${codeLine(pli.push.branch)}.` },
+                            body: {
+                                body: `PR closed because all polices of ${italic(aspect.displayName)} have been applied to branch ` +
+                                    `${codeLine(pli.push.branch)}.`,
+                            },
                             ...config,
                         });
                 }
@@ -127,7 +130,7 @@ export function raisePrDiffHandler(sdm: SoftwareDeliveryMachine,
         const description = discrepancies.length === 1 ?
             applyFingerprintTitle(discrepancies[0], [aspect]) :
             `Applying ${discrepancies.length} ${discrepancies.length === 1 ? "target" : "targets"} for ${
-                aspect.name} to ${repo.owner} /${repo.name}/${pli.push.branch}`;
+            aspect.name} to ${repo.owner} /${repo.name}/${pli.push.branch}`;
 
         const title = discrepancies.length === 1 ?
             applyFingerprintTitle(discrepancies[0], [aspect]) :
@@ -178,6 +181,7 @@ export function raisePrPreferenceKey(org: string, repo?: string): string {
     }
 }
 
+/* tslint:disable:cyclomatic-complexity */
 async function shouldFallback(pli: PushImpactListenerInvocation): Promise<boolean> {
     const { push: { repo } } = pli;
 
@@ -235,6 +239,7 @@ async function shouldFallback(pli: PushImpactListenerInvocation): Promise<boolea
     }
     return false;
 }
+/* tslint:enable:cyclomatic-complexity */
 
 async function hasChatTeam(pli: PushImpactListenerInvocation): Promise<boolean> {
     let hct = false;
@@ -254,6 +259,7 @@ function addCommandsToPrBody(body: string,
                              aspect: Aspect,
                              category: string,
                              fp: FP<any>): string {
+    /* tslint:disable:max-line-length */
     return `${body}
 
 ---
@@ -266,7 +272,8 @@ You can trigger Atomist commands by commenting on this PR:
 - \`@atomist help\` start your comment with this to ask Atomist for help or provide feedback
 
 ${!hct ? `[Connect your Atomist workspace to Slack](https://app.atomist.com/workspace/${workspaceId}/analysis/chatops?aspect=${encodeURIComponent(aspect.displayName)}&category=${encodeURIComponent(category)}&fingerprint=${encodeURIComponent(fp.name)}) to manage these updates directly from Slack.`
-        : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)}) to manage these updates directly from Slack.`}
+            : `[Link this repository to a Slack channel](https://app.atomist.com/workspace/${workspaceId}/settings/integrations/slack?repo=${encodeURIComponent(`${repo.owner}/${repo.name}`)}) to manage these updates directly from Slack.`}
 
 </details>`;
+    /* tslint:enable:max-line-length */
 }
