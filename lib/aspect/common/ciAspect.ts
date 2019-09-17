@@ -15,7 +15,10 @@
  */
 
 import { projectUtils } from "@atomist/automation-client";
-import { ClassificationAspect, projectClassificationAspect } from "@atomist/sdm-pack-aspect";
+import {
+    ClassificationAspect,
+    projectClassificationAspect,
+} from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 
 export const CiAspect: ClassificationAspect = projectClassificationAspect(

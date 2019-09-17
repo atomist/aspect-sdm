@@ -24,6 +24,7 @@ export const BuildToolAspect: Aspect = projectClassificationAspect({
         name: BuildToolName,
         // Deliberately don't display
         displayName: undefined,
+        stopAtFirst: false,
         toDisplayableFingerprintName: () => "Build tool",
     },
     { tags: "maven", reason: "has Maven POM", test: async p => projectUtils.fileExists(p, "**/pom.xml")},
