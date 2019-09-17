@@ -32,7 +32,7 @@ describe("languageAspect", () => {
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await LanguageAspect.extract(p, undefined) as FP<ClassificationData>;
-            return assert.strictEqual(fp, undefined);
+            return assert.deepStrictEqual(fp.data.tags, []);
         });
 
         it("finds cpp file in a subdirectory", async () => {
@@ -61,7 +61,7 @@ describe("languageAspect", () => {
                 path: "anydir/subdir/myfile", content: "something",
             });
             const fp = await doExtract(p);
-            return assert.strictEqual(fp, undefined);
+            return assert.deepStrictEqual(fp.data.tags, []);
         });
 
     });
