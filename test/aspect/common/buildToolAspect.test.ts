@@ -26,11 +26,104 @@ import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
 
 describe("buildToolAspect", () => {
 
-    describe("ivy", () => {
-        it("tags Ivy", async () => {
+    describe("multiple detection", () => {
+        it("tags multiple times when different build tools are detected", async () => {
+            const p = InMemoryProject.of({path: "build.xml", content: ""},
+                {path: "ivy.xml", content: ""});
+            const fp = await doExtract(p);
+            return assert.notDeepStrictEqual(fp.data.tags, ["ivy", "nant"]);
+        });
+    });
+
+    describe("Ivy", () => {
+        it("tags projects built with Ivy", async () => {
             const p = InMemoryProject.of({path: "ivy.xml", content: ""});
             const fp = await doExtract(p);
             return assert.deepStrictEqual(fp.data.tags, ["ivy"]);
+        });
+
+        it("tags projects built with Ivy, file anywhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/ivy.xml", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["ivy"]);
+        });
+    });
+
+    describe("Ant", () => {
+        it("tags project built with Ant", async () => {
+            const p = InMemoryProject.of({path: "build.xml", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["ant"]);
+        });
+
+        it("tags project built with Ant, file anywhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/build.xml", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["ant"]);
+        });
+    });
+
+    describe("SBT", () => {
+        it("tags SBT projects", async () => {
+            const p = InMemoryProject.of({path: "build.sbt", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["sbt"]);
+        });
+
+        it("tags SBT projects, file anywhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/build.sbt", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["sbt"]);
+        });
+    });
+
+    describe("NPM", () => {
+        it("tags NPM projects", async () => {
+            const p = InMemoryProject.of({path: "package.json", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["npm"]);
+        });
+    });
+
+    describe("Grunt", () => {
+        it("tags Grunt projects", async () => {
+            const p = InMemoryProject.of({path: "Gruntfile", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["grunt"]);
+        });
+
+        it("tags Grunt projects, file somewhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/Gruntfile", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["grunt"]);
+        });
+    });
+
+    describe("NAnt", () => {
+        it("tags NAnt projects", async () => {
+            const p = InMemoryProject.of({path: "NAnt.build", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["nant"]);
+        });
+
+        it("tags NAnt projects, file anywhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/NAnt.build", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["nant"]);
+        });
+    });
+
+    describe("Cake", () => {
+        it("tags Cake projects", async () => {
+            const p = InMemoryProject.of({path: "build.cake", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["cake"]);
+        });
+
+        it("tags Cake projects, file somewhere in the project", async () => {
+            const p = InMemoryProject.of({path: "some/path/build.cake", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["cake"]);
         });
     });
 
