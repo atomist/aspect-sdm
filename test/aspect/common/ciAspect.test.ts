@@ -29,12 +29,16 @@ import { CiAspect } from "../../../lib/aspect/common/ciAspect";
 
 describe("ciAspect", () => {
 
-    describe("gitlab action tests", () => {
+    describe("CiAspect", () => {
 
-        it("doesn't find in empty project", async () => {
+        async function doExtract(p: Project): Promise<FP<ClassificationData>> {
+            return CiAspect.extract(p, undefined) as any;
+        }
+
+        it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await CiAspect.extract(p, undefined) as FP<ClassificationData>;
-            return assert.strictEqual(fp, undefined);
+            const fp = await doExtract(p);
+            assert(fp === undefined);
         });
 
         it("finds an action workflow", async () => {
@@ -42,13 +46,28 @@ describe("ciAspect", () => {
                 path: ".github/workflows/mine.yml", content: "something",
             });
             const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+            assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+        });
+
+        it("finds an action workflow", async () => {
+            const p = InMemoryProject.of({
+                path: ".github/workflows/yours.yaml", content: "something",
+            });
+            const fp = await doExtract(p);
+            assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+        });
+
+        it("finds multiple CI", async () => {
+            const p = InMemoryProject.of(
+                { path: ".travis.yml", content: "something" },
+                { path: "Jenkinsfile", content: "something" },
+            );
+            const fp = await doExtract(p);
+            assert(fp.data.tags.length === 2);
+            assert(fp.data.tags.includes("travis"));
+            assert(fp.data.tags.includes("jenkins"));
         });
 
     });
 
 });
-
-async function doExtract(p: Project): Promise<FP<ClassificationData>> {
-    return CiAspect.extract(p, undefined) as any;
-}
