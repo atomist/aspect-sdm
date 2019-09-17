@@ -15,7 +15,7 @@
  */
 
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
-import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { Aspect, FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
 
 export const FrameworkName = "framework";
 
@@ -25,7 +25,6 @@ export const FrameworkName = "framework";
  */
 export const FrameworkAspect: Aspect = projectClassificationAspect(
     {
-        alwaysFingerprint: true,
         name: FrameworkName,
         // Deliberately don't display
         displayName: undefined,
@@ -47,4 +46,13 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
             return (await pom.getContent()).includes("org.springframework.boot");
         },
     },
+    {
+        tags: "react",
+        reason: "package.json references react",
+        testFingerprints: async fps => hasNpmDep(fps, "react"),
+    },
 );
+
+function hasNpmDep(fps: FP[], dep: string): boolean {
+    return fps.some(fp => fp.type === NpmDeps.name && fp.name === dep);
+}

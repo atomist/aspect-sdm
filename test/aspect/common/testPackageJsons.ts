@@ -1,0 +1,41 @@
+
+export const pokedexPackageJson = `{
+  "name": "pokedex",
+  "version": "3.0.0",
+  "private": true,
+  "author": "Ali Gasymov <alik0211alik@gmail.com> (https://alik0211.com/)",
+  "homepage": "https://alik0211.github.io/pokedex/",
+  "dependencies": {
+    "hardtack": "4.1.0",
+    "react": "16.7.0",
+    "react-dom": "16.7.0",
+    "react-redux": "6.0.0",
+    "redux": "4.0.1",
+    "redux-api-middleware": "3.0.1",
+    "redux-thunk": "2.3.0"
+  },
+  "devDependencies": {
+    "husky": "1.3.1",
+    "lint-staged": "8.1.5",
+    "prettier": "1.15.3",
+    "react-scripts": "2.1.8",
+    "redux-logger": "3.0.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}`;

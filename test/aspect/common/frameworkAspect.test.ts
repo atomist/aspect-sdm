@@ -19,10 +19,12 @@ import {
     Project,
 } from "@atomist/automation-client";
 import { ClassificationData } from "@atomist/sdm-pack-aspect";
-import { FP } from "@atomist/sdm-pack-fingerprint";
+import { FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
 import { NonSpringPom, springBootPom } from "./testPoms";
+import { pokedexPackageJson } from "./testPackageJsons";
+import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 
 describe("frameworkAspect", () => {
 
@@ -66,6 +68,37 @@ describe("frameworkAspect", () => {
             });
             const fp = await doExtract(p);
             return assert.deepStrictEqual(fp.data.tags, ["spring-boot"]);
+        });
+
+        it("should find spring boot from Gradle");
+
+    });
+
+    describe("react", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no react in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: "i am package json",
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+        it("finds react in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: pokedexPackageJson,
+            });
+            const fps = await NpmDeps.extract(p, undefined);
+            const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
+            assert.strictEqual(result.length, 1);
+            const fp = result[0];
+            return assert.deepStrictEqual(fp.data.tags, ["react"]);
         });
 
     });
