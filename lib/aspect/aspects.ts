@@ -27,6 +27,7 @@ import { CiAspect } from "./common/ciAspect";
 import {
     FrameworkAspect,
 } from "./common/frameworkAspect";
+import { InfrastructureAspect } from "./common/infrastructureAspect";
 import { LanguageAspect } from "./common/languageAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
@@ -38,7 +39,6 @@ import { TypeScriptVersion } from "./node/TypeScriptVersion";
 import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
 import { TravisScriptsAspect } from "./travis/travisAspect";
-import { InfrastructureAspect } from "./common/infrastructureAspect";
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
