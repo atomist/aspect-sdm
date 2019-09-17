@@ -167,6 +167,44 @@ describe("frameworkAspect", () => {
 
     });
 
+    describe("Django", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no Django in gemfile", async () => {
+            const p = InMemoryProject.of({
+                path: "Gemfile", content: gemnasiumGemfile,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds no Django in non Django-ey requirements.txt", async () => {
+            const p = InMemoryProject.of({
+                path: "requirements.txt",
+                content: `notDjango==2.2.1
+docutils==0.14`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, []);
+        });
+
+        it("finds Django in Django-ey requirements.txt", async () => {
+            const p = InMemoryProject.of({
+                path: "requirements.txt",
+                content: `Django==2.2.1
+docutils==0.14`,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["django"]);
+        });
+
+    });
+
 });
 
 async function doExtract(p: Project): Promise<FP<ClassificationData>> {

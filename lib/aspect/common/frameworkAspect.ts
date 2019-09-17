@@ -70,6 +70,19 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
             return gemMatch.test(content);
         },
     },
+    {
+        tags: "django",
+        reason: "requirements.txt references Django",
+        test: async p => {
+            const reqText = await p.getFile("requirements.txt");
+            if (!reqText) {
+                return false;
+            }
+            const djangoMatch = /^Django==/;
+            const content = await reqText.getContent();
+            return djangoMatch.test(content);
+        },
+    },
 );
 
 function hasNpmDep(fps: FP[], test: (fp: FP<NpmDepData>) => boolean): boolean {
