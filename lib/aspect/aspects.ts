@@ -38,6 +38,7 @@ import { TypeScriptVersion } from "./node/TypeScriptVersion";
 import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { InfrastructureAspect } from "./common/infrastructureAspect";
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
@@ -119,6 +120,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         CiAspect,
         BuildToolAspect,
         LanguageAspect,
+        InfrastructureAspect,
         ...optionalAspects,
     ];
 

@@ -30,36 +30,36 @@ export const CiAspect: ClassificationAspect = projectClassificationAspect(
     {
         tags: "travis",
         reason: "has .travis.yml",
-        test: async p => p.hasFile(".travis.yml"),
+        test: async p => await p.hasFile(".travis.yml"),
     },
     {
         tags: "jenkins",
         reason: "has JenkinsFile",
-        test: async p => p.hasFile("Jenkinsfile"),
+        test: async p => await p.hasFile("Jenkinsfile"),
     },
     {
         tags: "circle",
         reason: "has .circleci/config.yml",
-        test: async p => p.hasFile(".circleci/config.yml"),
+        test: async p => await p.hasFile(".circleci/config.yml"),
     },
     {
         tags: "concourse",
         reason: "has pipeline.yml",
-        test: async p => p.hasFile("pipeline.yml"),
+        test: async p => await p.hasFile("pipeline.yml"),
     },
     {
         tags: "github-actions",
         reason: "has .github/workflows YAML",
-        test: async p => projectUtils.fileExists(p, [".github/workflows/*.y{,a}ml"]),
+        test: async p => await projectUtils.fileExists(p, [".github/workflows/*.y{,a}ml"]),
     },
     {
         tags: "gitlab-ci",
         reason: "has .gitlab-ci.yml",
-        test: async p => p.hasFile(".gitlab-ci.yml"),
+        test: async p => await p.hasFile(".gitlab-ci.yml"),
     },
     {
         tags: "azure-devops-pipeline",
         reason: "has azure-pipelines.yml",
-        test: async p => p.hasFile("azure-pipelines.yml"),
+        test: async p => await p.hasFile("azure-pipelines.yml"),
     },
 );
