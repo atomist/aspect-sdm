@@ -23,7 +23,7 @@ import { FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { FrameworkAspect } from "../../../lib/aspect/common/frameworkAspect";
 import { NonSpringPom, springBootPom } from "./testPoms";
-import { pokedexPackageJson } from "./testPackageJsons";
+import { angularPackageJson, pokedexPackageJson } from "./testPackageJsons";
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 
 describe("frameworkAspect", () => {
@@ -99,6 +99,35 @@ describe("frameworkAspect", () => {
             assert.strictEqual(result.length, 1);
             const fp = result[0];
             return assert.deepStrictEqual(fp.data.tags, ["react"]);
+        });
+
+    });
+
+    describe("angular", () => {
+
+        it("doesn't find in empty project", async () => {
+            const p = InMemoryProject.of();
+            const fp = await doExtract(p);
+            return assert.strictEqual(fp.data.tags.length, 0);
+        });
+
+        it("finds no angular in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: pokedexPackageJson,
+            });
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+        });
+
+        it("finds angular in package.json", async () => {
+            const p = InMemoryProject.of({
+                path: "package.json", content: angularPackageJson,
+            });
+            const fps = await NpmDeps.extract(p, undefined);
+            const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
+            assert.strictEqual(result.length, 1);
+            const fp = result[0];
+            return assert.deepStrictEqual(fp.data.tags, ["angular"]);
         });
 
     });

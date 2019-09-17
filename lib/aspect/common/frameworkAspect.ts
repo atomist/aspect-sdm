@@ -16,6 +16,7 @@
 
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect, FP, NpmDeps } from "@atomist/sdm-pack-fingerprint";
+import { NpmDepData } from "@atomist/sdm-pack-fingerprint/lib/fingerprints/npmDeps";
 
 export const FrameworkName = "framework";
 
@@ -49,10 +50,15 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
     {
         tags: "react",
         reason: "package.json references react",
-        testFingerprints: async fps => hasNpmDep(fps, "react"),
+        testFingerprints: async fps => hasNpmDep(fps, fp => fp.name === "react"),
+    },
+    {
+        tags: "angular",
+        reason: "package.json references angular",
+        testFingerprints: async fps => hasNpmDep(fps, fp => fp.data[0].startsWith("@angular/")),
     },
 );
 
-function hasNpmDep(fps: FP[], dep: string): boolean {
-    return fps.some(fp => fp.type === NpmDeps.name && fp.name === dep);
+function hasNpmDep(fps: FP[], test: (fp: FP<NpmDepData>) => boolean): boolean {
+    return fps.some(fp => fp.type === NpmDeps.name && test(fp));
 }
