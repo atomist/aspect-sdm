@@ -126,7 +126,60 @@ describe("buildToolAspect", () => {
             return assert.deepStrictEqual(fp.data.tags, ["cake"]);
         });
     });
-
+    describe("make", () => {
+        it("tags make", async () => {
+            const p = InMemoryProject.of({path: "Makefile", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["make"]);
+        });
+    });
+    describe("leiningen", () => {
+        it("tags leiningen", async () => {
+            const p = InMemoryProject.of({path: "project.clj", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["leiningen"]);
+        });
+    });
+    describe("rake", () => {
+        it("tags rake", async () => {
+            const p = InMemoryProject.of({path: "Rakefile", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["rake"]);
+        });
+    });
+    describe("buck", () => {
+        it("tags buck", async () => {
+            const p = InMemoryProject.of({path: "test/.buckconfig", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["buck"]);
+        });
+    });
+    describe("gulp", () => {
+        it("tags gulp", async () => {
+            const p = InMemoryProject.of({path: "gulpfile.js", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["gulp"]);
+        });
+    });
+    describe("flutter", () => {
+        it("tags flutter yaml", async () => {
+            const p = InMemoryProject.of({path: "pubspec.yaml", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["flutter"]);
+        });
+        it("tags flutter yml", async () => {
+            const p = InMemoryProject.of({path: "pubspec.yml", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["flutter"]);
+        });
+    });
+    describe("cocoapods", () => {
+        it("tags cocoapods", async () => {
+            const p = InMemoryProject.of({path: "test.podspec", content: ""});
+            const fp = await doExtract(p);
+            return assert.deepStrictEqual(fp.data.tags, ["cocoapods"]);
+        });
+    });
 });
 
 async function doExtract(p: Project): Promise<FP<ClassificationData>> {
