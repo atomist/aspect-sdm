@@ -18,20 +18,33 @@ import {
     InMemoryProject,
     Project,
 } from "@atomist/automation-client";
-import { ClassificationData, ClassificationAspect } from "@atomist/sdm-pack-aspect";
+import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
+import { ClassificationAspect, ClassificationData } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { CiAspect } from "../../../lib/aspect/common/ciAspect";
-import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 
 describe("ciAspect", () => {
+
+    describe("multiple CI files", () => {
+        it("blows show two tags when there are two CI files", async () => {
+            const p = InMemoryProject.of({
+                path: ".travis.yml", content: "",
+            },
+            {
+                path: "Jenkinsfile", content: "",
+            });
+            const fp = await CiAspect.extract(p, undefined) as FP<ClassificationData>;
+            return assert.notStrictEqual(fp.data.tags, ["jenkins", "travis"]);
+        });
+    });
 
     describe("gitlab action tests", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await CiAspect.extract(p, undefined) as FP<ClassificationData>;
-            return assert.strictEqual(fp, undefined);
+            return assert.strictEqual(fp.data.tags, []);
         });
 
         it("finds an action workflow", async () => {

@@ -50,8 +50,13 @@ export const CiAspect: ClassificationAspect = projectClassificationAspect(
         test: async p => projectUtils.fileExists(p, [".github/workflows/*.y{,a}ml"]),
     },
     {
+        tags: "gitlab-ci",
+        reason: "has a .gitlab-ci.yml file in the root of the repository",
+        test: async p => p.hasFile(".gitlab-ci.yml"),
+    },
+    {
         tags: "azure-devops",
-        reason: "",
-        test: async p => projectUtils.fileExists(p, ""),
+        reason: "has an azure-pipelines.yml file in the root of the repository",
+        test: async p => p.hasFile("azure-pipelines.yml"),
     },
 );
