@@ -38,7 +38,8 @@ describe("ciAspect", () => {
         it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await doExtract(p);
-            assert(fp === undefined);
+            console.log(JSON.stringify(fp));
+            assert.deepStrictEqual(fp.data.tags, []);
         });
 
         it("finds an action workflow", async () => {
