@@ -21,7 +21,7 @@ import {
     ImportDotStarReviewer,
     ImportIoFile,
     ImportIoFileReviewer,
-    MutableInjectionsReviewer, NonSpecificMvcAnnotationsReviewer
+    MutableInjectionsReviewer, NonSpecificMvcAnnotationsReviewer,
 } from "@atomist/sdm-pack-spring";
 
 export const FileIoUsage = reviewerAspect({
