@@ -40,20 +40,20 @@ describe("ciAspect", () => {
             assert.deepStrictEqual(fp.data.tags, []);
         });
 
-        it("finds an action workflow", async () => {
-            const p = InMemoryProject.of({
-                path: ".github/workflows/mine.yml", content: "something",
-            });
-            const fp = await doExtract(p);
-            assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+        it("finds a Concourse pipeline", async () => {
+            for (const f of ["pipeline.yml", "ci/pipeline.yml"]) {
+                const p = InMemoryProject.of({ path: f, content: "something" });
+                const fp = await doExtract(p);
+                assert.deepStrictEqual(fp.data.tags, ["concourse"]);
+            }
         });
 
-        it("finds an action workflow", async () => {
-            const p = InMemoryProject.of({
-                path: ".github/workflows/yours.yaml", content: "something",
-            });
-            const fp = await doExtract(p);
-            assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+        it("finds a GitHub action workflow", async () => {
+            for (const f of [".github/workflows/mine.yml", ".github/workflows/yours.yaml"]) {
+                const p = InMemoryProject.of({ path: f, content: "something" });
+                const fp = await doExtract(p);
+                assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+            }
         });
 
         it("finds multiple CI", async () => {
