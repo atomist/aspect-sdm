@@ -16,8 +16,14 @@
 
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import {
+    Aspect,
+    fingerprintOf,
+    FP,
+} from "@atomist/sdm-pack-fingerprint";
+import {
     isLogbackFingerprint,
     LogbackConfigFile,
+    LogbackData,
 } from "./logbackAspect";
 import { SpringBootVersion } from "./springBootVersion";
 
@@ -27,7 +33,28 @@ export const ConsoleLoggingType = "console-logging";
  * Determine console logging status for Spring Boot applications.
  * Depends on SpringBootVersion and Logback aspects
  */
-export const ConsoleLogging = projectClassificationAspect({
+export const ConsoleLogging: Aspect<{ present: boolean }> = {
+        name: ConsoleLoggingType,
+        displayName: "Console logging status",
+        extract: async () => [],
+        consolidate: async fps => {
+            const logbackFingerprint = fps.find(isLogbackFingerprint);
+            const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.configFiles.some(logsToConsole);
+            const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
+            const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.configFiles.length === 0));
+            return fingerprintOf({
+                type: ConsoleLoggingType,
+                data: {
+                    present,
+                },
+            });
+        },
+    };
+/**
+ * Determine console logging status for Spring Boot applications.
+ * Depends on SpringBootVersion and Logback aspects
+ */
+export const ConsoleLoggingClassification = projectClassificationAspect({
         name: ConsoleLoggingType,
         displayName: "Console logging status",
     },
@@ -35,12 +62,13 @@ export const ConsoleLogging = projectClassificationAspect({
         tags: "console-logging",
         reason: "Spring Boot with no logging config or console config",
         testFingerprints: async fps => {
-            const logbackFingerprint = fps.find(isLogbackFingerprint);
-            const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.configFiles.some(logsToConsole);
-            const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
-            return hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.configFiles.length === 0));
+            return !!fps.find(fp => isConsoleLoggingFingerprint(fp) && fp.data.present);
         },
     });
+
+export function isConsoleLoggingFingerprint(fp: FP): fp is FP<{present: boolean}> {
+    return fp.type === "console-logging";
+}
 
 function logsToConsole(lbcf: LogbackConfigFile): boolean {
     const consoleAppender = lbcf.appenders.find(app => app.appenderClass === "ch.qos.logback.core.ConsoleAppender");
