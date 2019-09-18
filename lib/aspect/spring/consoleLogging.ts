@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-import { Aspect, fingerprintOf } from "@atomist/sdm-pack-fingerprint";
-import { isLogbackFingerprint, LogbackConfigFile } from "./logbackAspect";
+import {
+    Aspect,
+    fingerprintOf,
+} from "@atomist/sdm-pack-fingerprint";
+import {
+    isLogbackFingerprint,
+    LogbackConfigFile,
+} from "./logbackAspect";
 import { SpringBootVersion } from "./springBootVersion";
 
 export interface ConsoleLoggingData {
