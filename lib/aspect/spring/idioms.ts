@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { reviewerAspect } from "@atomist/sdm-pack-aspect/lib/aspect/common/reviewerAspect";
+import { reviewerAspects } from "@atomist/sdm-pack-aspect/lib/aspect/common/reviewerAspect";
 import {
     HardcodedPropertyReviewer,
     ImportDotStar,
@@ -25,31 +25,31 @@ import {
     NonSpecificMvcAnnotationsReviewer,
 } from "@atomist/sdm-pack-spring";
 
-export const FileIoUsage = reviewerAspect({
+export const FileIoUsage = reviewerAspects({
     name: "file-io",
     displayName: ImportIoFile,
     reviewer: ImportIoFileReviewer,
 });
 
-export const DotStarUsage = reviewerAspect({
+export const DotStarUsage = reviewerAspects({
     name: "import-dot-star",
     displayName: ImportDotStar,
     reviewer: ImportDotStarReviewer,
 });
 
-export const MutableInjections = reviewerAspect({
+export const MutableInjections = reviewerAspects({
     name: "mutable-injection",
     displayName: "mutable injection",
     reviewer: MutableInjectionsReviewer,
 });
 
-export const HardCodedProperty = reviewerAspect({
+export const HardCodedProperty = reviewerAspects({
     name: "hard-coded-property",
     displayName: "hard code property",
     reviewer: HardcodedPropertyReviewer,
 });
 
-export const NonSpecificMvcAnnotation = reviewerAspect({
+export const NonSpecificMvcAnnotation = reviewerAspects({
     name: "non-specific-mvc",
     displayName: "non specific MVC annotations",
     reviewer: NonSpecificMvcAnnotationsReviewer,
