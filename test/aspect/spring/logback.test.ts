@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { InMemoryProject, Project, } from "@atomist/automation-client";
+import { InMemoryProject, Project } from "@atomist/automation-client";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
 import * as assert from "assert";
@@ -22,9 +22,9 @@ import { LogbackAspect, LogbackData } from "../../../lib/aspect/spring/logbackAs
 
 export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
- 
+
     <property name="LOGS" value="./logs" />
- 
+
     <appender name="Console"
         class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
@@ -33,25 +33,25 @@ export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
             </Pattern>
         </layout>
     </appender>
-     
+
     <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="Console" />
     </root>
- 
+
     <!-- LOG "com.baeldung*" at TRACE level -->
     <logger name="com.baeldung" level="trace" additivity="false">
         <appender-ref ref="Console" />
     </logger>
- 
+
 </configuration>`;
 
 export const LogbackNoConsole = `
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
- 
+
     <property name="LOGS" value="./logs" />
- 
+
     <appender name="RollingFile"
         class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>spring-boot-logger.log</file>
@@ -59,20 +59,20 @@ export const LogbackNoConsole = `
             class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
         </encoder>
- 
-       
+
+
     </appender>
-     
+
     <!-- LOG everything at INFO level -->
     <root level="info">
         <appender-ref ref="RollingFile" />
     </root>
- 
+
     <!-- LOG "com.baeldung*" at TRACE level -->
     <logger name="com.baeldung" level="trace" additivity="false">
         <appender-ref ref="RollingFile" />
     </logger>
- 
+
 </configuration>
 `;
 
