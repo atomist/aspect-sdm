@@ -34,10 +34,11 @@ import { GishProject } from "./springProjects";
 
 describe("Console logging aspect", () => {
 
-    it("should find console logging in spring-boot without logback", async () => {
+    it("should find console logging in spring-boot without logback, providing fingerprint", async () => {
         const p = GishProject();
-        const fp = await SpringBootVersion.extract(p, undefined) as any as FP;
-        const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
+        const sfp = await SpringBootVersion.extract(p, undefined) as any as FP;
+        const lfp = await doExtractLogback(p);
+        const consolidated = toArray(await ConsoleLogging.consolidate([sfp, lfp], undefined, undefined));
         assert.strictEqual(consolidated.length, 1);
         assert(consolidated[0].data.present);
     });
