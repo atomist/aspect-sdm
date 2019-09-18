@@ -32,9 +32,9 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
     name: SpringBootAppClassAspectName,
     displayName: "Spring Boot application class",
     extract: async p => {
-        try {
-            const structure = await SpringBootProjectStructure.inferFromJavaOrKotlinSource(p);
-            if (structure) {
+        const structures = await SpringBootProjectStructure.inferFromJavaOrKotlin(p);
+        if (structures.length > 0) {
+            return structures.map(structure => {
                 const data = {
                     applicationClassName: structure.applicationClass,
                     applicationClassPackage: structure.applicationPackage,
@@ -49,24 +49,9 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
                     displayName: "Spring Boot application class",
                     sha: sha256(data),
                 };
-            } else {
-                return undefined;
-            }
-        } catch (e) {
-            const data = {
-                applicationClassName: undefined,
-                applicationClassPackage: undefined,
-                multipleDeclarations: true,
-            };
-            return {
-                name: SpringBootAppClassAspectName,
-                version: "1.0.0",
-                type: SpringBootAppClassAspectName,
-                data,
-                displayValue: "Multiple",
-                displayName: "Spring Boot application class",
-                sha: sha256(data),
-            };
+            });
+        } else {
+            return undefined;
         }
     },
 };
