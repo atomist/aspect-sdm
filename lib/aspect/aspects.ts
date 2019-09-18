@@ -43,6 +43,7 @@ import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import * as idioms from "./spring/idioms";
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
@@ -56,7 +57,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "fingerprint/typescript-version/typescript-version?byOrg=true&trim=false",
             description: "TypeScript versions in use across all repositories in your workspace, " +
-                "broken out by version and repositories that use each version.",
+            "broken out by version and repositories that use each version.",
         }),
         enrich(NpmDependencies, {
             shortName: "dependency",
@@ -64,7 +65,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "drift?type=npm-project-deps&band=true&repos=false",
             description: "Node direct dependencies in use across all repositories in your workspace, " +
-                "grouped by Drift Level.",
+            "grouped by Drift Level.",
         }),
         TravisScriptsAspect,
         SpringBootVersion,
@@ -74,7 +75,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "drift?type=maven-direct-dep&band=true&repos=false",
             description: "Maven declared dependencies in use across all repositories in your workspace, " +
-                "grouped by Drift Level.",
+            "grouped by Drift Level.",
         }),
         enrich(MavenParentPom, {
             shortName: "parent",
@@ -82,7 +83,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: `drift?type=${MavenParentPom.name}&band=true&repos=false`,
             description: "Maven parent POM in use across all repositories in your workspace, " +
-                "grouped by Drift Level.",
+            "grouped by Drift Level.",
         }),
         enrich(LeinDeps, {
             shortName: "dependency",
@@ -90,7 +91,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "drift?type=clojure-project-deps&band=true&repos=false",
             description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
-                "grouped by Drift Level.",
+            "grouped by Drift Level.",
         }),
         enrich(DockerFrom, {
             shortName: "images",
@@ -98,7 +99,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "tag",
             url: "fingerprint/docker-base-image/*?byOrg=true&trim=false",
             description: "Docker base images in use across all repositories in your workspace, " +
-                "broken out by image label and repositories where used.",
+            "broken out by image label and repositories where used.",
         }),
         DockerfilePath,
         enrich(DockerPorts, {
@@ -107,7 +108,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "port",
             url: "fingerprint/docker-ports/docker-ports?byOrg=true&trim=false",
             description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
-                "broken out by port number and repositories where used.",
+            "broken out by port number and repositories where used.",
             manage: false,
         }),
         K8sSpecs,
@@ -117,7 +118,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "branch",
             url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&trim=false`,
             description: "Number of Git branches across repositories in your workspace, " +
-                "grouped by Drift Level.",
+            "grouped by Drift Level.",
             manage: false,
         }),
         FrameworkAspect,
@@ -129,6 +130,11 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         SpringBootAppClass,
         LogbackAspect,
         ConsoleLogging,
+        idioms.HardCodedProperty,
+        idioms.NonSpecificMvcAnnotation,
+        idioms.DotStarUsage,
+        idioms.FileIoUsage,
+        idioms.MutableInjections,
         ...optionalAspects,
     ];
 
