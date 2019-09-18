@@ -23,10 +23,9 @@ import { SpringBootProjectStructure } from "@atomist/sdm-pack-spring";
 export interface SpringBootAppData {
     applicationClassName: string;
     applicationClassPackage: string;
-    multipleDeclarations: boolean;
 }
 
-const SpringBootAppClassAspectName = "spring-boot-app-class";
+export const SpringBootAppClassAspectName = "spring-boot-app-class";
 
 export const SpringBootAppClass: Aspect<SpringBootAppData> = {
     name: SpringBootAppClassAspectName,
@@ -38,7 +37,6 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
                 const data = {
                     applicationClassName: structure.applicationClass,
                     applicationClassPackage: structure.applicationPackage,
-                    multipleDeclarations: false,
                 };
                 return {
                     name: SpringBootAppClassAspectName,
