@@ -130,11 +130,11 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         SpringBootAppClass,
         LogbackAspect,
         ConsoleLogging,
-        idioms.HardCodedProperty,
-        idioms.NonSpecificMvcAnnotation,
-        idioms.DotStarUsage,
-        idioms.FileIoUsage,
-        idioms.MutableInjections,
+        ...idioms.HardCodedProperty,
+        ...idioms.NonSpecificMvcAnnotation,
+        ...idioms.DotStarUsage,
+        ...idioms.FileIoUsage,
+        ...idioms.MutableInjections,
         ...optionalAspects,
     ];
 
