@@ -45,7 +45,6 @@ describe("Spring boot apps aspect", () => {
         assert.strictEqual(fp.length, 1);
         assert.deepStrictEqual(fp[0].data.applicationClassName, "GishApplication");
         assert.deepStrictEqual(fp[0].data.applicationClassPackage, "com.smashing.pumpkins");
-        assert.deepStrictEqual(fp[0].data.multipleDeclarations, false);
         assert.deepStrictEqual(fp[0].displayValue,  "com.smashing.pumpkins.GishApplication");
     });
 
@@ -56,7 +55,6 @@ describe("Spring boot apps aspect", () => {
         assert(fp.some(sbad => sbad.data.applicationClassPackage === "com.smashing.pumpkins"));
         assert(fp.some(sbad => sbad.data.applicationClassPackage === "red.hot.chillipeppers"));
     });
-
 });
 
 async function doExtract(p: Project): Promise<Array<FP<SpringBootAppData>>> {

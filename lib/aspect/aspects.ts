@@ -42,6 +42,7 @@ import { LogbackAspect } from "./spring/logbackAspect";
 import { SpringBootAppClass } from "./spring/springBootApps";
 import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
+import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
 
@@ -135,6 +136,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...idioms.DotStarUsage,
         ...idioms.FileIoUsage,
         ...idioms.MutableInjections,
+        ...SpringBootTwelveFactors,
         ...optionalAspects,
     ];
 
