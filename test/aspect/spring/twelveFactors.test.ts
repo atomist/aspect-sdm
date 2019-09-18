@@ -17,13 +17,17 @@
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { fingerprintOf } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
+import { ConsoleLoggingType } from "../../../lib/aspect/spring/consoleLogging";
+import { LogbackData } from "../../../lib/aspect/spring/logbackAspect";
 import {
     SpringBootAppClassAspectName,
     SpringBootAppData,
 } from "../../../lib/aspect/spring/springBootApps";
 import {
-    SingleProjectPerRepoAspect,
+    ConsoleLoggingFactor,
+    ConsoleLoggingFactorAspect,
     SingleProjectPerRepoFactor,
+    SingleProjectPerRepoFactorAspect,
     TwelveFactorClassificationAspect,
     TwelveFactorCountAspect,
     TwelveFactorElement,
@@ -48,7 +52,7 @@ describe("twelve factors", () => {
 
     describe("single project per repo", () => {
         it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
-            const consolidation = toArray(await SingleProjectPerRepoAspect.consolidate([], undefined, undefined));
+            const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([], undefined, undefined));
             assert(consolidation.length === 1);
             assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
             assert.strictEqual(consolidation[0].data.fulfilled, false);
@@ -62,7 +66,7 @@ describe("twelve factors", () => {
                     applicationClassName: "bar",
                 },
             });
-            const consolidation = toArray(await SingleProjectPerRepoAspect.consolidate([springAppClassFP], undefined, undefined));
+            const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([springAppClassFP], undefined, undefined));
             assert(consolidation.length === 1);
             assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
             assert.strictEqual(consolidation[0].data.fulfilled, true);
@@ -83,7 +87,7 @@ describe("twelve factors", () => {
                     applicationClassName: "baz",
                 },
             });
-            const consolidation = toArray(await SingleProjectPerRepoAspect.consolidate(
+            const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate(
                 [springAppClassFP, springAppClassFP2], undefined, undefined));
             assert(consolidation.length === 1);
             assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
@@ -100,7 +104,7 @@ describe("twelve factors", () => {
             });
             const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
             assert(consolidation.length === 1);
-            assert.deepStrictEqual(consolidation[0].data.tags, ["single-project-per-repo"]);
+            assert.deepStrictEqual(consolidation[0].data.tags, ["twelve-factor:single-project-per-repo"]);
         });
 
         it("should not tag when there is an unfulfilled 12 factor element", async () => {
@@ -114,6 +118,64 @@ describe("twelve factors", () => {
             const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
             assert(consolidation.length === 1);
             assert.deepStrictEqual(consolidation[0].data.tags, []);
+        });
+
+        describe("single project per repo", () => {
+            it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
+                const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([], undefined, undefined));
+                assert(consolidation.length === 1);
+                assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
+                assert.strictEqual(consolidation[0].data.fulfilled, false);
+            });
+
+            it("should have fulfilled 12 factor element when there is a single spring boot app fingerprint", async () => {
+                const springAppClassFP = fingerprintOf<SpringBootAppData>({
+                    type: SpringBootAppClassAspectName,
+                    data: {
+                        applicationClassPackage: "foo",
+                        applicationClassName: "bar",
+                    },
+                });
+                const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([springAppClassFP], undefined, undefined));
+                assert(consolidation.length === 1);
+                assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
+                assert.strictEqual(consolidation[0].data.fulfilled, true);
+            });
+        });
+
+        describe("console logging", () => {
+            it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
+                const consolidation = toArray(await ConsoleLoggingFactorAspect.consolidate([], undefined, undefined));
+                assert(consolidation.length === 1);
+                assert.strictEqual(consolidation[0].data.factor, ConsoleLoggingFactor);
+                assert.strictEqual(consolidation[0].data.fulfilled, false);
+            });
+
+            it("should have fulfilled 12 factor element when there is a single spring boot app fingerprint", async () => {
+                const fp = fingerprintOf<{present: boolean}>({
+                    type: ConsoleLoggingType,
+                    data: {
+                        present: true,
+                    },
+                });
+                const consolidation = toArray(await ConsoleLoggingFactorAspect.consolidate([fp], undefined, undefined));
+                assert(consolidation.length === 1);
+                assert.strictEqual(consolidation[0].data.factor, ConsoleLoggingFactor);
+                assert.strictEqual(consolidation[0].data.fulfilled, true);
+            });
+
+            it("should tag when there is a fulfilled 12 factor element", async () => {
+                const twelveFactorFP = fingerprintOf<TwelveFactorElement>({
+                    type: TwelveFactorSpringBootFingerprintName,
+                    data: {
+                        factor: ConsoleLoggingFactor,
+                        fulfilled: true,
+                    },
+                });
+                const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
+                assert(consolidation.length === 1);
+                assert.deepStrictEqual(consolidation[0].data.tags, ["twelve-factor:console-logging"]);
+            });
         });
     });
 });

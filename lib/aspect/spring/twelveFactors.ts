@@ -21,6 +21,7 @@ import {
     fingerprintOf,
     FP,
 } from "@atomist/sdm-pack-fingerprint";
+import { ConsoleLoggingType } from "./consoleLogging";
 import {
     SpringBootAppClassAspectName,
     SpringBootAppData,
@@ -49,25 +50,6 @@ export interface TwelveFactorElement {
     fulfilled: boolean;
 }
 
-export const TwelveFactorSpringBootFingerprintName = "twelve-factor-spring-boot";
-export const SingleProjectPerRepoFactor = "twelve-factor-spring-boot";
-
-export const SingleProjectPerRepoAspect: Aspect<TwelveFactorElement> = {
-    name: "twelve-factor-single-project-per-repo",
-    displayName: "12-Factor: Single project per repo",
-    extract: async () => [],
-    consolidate: async fps => {
-        const springBootAppClassFP = fps.filter(isSpringBootAppClassFingerprint);
-        return fingerprintOf<TwelveFactorElement>({
-            type: TwelveFactorSpringBootFingerprintName,
-            data: {
-                factor: SingleProjectPerRepoFactor,
-                fulfilled: springBootAppClassFP.length === 1,
-            },
-        });
-    },
-};
-
 export const TwelveFactorCountAspect: CountAspect = {
     name: "twelve-factor-count",
     displayName: "12 factor count",
@@ -83,24 +65,71 @@ export const TwelveFactorClassificationAspect = projectClassificationAspect({
     displayName: "12 factor classification",
     toDisplayableFingerprintName: () => "12 Factor",
 }, {
-    tags: "single-project-per-repo",
+    tags: "twelve-factor:single-project-per-repo",
     reason: "Single project found in repository",
     testFingerprints: async fps => {
-        const singleProjectPerRepoFPs = fps.filter(fp => isTwelveFactorFingerprint(fp) && fp.data.factor === SingleProjectPerRepoFactor);
-        return singleProjectPerRepoFPs.length === 1 && singleProjectPerRepoFPs[0].data.fulfilled;
+        const tffps = fps.filter(fp => isTwelveFactorFingerprint(fp) && fp.data.factor === SingleProjectPerRepoFactor);
+        return tffps.length === 1 && tffps[0].data.fulfilled;
+    },
+}, {
+    tags: "twelve-factor:console-logging",
+    reason: "Uses console logging",
+    testFingerprints: async fps => {
+        const tffps = fps.filter(fp => isTwelveFactorFingerprint(fp) && fp.data.factor === ConsoleLoggingFactor);
+        return tffps.length === 1 && tffps[0].data.fulfilled;
     },
 });
+
+export const TwelveFactorSpringBootFingerprintName = "twelve-factor-spring-boot";
+export const SingleProjectPerRepoFactor = "single-project-per-repo";
+export const SingleProjectPerRepoFactorAspect: Aspect<TwelveFactorElement> = {
+    name: "twelve-factor-single-project-per-repo",
+    displayName: "12-Factor: Single project per repo",
+    extract: async () => [],
+    consolidate: async fps => {
+        const springBootAppClassFP = fps.filter(isSpringBootAppClassFingerprint);
+        return fingerprintOf<TwelveFactorElement>({
+            type: TwelveFactorSpringBootFingerprintName,
+            data: {
+                factor: SingleProjectPerRepoFactor,
+                fulfilled: springBootAppClassFP.length === 1,
+            },
+        });
+    },
+};
 
 export function isSpringBootAppClassFingerprint(o: any): o is FP<SpringBootAppData> {
     return (!!o.type && o.type === SpringBootAppClassAspectName);
 }
 
-export function isTwelveFactorFingerprint(o: any): o is FP<TwelveFactorElement> {
+export const TwelveFactorConsoleLoggingFingerprintName = "twelve-factor-spring-boot";
+export const ConsoleLoggingFactor = "logging-to-console";
+export const ConsoleLoggingFactorAspect: Aspect<TwelveFactorElement> = {
+    name: "twelve-factor-logging-to-console",
+    displayName: "12-Factor: Logging to console",
+    extract: async () => [],
+    consolidate: async fps => {
+        const clfp = fps.filter(isConsoleLoggingFingerprint);
+        return fingerprintOf<TwelveFactorElement>({
+            type: TwelveFactorSpringBootFingerprintName,
+            data: {
+                factor: ConsoleLoggingFactor,
+                fulfilled: clfp.length === 1 && clfp[0].data.present,
+            },
+        });
+    },
+};
+
+export function isConsoleLoggingFingerprint(o: FP): o is FP<{present: boolean}> {
+    return (!!o.type && o.type === ConsoleLoggingType);
+}
+
+export function isTwelveFactorFingerprint(o: FP): o is FP<TwelveFactorElement> {
     return (!!o.type && o.type === TwelveFactorSpringBootFingerprintName);
 }
 
 export const SpringBootTwelveFactors = [
-    SingleProjectPerRepoAspect,
+    SingleProjectPerRepoFactorAspect,
     TwelveFactorCountAspect,
     TwelveFactorClassificationAspect,
     ];
