@@ -18,6 +18,7 @@ import {
     InMemoryProject,
     Project,
 } from "@atomist/automation-client";
+import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import {
     SpringBootAppClass,
@@ -25,9 +26,12 @@ import {
 } from "../../../lib/aspect/spring/springBootApps";
 
 import * as assert from "assert";
-import { GishProject } from "./springProjects";
+import {
+    GishProject,
+    MultipleGishProject,
+} from "./springProjects";
 
-describe("XML bean definitions", () => {
+describe("Spring boot apps aspect", () => {
 
     it("should not find in empty project", async () => {
         const p = InMemoryProject.of();
@@ -38,14 +42,23 @@ describe("XML bean definitions", () => {
     it("should find with single application Java class", async () => {
         const p = GishProject();
         const fp = await doExtract(p);
-        assert.deepStrictEqual(fp.data.applicationClassName, "GishApplication");
-        assert.deepStrictEqual(fp.data.applicationClassPackage, "com.smashing.pumpkins");
-        assert.deepStrictEqual(fp.data.multipleDeclarations, false);
-        assert.deepStrictEqual(fp.displayValue,  "com.smashing.pumpkins.GishApplication");
+        assert.strictEqual(fp.length, 1);
+        assert.deepStrictEqual(fp[0].data.applicationClassName, "GishApplication");
+        assert.deepStrictEqual(fp[0].data.applicationClassPackage, "com.smashing.pumpkins");
+        assert.deepStrictEqual(fp[0].data.multipleDeclarations, false);
+        assert.deepStrictEqual(fp[0].displayValue,  "com.smashing.pumpkins.GishApplication");
+    });
+
+    it("should create multiple fingerprints when multiple applications are found", async () => {
+        const p = MultipleGishProject();
+        const fp = await doExtract(p);
+        assert.strictEqual(fp.length, 2);
+        assert(fp.some(sbad => sbad.data.applicationClassPackage === "com.smashing.pumpkins"));
+        assert(fp.some(sbad => sbad.data.applicationClassPackage === "red.hot.chillipeppers"));
     });
 
 });
 
-async function doExtract(p: Project): Promise<FP<SpringBootAppData>> {
-    return SpringBootAppClass.extract(p, undefined) as any;
+async function doExtract(p: Project): Promise<Array<FP<SpringBootAppData>>> {
+    return toArray(await SpringBootAppClass.extract(p, undefined));
 }

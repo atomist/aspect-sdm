@@ -19,15 +19,18 @@ import {
     Project,
 } from "@atomist/automation-client";
 
-export const javaSource =
-    `package com.smashing.pumpkins;
+export const javaSource = generateJavaSpringBootAppSource("com.smashing.pumpkins", "GishApplication");
+
+function generateJavaSpringBootAppSource(packageName: string, classname: string): string {
+    return `package ${packageName};
 
 @SpringBootApplication
-class GishApplication {
+class ${classname} {
     //1
 }
 
 `;
+}
 
 export const kotlinSource =
     `package com.smashing.pumpkins
@@ -61,12 +64,28 @@ const SimplePom = `<?xml version="1.0" encoding="UTF-8"?>
 `;
 
 export const GishJavaPath = "src/main/java/com/smashing/pumpkins/Gish.java";
+export const Gish2JavaPath = "src/main/java/com/smashing/pumpkins/Gish2.java";
 
 export const GishProject: () => Project = () => InMemoryProject.from(
     { owner: "smashing-pumpkins", repo: "gish", url: "" },
     {
         path: GishJavaPath,
         content: javaSource,
+    }, {
+        path: "pom.xml",
+        content: SimplePom,
+    },
+);
+
+export const MultipleGishProject: () => Project = () => InMemoryProject.from(
+    { owner: "smashing-pumpkins", repo: "gish", url: "" },
+    {
+        path: GishJavaPath,
+        content: javaSource,
+    },
+    {
+        path: Gish2JavaPath,
+        content: generateJavaSpringBootAppSource("red.hot.chillipeppers", "GishApplication2"),
     }, {
         path: "pom.xml",
         content: SimplePom,
