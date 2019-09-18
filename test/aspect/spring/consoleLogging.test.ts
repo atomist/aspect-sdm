@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { GitProject, InMemoryProject } from "@atomist/automation-client";
+import {
+    GitProject,
+    InMemoryProject,
+} from "@atomist/automation-client";
 
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { FP } from "@atomist/sdm-pack-fingerprint";
@@ -22,7 +25,11 @@ import { HasSpringBootPom } from "@atomist/sdm-pack-spring";
 import * as assert from "assert";
 import { ConsoleLogging } from "../../../lib/aspect/spring/consoleLogging";
 import { SpringBootVersion } from "../../../lib/aspect/spring/springBootVersion";
-import { doExtractLogback, LogbackNoConsole, LogbackWithConsole } from "./logback.test";
+import {
+    doExtractLogback,
+    LogbackNoConsole,
+    LogbackWithConsole,
+} from "./logback.test";
 import { GishProject } from "./springProjects";
 
 describe("Console logging aspect", () => {
