@@ -29,6 +29,7 @@ import {
 export interface TwelveFactorsOptions {
     name: string;
 }
+
 export function twelveFactorsCountAspect(opts: TwelveFactorsOptions): CountAspect {
     const type = `count_${opts.name}`;
     return {
@@ -97,3 +98,9 @@ export function isSpringBootAppClassFingerprint(o: any): o is FP<SpringBootAppDa
 export function isTwelveFactorFingerprint(o: any): o is FP<TwelveFactorElement> {
     return (!!o.type && o.type === TwelveFactorSpringBootFingerprintName);
 }
+
+export const SpringBootTwelveFactors = [
+    SingleProjectPerRepoAspect,
+    TwelveFactorCountAspect,
+    TwelveFactorClassificationAspect,
+    ];
