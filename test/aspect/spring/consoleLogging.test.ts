@@ -40,7 +40,7 @@ describe("Console logging aspect", () => {
         const lfp = await doExtractLogback(p);
         const consolidated = toArray(await ConsoleLogging.consolidate([sfp, lfp], undefined, undefined));
         assert.strictEqual(consolidated.length, 1);
-        assert(consolidated[0].data.present);
+        assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
     });
 
     it("should find console in logback-spring", async () => {
@@ -51,7 +51,7 @@ describe("Console logging aspect", () => {
         const fp = await doExtractLogback(p);
         const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
         assert.strictEqual(consolidated.length, 1);
-        assert(consolidated[0].data.present);
+        assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
     });
 
     it("should find no console in logback-spring", async () => {
@@ -62,7 +62,7 @@ describe("Console logging aspect", () => {
         const fp = await doExtractLogback(p);
         const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
         assert.strictEqual(consolidated.length, 1);
-        assert.strictEqual(consolidated[0].data.present, false);
+        assert.deepStrictEqual(consolidated[0].data.tags, []);
     });
 
 });
