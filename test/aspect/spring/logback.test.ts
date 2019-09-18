@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-import { InMemoryProject, Project } from "@atomist/automation-client";
+import {
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
 import * as assert from "assert";
-import { LogbackAspect, LogbackData } from "../../../lib/aspect/spring/logbackAspect";
+import {
+    LogbackAspect,
+    LogbackData,
+} from "../../../lib/aspect/spring/logbackAspect";
 
 export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
