@@ -30,6 +30,10 @@ export interface ConsoleLoggingData {
 
 export const ConsoleLoggingType = "console-logging";
 
+/**
+ * Determine console logging status for Spring Boot applications.
+ * Depends on SpringBootVersion and Logback aspects
+ */
 export const ConsoleLogging: Aspect<ConsoleLoggingData> = {
     name: ConsoleLoggingType,
     displayName: "Console logging status",
@@ -38,7 +42,7 @@ export const ConsoleLogging: Aspect<ConsoleLoggingData> = {
         const logbackFingerprint = fps.find(isLogbackFingerprint);
         const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.configFiles.some(logsToConsole);
         const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
-        const present = hasLogbackWithConsole || (isSpringBoot && !logbackFingerprint);
+        const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.configFiles.length === 0));
         return fingerprintOf({
             type: ConsoleLoggingType,
             data: { present },
