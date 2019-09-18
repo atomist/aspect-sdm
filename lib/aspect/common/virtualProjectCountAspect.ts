@@ -16,8 +16,8 @@
 
 import { CountAspect } from "@atomist/sdm-pack-aspect/lib/aspect/compose/commonTypes";
 
-import * as _ from "lodash";
 import { fingerprintOf } from "@atomist/sdm-pack-fingerprint";
+import * as _ from "lodash";
 
 export const VirtualProjectCountType = "virtual-project-count";
 

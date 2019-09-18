@@ -36,7 +36,7 @@ export const ConsoleLogging: Aspect<ConsoleLoggingData> = {
         return fingerprintOf({
             type: ConsoleLoggingType,
             data: { present },
-        })
+        });
     },
 };
 

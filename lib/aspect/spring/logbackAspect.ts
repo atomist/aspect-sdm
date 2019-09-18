@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { Aspect, fingerprintOf, FP } from "@atomist/sdm-pack-fingerprint";
-import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { logger, ProjectFile } from "@atomist/automation-client";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+import { Aspect, fingerprintOf, FP } from "@atomist/sdm-pack-fingerprint";
 import { XmldocFileParser } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
 import { evaluateExpression, isSuccessResult } from "@atomist/tree-path";
 
