@@ -22,6 +22,7 @@ import {
 import { matchIterator } from "@atomist/automation-client/lib/tree/ast/astUtils";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import * as yaml from "js-yaml";
 
 const likelyPlacesForDeployCommands = ["**/*.sh", "*.md", "bin/*", "script/*"];
 
@@ -32,10 +33,8 @@ export const InfrastructureAspect: Aspect = projectClassificationAspect({
     toDisplayableFingerprintName: () => "Infrastructure",
 },
     { tags: "terraform", reason: "has *.tf file", test: async p => projectUtils.fileExists(p, ["**/*.tf"]) },
-    // add cloud formation
     { tags: "docker", reason: "has Dockerfile", test: async p => projectUtils.fileExists(p, ["**/Dockerfile"]) },
     { tags: "docker-compose", reason: "has docker-compose.yaml", test: async p => projectUtils.fileExists(p, ["**/docker-compose.y{,a}ml"]) },
-    // kubernetes deployment or service spec
     { tags: "cloudfoundry", reason: "has manifest.yaml", test: async p => projectUtils.fileExists(p, ["**/manifest.y{,a}ml"]) },
     {
         tags: "google-app-engine",
@@ -56,6 +55,48 @@ export const InfrastructureAspect: Aspect = projectClassificationAspect({
         tags: "ansible",
         reason: "a script references ansible-playbook",
         test: p => containsRegex(p, likelyPlacesForDeployCommands, /ansible-playbook/),
+    },
+    {
+        tags: "k8s",
+        reason: "has k8s files",
+        test: async p => {
+            const matches = await projectUtils.gatherFromFiles(p, ["**/*.yaml", "**/*.json"], async f => {
+                const content = await f.getContent();
+                try {
+                    const yamls = yaml.safeLoadAll(content);
+                    for (const y of yamls) {
+                        if (!!y && !!y.apiVersion && !!y.kind) {
+                            return true;
+                        }
+                    }
+                } catch (e) {
+                    // Ignoring failing yaml loading
+                }
+                return false;
+            });
+            return matches.some(m => !!m);
+        },
+    },
+    {
+        tags: "cloudformation",
+        reason: "has cloud formation files",
+        test: async p => {
+            const matches = await projectUtils.gatherFromFiles(p, ["**/*.yaml", "**/*.json"], async f => {
+                const content = await f.getContent();
+                try {
+                    const yamls = yaml.safeLoadAll(content);
+                    for (const y of yamls) {
+                        if (!!y && !!y.Resources) {
+                            return true;
+                        }
+                    }
+                } catch (e) {
+                    // Ignoring failing yaml loading
+                }
+                return false;
+            });
+            return matches.some(m => !!m);
+        },
     },
 );
 
