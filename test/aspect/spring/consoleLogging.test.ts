@@ -15,15 +15,19 @@
  */
 
 import {
-    GitProject,
     InMemoryProject,
 } from "@atomist/automation-client";
 
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
-import { FP } from "@atomist/sdm-pack-fingerprint";
-import { HasSpringBootPom } from "@atomist/sdm-pack-spring";
+import {
+    fingerprintOf,
+    FP,
+} from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
-import { ConsoleLogging } from "../../../lib/aspect/spring/consoleLogging";
+import {
+    ConsoleLogging,
+    ConsoleLoggingClassification,
+} from "../../../lib/aspect/spring/consoleLogging";
 import { SpringBootVersion } from "../../../lib/aspect/spring/springBootVersion";
 import {
     doExtractLogback,
@@ -34,35 +38,62 @@ import { GishProject } from "./springProjects";
 
 describe("Console logging aspect", () => {
 
-    it("should find console logging in spring-boot without logback, providing fingerprint", async () => {
-        const p = GishProject();
-        const sfp = await SpringBootVersion.extract(p, undefined) as any as FP;
-        const lfp = await doExtractLogback(p);
-        const consolidated = toArray(await ConsoleLogging.consolidate([sfp, lfp], undefined, undefined));
-        assert.strictEqual(consolidated.length, 1);
-        assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
-    });
-
-    it("should find console in logback-spring", async () => {
-        const p = InMemoryProject.of({
-            path: "src/main/resources/logback-spring.xml",
-            content: LogbackWithConsole,
+    describe("consolidation", () => {
+        it("should find console logging in spring-boot without logback, providing fingerprint", async () => {
+            const p = GishProject();
+            const sfp = await SpringBootVersion.extract(p, undefined) as any as FP;
+            const lfp = await doExtractLogback(p);
+            const consolidated = toArray(await ConsoleLogging.consolidate([sfp, lfp], undefined, undefined));
+            assert.strictEqual(consolidated.length, 1);
+            assert.deepStrictEqual(consolidated[0].data.present, true);
         });
-        const fp = await doExtractLogback(p);
-        const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
-        assert.strictEqual(consolidated.length, 1);
-        assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
-    });
 
-    it("should find no console in logback-spring", async () => {
-        const p = InMemoryProject.of({
-            path: "src/main/resources/logback-spring.xml",
-            content: LogbackNoConsole,
+        it("should find console in logback-spring", async () => {
+            const p = InMemoryProject.of({
+                path: "src/main/resources/logback-spring.xml",
+                content: LogbackWithConsole,
+            });
+            const fp = await doExtractLogback(p);
+            const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
+            assert.strictEqual(consolidated.length, 1);
+            assert.deepStrictEqual(consolidated[0].data.present, true);
         });
-        const fp = await doExtractLogback(p);
-        const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
-        assert.strictEqual(consolidated.length, 1);
-        assert.deepStrictEqual(consolidated[0].data.tags, []);
+
+        it("should find no console in logback-spring", async () => {
+            const p = InMemoryProject.of({
+                path: "src/main/resources/logback-spring.xml",
+                content: LogbackNoConsole,
+            });
+            const fp = await doExtractLogback(p);
+            const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
+            assert.strictEqual(consolidated.length, 1);
+            assert.deepStrictEqual(consolidated[0].data.present, false);
+        });
     });
 
+    describe("tagging", () => {
+        it("should tag on console logging presence", async () => {
+            const fp = fingerprintOf({
+                type: "console-logging",
+                data: {
+                    present: true,
+                },
+            });
+            const consolidated = toArray(await ConsoleLoggingClassification.consolidate([fp], undefined, undefined));
+            assert.strictEqual(consolidated.length, 1);
+            assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
+        });
+
+        it("should not tag on no console logging presence", async () => {
+            const fp = fingerprintOf({
+                type: "console-logging",
+                data: {
+                    present: false,
+                },
+            });
+            const consolidated = toArray(await ConsoleLoggingClassification.consolidate([fp], undefined, undefined));
+            assert.strictEqual(consolidated.length, 1);
+            assert.deepStrictEqual(consolidated[0].data.tags, []);
+        });
+    });
 });
