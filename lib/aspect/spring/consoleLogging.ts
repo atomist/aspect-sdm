@@ -15,7 +15,10 @@
  */
 
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
-import { isLogbackFingerprint, LogbackConfigFile } from "./logbackAspect";
+import {
+    isLogbackFingerprint,
+    LogbackConfigFile,
+} from "./logbackAspect";
 import { SpringBootVersion } from "./springBootVersion";
 
 export const ConsoleLoggingType = "console-logging";
