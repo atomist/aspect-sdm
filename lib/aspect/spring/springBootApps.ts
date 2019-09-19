@@ -16,6 +16,7 @@
 
 import {
     Aspect,
+    fingerprintOf,
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
 import { SpringBootProjectStructure } from "@atomist/sdm-pack-spring";
@@ -38,15 +39,10 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
                     applicationClassName: structure.applicationClass,
                     applicationClassPackage: structure.applicationPackage,
                 };
-                return {
-                    name: SpringBootAppClassAspectName,
-                    version: "1.0.0",
+                return fingerprintOf({
                     type: SpringBootAppClassAspectName,
                     data,
-                    displayValue: `${structure.applicationPackage}.${structure.applicationClass}`,
-                    displayName: "Spring Boot application class",
-                    sha: sha256(data),
-                };
+                });
             });
         } else {
             return undefined;
