@@ -28,6 +28,7 @@ import {
 import { SpringBootVersion } from "./springBootVersion";
 
 export const ConsoleLoggingType = "console-logging";
+export const ConsoleLoggingClassificationType = "console-logging-classification";
 
 /**
  * Determine console logging status for Spring Boot applications.
@@ -55,7 +56,7 @@ export const ConsoleLogging: Aspect<{ present: boolean }> = {
  * Depends on SpringBootVersion and Logback aspects
  */
 export const ConsoleLoggingClassification = projectClassificationAspect({
-        name: ConsoleLoggingType,
+        name: ConsoleLoggingClassificationType,
         displayName: "Console logging status",
     },
     {
