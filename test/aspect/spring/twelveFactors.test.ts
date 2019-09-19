@@ -36,7 +36,20 @@ import {
 
 describe("twelve factors", () => {
     describe("count", () => {
-        it("should have a count of 1 if there is a 12 factor fingerprint", async () => {
+        it("should have a count of 1 if there is a fulfilled 12 factor fingerprint", async () => {
+            const twelveFactorFP = fingerprintOf<TwelveFactorElement>({
+                type: TwelveFactorSpringBootFingerprintName,
+                data: {
+                    factor: SingleProjectPerRepoFactor,
+                    fulfilled: true,
+                },
+            });
+            const consolidation = toArray(await TwelveFactorCountAspect.consolidate([twelveFactorFP], undefined, undefined));
+            assert(consolidation.length === 1);
+            assert.strictEqual(consolidation[0].data.count, 1);
+        });
+
+        it("should have a count of 0 if there is an unfulfilled 12 factor fingerprint", async () => {
             const twelveFactorFP = fingerprintOf<TwelveFactorElement>({
                 type: TwelveFactorSpringBootFingerprintName,
                 data: {
@@ -46,7 +59,7 @@ describe("twelve factors", () => {
             });
             const consolidation = toArray(await TwelveFactorCountAspect.consolidate([twelveFactorFP], undefined, undefined));
             assert(consolidation.length === 1);
-            assert.strictEqual(consolidation[0].data.count, 1);
+            assert.strictEqual(consolidation[0].data.count, 0);
         });
     });
 
