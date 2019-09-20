@@ -42,8 +42,8 @@ describe("the infrastructure aspect", () => {
         }, {
             path: "bin/deploy", content: "ansible-playbook etc etc etc",
         });
-        const result = await InfrastructureAspect.extract(p, undefined) as FP;
-        assert.deepStrictEqual(result.data.tags.sort(), ["ansible",
+        const result = await InfrastructureAspect.extract(p, undefined) as FP[];
+        assert.deepStrictEqual(result.map(r => r.name).sort(), ["ansible",
             "cloudfoundry",
             "docker",
             "docker-compose",
@@ -58,9 +58,9 @@ describe("the infrastructure aspect", () => {
         const p = InMemoryProject.of({
             path: "anywhere/app.yaml", content: "",
         });
-        const result = await InfrastructureAspect.extract(p, undefined) as FP;
+        const result = await InfrastructureAspect.extract(p, undefined) as FP[];
         assert(result);
-        assert.deepStrictEqual(result.data.tags.sort(), [
+        assert.deepStrictEqual(result.map(r => r.name).sort(), [
             "google-app-engine",
         ]);
     });
@@ -70,8 +70,8 @@ describe("the infrastructure aspect", () => {
         const p = InMemoryProject.of({
             path: "anywhere/app.json", content: "",
         });
-        const result = await InfrastructureAspect.extract(p, undefined) as FP;
-        assert.deepStrictEqual(result.data.tags.sort(), [
+        const result = await InfrastructureAspect.extract(p, undefined) as FP[];
+        assert.deepStrictEqual(result.map(r => r.name).sort(), [
             "google-app-engine",
         ]);
     });
