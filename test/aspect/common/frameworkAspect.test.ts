@@ -45,16 +45,17 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds node from package.json", async () => {
             const p = InMemoryProject.of({
                 path: "package.json", content: "something",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+            const fps = await doExtract(p);
+            assert.strictEqual(fps.length, 1);
+            return assert(fps.some(fp => fp.name === "node"));
         });
 
     });
@@ -63,24 +64,24 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("doesn't find in non spring project", async () => {
             const p = InMemoryProject.of({
                 path: "pom.xml", content: NonSpringPom,
             });
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds spring boot from pom", async () => {
             const p = InMemoryProject.of({
                 path: "pom.xml", content: springBootPom(),
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["spring-boot"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "spring-boot"));
         });
 
         it("should find spring boot from Gradle");
@@ -91,16 +92,16 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds no react in package.json", async () => {
             const p = InMemoryProject.of({
                 path: "package.json", content: "i am package json",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "node"));
         });
 
         it("finds react in package.json", async () => {
@@ -110,8 +111,8 @@ describe("frameworkAspect", () => {
             const fps = await NpmDeps.extract(p, undefined);
             const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
             assert.strictEqual(result.length, 1);
-            const fp = result[0];
-            return assert.deepStrictEqual(fp.data.tags, ["react"]);
+            const cfp = result[0];
+            return assert(cfp.name === "react");
         });
 
     });
@@ -120,16 +121,16 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds no angular in package.json", async () => {
             const p = InMemoryProject.of({
                 path: "package.json", content: pokedexPackageJson,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["node"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "node"));
         });
 
         it("finds angular in package.json", async () => {
@@ -139,8 +140,7 @@ describe("frameworkAspect", () => {
             const fps = await NpmDeps.extract(p, undefined);
             const result = toArray(await FrameworkAspect.consolidate(toArray(fps), undefined, undefined));
             assert.strictEqual(result.length, 1);
-            const fp = result[0];
-            return assert.deepStrictEqual(fp.data.tags, ["angular"]);
+            return assert(result.some(fp => fp.name === "angular"));
         });
 
     });
@@ -149,32 +149,32 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds no rails in gemfile", async () => {
             const p = InMemoryProject.of({
                 path: "Gemfile", content: gemnasiumGemfile,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds rails in gemfile with single quotes", async () => {
             const p = InMemoryProject.of({
                 path: "Gemfile", content: adoptAHydrantGemfile,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "rails"));
         });
 
         it("finds rails in gemfile with double quotes", async () => {
             const p = InMemoryProject.of({
                 path: "Gemfile", content: `gem "rails"`,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["rails"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "rails"));
         });
 
     });
@@ -183,16 +183,16 @@ describe("frameworkAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            return assert.strictEqual(fp.data.tags.length, 0);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds no Django in gemfile", async () => {
             const p = InMemoryProject.of({
                 path: "Gemfile", content: gemnasiumGemfile,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds no Django in non Django-ey requirements.txt", async () => {
@@ -201,8 +201,8 @@ describe("frameworkAspect", () => {
                 content: `notDjango==2.2.1
 docutils==0.14`,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await doExtract(p);
+            return assert.strictEqual(fps.length, 0);
         });
 
         it("finds Django in Django-ey requirements.txt", async () => {
@@ -211,14 +211,14 @@ docutils==0.14`,
                 content: `Django==2.2.1
 docutils==0.14`,
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["django"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "django"));
         });
 
     });
 
 });
 
-async function doExtract(p: Project): Promise<FP<ClassificationData>> {
+async function doExtract(p: Project): Promise<Array<FP<ClassificationData>>> {
     return FrameworkAspect.extract(p, undefined) as any;
 }

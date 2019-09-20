@@ -19,7 +19,6 @@ import {
     Project,
 } from "@atomist/automation-client";
 import {
-    ClassificationAspect,
     ClassificationData,
 } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
@@ -30,29 +29,29 @@ describe("ciAspect", () => {
 
     describe("CiAspect", () => {
 
-        async function doExtract(p: Project): Promise<FP<ClassificationData>> {
+        async function doExtract(p: Project): Promise<Array<FP<ClassificationData>>> {
             return CiAspect.extract(p, undefined) as any;
         }
 
         it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await doExtract(p);
-            assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await doExtract(p);
+            assert.deepStrictEqual(fps.length, 0);
         });
 
         it("finds a Concourse pipeline", async () => {
             for (const f of ["pipeline.yml", "ci/pipeline.yml"]) {
                 const p = InMemoryProject.of({ path: f, content: "something" });
-                const fp = await doExtract(p);
-                assert.deepStrictEqual(fp.data.tags, ["concourse"]);
+                const fps = await doExtract(p);
+                return assert(fps.some(fp => fp.name === "concourse"));
             }
         });
 
         it("finds a GitHub action workflow", async () => {
             for (const f of [".github/workflows/mine.yml", ".github/workflows/yours.yaml"]) {
                 const p = InMemoryProject.of({ path: f, content: "something" });
-                const fp = await doExtract(p);
-                assert.deepStrictEqual(fp.data.tags, ["github-actions"]);
+                const fps = await doExtract(p);
+                return assert(fps.some(fp => fp.name === "github-actions"));
             }
         });
 
@@ -61,10 +60,10 @@ describe("ciAspect", () => {
                 { path: ".travis.yml", content: "something" },
                 { path: "Jenkinsfile", content: "something" },
             );
-            const fp = await doExtract(p);
-            assert(fp.data.tags.length === 2);
-            assert(fp.data.tags.includes("travis"));
-            assert(fp.data.tags.includes("jenkins"));
+            const fps = await doExtract(p);
+            assert(fps.length === 2);
+            return assert(fps.some(fp => fp.name === "travis"));
+            return assert(fps.some(fp => fp.name === "jenkins"));
         });
 
     });

@@ -31,43 +31,43 @@ describe("languageAspect", () => {
 
         it("doesn't find in empty project", async () => {
             const p = InMemoryProject.of();
-            const fp = await LanguageAspect.extract(p, undefined) as FP<ClassificationData>;
-            return assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await LanguageAspect.extract(p, undefined) as Array<FP<ClassificationData>>;
+            return assert.deepStrictEqual(fps.length, 0);
         });
 
         it("finds cpp file in a subdirectory", async () => {
             const p = InMemoryProject.of({
                 path: "anydir/myfile.cpp", content: "something",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["c++"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "c++"));
         });
         it("finds hpp file in root directory", async () => {
             const p = InMemoryProject.of({
                 path: "myfile.hpp", content: "something",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["c++"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "c++"));
         });
         it("finds cxx file in nested directory", async () => {
             const p = InMemoryProject.of({
                 path: "anydir/subdir/myfile.cxx", content: "something",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, ["c++"]);
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "c++"));
         });
         it("doesn't tag files with no extension", async () => {
             const p = InMemoryProject.of({
                 path: "anydir/subdir/myfile", content: "something",
             });
-            const fp = await doExtract(p);
-            return assert.deepStrictEqual(fp.data.tags, []);
+            const fps = await doExtract(p);
+            return assert.deepStrictEqual(fps.length, 0);
         });
 
     });
 
 });
 
-async function doExtract(p: Project): Promise<FP<ClassificationData>> {
+async function doExtract(p: Project): Promise<Array<FP<ClassificationData>>> {
     return LanguageAspect.extract(p, undefined) as any;
 }
