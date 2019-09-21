@@ -25,14 +25,6 @@ const ciAspectOptions = {
     name: "ci",
     displayName: "CI",
     toDisplayableFingerprintName: () => "CI tool",
-    details: {
-        description: "CI configuration(s) found in repository",
-        shortName: "ci",
-        unit: "ci",
-        category: "CI",
-        url: `fingerprint/ci/ci?byOrg=true&trim=false`,
-        manage: false,
-    },
 };
 
 export const CiAspect: ClassificationAspect = projectClassificationAspect(ciAspectOptions,
