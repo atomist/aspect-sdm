@@ -23,7 +23,7 @@
   "dependencies": {
     "@atomist/automation-client": "1.7.1-master.20190920175552",
     "@atomist/automation-client-ext-dashboard": "1.1.1-master.20190810154215",
-    "@atomist/automation-client-ext-humio": "0.2.1-master.20190923190201",
+    "@atomist/automation-client-ext-humio": "^0.2.1",
     "@atomist/microgrammar": "^1.2.1",
     "@atomist/sdm": "1.7.1-master.20190920014925",
     "@atomist/sdm-core": "1.7.1-master.20190920064341",
