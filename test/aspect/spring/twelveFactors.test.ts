@@ -117,7 +117,7 @@ describe("twelve factors", () => {
             });
             const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
             assert(consolidation.length === 1);
-            assert.deepStrictEqual(consolidation[0].data.tags, ["twelve-factor:single-project-per-repo"]);
+            assert.deepStrictEqual(consolidation[0].name, "twelve-factor:single-project-per-repo");
         });
 
         it("should not tag when there is an unfulfilled 12 factor element", async () => {
@@ -129,8 +129,7 @@ describe("twelve factors", () => {
                 },
             });
             const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
-            assert(consolidation.length === 1);
-            assert.deepStrictEqual(consolidation[0].data.tags, []);
+            assert.strictEqual(consolidation.length, 0);
         });
 
         describe("single project per repo", () => {
@@ -187,7 +186,7 @@ describe("twelve factors", () => {
                 });
                 const consolidation = toArray(await TwelveFactorClassificationAspect.consolidate([twelveFactorFP], undefined, undefined));
                 assert(consolidation.length === 1);
-                assert.deepStrictEqual(consolidation[0].data.tags, ["twelve-factor:console-logging"]);
+                assert.deepStrictEqual(consolidation[0].name, "twelve-factor:console-logging");
             });
         });
     });

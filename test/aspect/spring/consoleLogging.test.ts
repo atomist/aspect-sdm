@@ -81,7 +81,7 @@ describe("Console logging aspect", () => {
             });
             const consolidated = toArray(await ConsoleLoggingClassification.consolidate([fp], undefined, undefined));
             assert.strictEqual(consolidated.length, 1);
-            assert.deepStrictEqual(consolidated[0].data.tags, ["console-logging"]);
+            assert.deepStrictEqual(consolidated[0].name, "console-logging");
         });
 
         it("should not tag on no console logging presence", async () => {
@@ -92,8 +92,7 @@ describe("Console logging aspect", () => {
                 },
             });
             const consolidated = toArray(await ConsoleLoggingClassification.consolidate([fp], undefined, undefined));
-            assert.strictEqual(consolidated.length, 1);
-            assert.deepStrictEqual(consolidated[0].data.tags, []);
+            assert.strictEqual(consolidated.length, 0);
         });
     });
 });
