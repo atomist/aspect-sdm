@@ -151,7 +151,7 @@ describe("buildToolAspect", () => {
         it("tags buck", async () => {
             const p = InMemoryProject.of({path: "test/.buckconfig", content: ""});
             const fps = await doExtract(p);
-            return assert(fps.some(fp => fp.name === "buck"));
+            return assert(fps.some(fp => fp.name === "buck"), JSON.stringify(fps));
         });
     });
     describe("gulp", () => {
