@@ -30,9 +30,11 @@ import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
 import {
-    cachingVirtualProjectFinder, fileNamesVirtualProjectFinder,
+    cachingVirtualProjectFinder,
+    fileNamesVirtualProjectFinder,
     RebaseFailure,
-    RebaseStrategy, VirtualProjectFinder,
+    RebaseStrategy,
+    VirtualProjectFinder,
 } from "@atomist/sdm-pack-fingerprint";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
