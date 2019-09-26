@@ -30,8 +30,9 @@ import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
 import {
+    cachingVirtualProjectFinder, fileNamesVirtualProjectFinder,
     RebaseFailure,
-    RebaseStrategy,
+    RebaseStrategy, VirtualProjectFinder,
 } from "@atomist/sdm-pack-fingerprint";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
@@ -69,6 +70,24 @@ import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
+
+export const virtualProjectFinder: VirtualProjectFinder =
+    // Consider directories containing any of these files to be virtual projects
+    cachingVirtualProjectFinder(
+        fileNamesVirtualProjectFinder(
+            "package.json",
+            {
+                glob: "pom.xml",
+                status: async f => {
+                    return {
+                        include: true,
+                        keepLooking: (await f.getContent()).includes("<modules>"),
+                    };
+                },
+            },
+            "build.gradle",
+            "requirements.txt",
+        ));
 
 export const configuration: Configuration = configure(async sdm => {
 
@@ -111,6 +130,7 @@ export const configuration: Configuration = configure(async sdm => {
 
                     exposeWeb: true,
                     secureWeb: true,
+                    virtualProjectFinder,
                 }),
                 gitHubCommandSupport(
                     {
