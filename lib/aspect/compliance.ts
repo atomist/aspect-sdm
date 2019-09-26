@@ -59,6 +59,7 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
                 _sha: push.after.sha,
                 targets: [],
                 differences: [],
+                aspects: [],
             };
         }
         data.targets.push(...targets.map(t => {
@@ -89,6 +90,10 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
                 aspectName: aspect.displayName,
             };
         }));
+        data.aspects.push({
+            type: aspect.name,
+            aspectName: aspect.displayName,
+        });
 
         storeInContext<ComplicanceData>("compliance", data, context);
         return [];

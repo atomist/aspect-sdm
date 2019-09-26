@@ -33,7 +33,6 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
-import * as fs from "fs";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {

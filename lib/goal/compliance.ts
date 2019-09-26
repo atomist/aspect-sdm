@@ -56,6 +56,11 @@ export interface ComplicanceData {
 
         aspectName: string;
     }>;
+    aspects: Array<{
+        type: string;
+
+        aspectName: string;
+    }>;
 }
 
 export function complianceGoal(aspects: Aspect[]): Goal {
