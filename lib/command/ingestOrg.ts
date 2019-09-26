@@ -53,7 +53,7 @@ export const IngestOrg: CommandHandlerRegistration<IngestOrgsParameters> = {
         };
 
         const org = await ci.context.graphClient.mutate<IngestScmOrgs.Mutation, IngestScmOrgs.Variables>({
-            name: "IngestScmOrgs",
+            name: "ingestScmOrgs",
             variables: {
                 scmOrgsInput: { orgs: [ingestOrg] },
                 scmProviderId: `${ci.context.workspaceId}_${ci.parameters.providerId}`,
