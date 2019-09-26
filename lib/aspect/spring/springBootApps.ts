@@ -39,10 +39,13 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
                     applicationClassName: structure.applicationClass,
                     applicationClassPackage: structure.applicationPackage,
                 };
-                return fingerprintOf({
+                return {
                     type: SpringBootAppClassAspectName,
+                    name: SpringBootAppClassAspectName,
+                    displayValue: (structure.applicationClass ? structure.applicationPackage + "." : "") + structure.applicationClass,
                     data,
-                });
+                    sha: sha256(JSON.stringify(data)),
+                };
             });
         } else {
             return undefined;
