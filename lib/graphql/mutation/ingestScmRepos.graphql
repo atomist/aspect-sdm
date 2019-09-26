@@ -1,0 +1,5 @@
+mutation ingestScmRepos($providerId: String!, $repos: SCMReposInput!) {
+    ingestSCMRepos(scmProviderId: $providerId, scmReposInput: $repos) {
+        id
+    }
+}

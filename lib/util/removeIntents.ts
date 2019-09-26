@@ -30,6 +30,7 @@ export class RemoveIntentsMetadataProcessor implements AutomationMetadataProcess
             "CreateFingerprintJob",
             "OptIn",
             "OptOut",
+            "IngestOrg",
             ...(isStaging ? ["EnableAspectReport", "DisableAspectReport"] : []),
         ];
 

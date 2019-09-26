@@ -47,6 +47,7 @@ import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
 import { FeedbackCommand } from "./lib/command/feedback";
+import { IngestOrg } from "./lib/command/ingestOrg";
 import {
     DisableAspectReportCommand,
     EnableAspectReportCommand,
@@ -89,6 +90,7 @@ export const configuration: Configuration = configure(async sdm => {
                 .addCommand(DisableAspectReportCommand)
                 .addCommand(EnableAspectReportCommand)
                 .addCommand(UpdateAspectCommand)
+                .addCommand(IngestOrg)
                 .addCommand(tryTargetCommand(sdm, aspects))
                 .addCommand(setTargetCommand(sdm, aspects))
                 .addCommand(unsetTargetCommand(sdm, aspects))

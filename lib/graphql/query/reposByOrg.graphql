@@ -1,0 +1,10 @@
+query reposByOrg($owner: String!, $providerId: String!) {
+    Repo {
+        org(owner: $owner) @required {
+            provider(providerId: $providerId) @required {
+                providerId
+            }
+        }
+        name
+    }
+}

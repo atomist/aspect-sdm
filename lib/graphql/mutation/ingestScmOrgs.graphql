@@ -1,0 +1,7 @@
+mutation ingestScmOrgs($scmProviderId: String!, $scmOrgsInput: SCMOrgsInput!) {
+  ingestSCMOrgs(scmProviderId: $scmProviderId, scmOrgsInput: $scmOrgsInput) {
+    id
+    owner
+    ownerType
+  }
+}

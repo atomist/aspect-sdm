@@ -26,11 +26,8 @@ export const DefaultGitHubApiUrl = "https://api.github.com/";
 export function api(token: string, apiUrl: string = DefaultGitHubApiUrl): github {
     const url = new URL(apiUrl);
     return new github({
-        auth: `token ${token}`,
-        protocol: url.protocol,
-        host: url.host,
-        port: +url.port,
-        pathPrefix: url.pathname,
+        auth: !!token ? `token ${token}` : undefined,
+        baseUrl: apiUrl.endsWith("/") ? apiUrl.slice(0, -1) : apiUrl,
         throttle: {
             onRateLimit: (retryAfter: any, options: any) => {
                 logger.warn(`Request quota exhausted for request '${options.method} ${options.url}'`);
