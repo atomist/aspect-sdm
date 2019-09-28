@@ -15,7 +15,7 @@
  */
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
-import { enrich } from "@atomist/sdm-pack-aspect";
+import { enrich, globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
@@ -131,6 +131,8 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         SpringBootAppClass,
         LogbackAspect,
         ConsoleLogging,
+        JspFiles,
+        DefaultPackageJavaFiles,
         ...idioms.HardCodedProperty,
         ...idioms.NonSpecificMvcAnnotation,
         ...idioms.DotStarUsage,
@@ -142,3 +144,9 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
 
     return aspects;
 }
+
+export const JspFiles: Aspect<GlobAspectData> =
+    globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
+
+export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
+    globAspect({ name: "default-package-java", displayName: "Java files in default package", glob: "src/main/java/*.java" });
