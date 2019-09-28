@@ -1,5 +1,6 @@
-import { commonScorers, RepositoryScorer } from "@atomist/sdm-pack-aspect";
+import { adjustBy, commonScorers, RepositoryScorer } from "@atomist/sdm-pack-aspect";
 import * as idioms from "./spring/idioms";
+import { xmlBeanDefinitionFilesCount } from "./spring/xmlBeans";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -30,7 +31,7 @@ export function springIdiomScorers(): RepositoryScorer[] {
             ],
             violationsPerPointLost: 2,
         }),
-        // TODO penalize for XML config
+        penalizeSpringBeanDefinitionsFiles({ pointsLostPerFile: 2.5 }),
     ];
 }
 
@@ -41,4 +42,21 @@ export function springTwelveFactorScorers(): RepositoryScorer[] {
             violationsPerPointLost: 2,
         }),
     ];
+}
+
+export function penalizeSpringBeanDefinitionsFiles(opts: { pointsLostPerFile: number}): RepositoryScorer {
+    const scoreFingerprints = async repo => {
+        const count = xmlBeanDefinitionFilesCount(repo.analysis.fingerprints);
+        // You get the first 2 branches for free. After that they start to cost
+        const score = adjustBy(-count * opts.pointsLostPerFile);
+        return {
+            score,
+            reason: `${count} XML bean definition files: Should have none`,
+        };
+    };
+    return {
+        name: "xml-bean-file-count",
+        scoreFingerprints,
+        baseOnly: true,
+    };
 }

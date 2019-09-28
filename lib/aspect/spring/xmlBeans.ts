@@ -14,17 +14,30 @@
  * limitations under the License.
  */
 
-import { globAspect } from "@atomist/sdm-pack-aspect";
+import { globAspect, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
+import { FP } from "@atomist/sdm-pack-fingerprint";
+
+const SpringBeansType = "spring-beans";
 
 /**
  * Fingerprint Spring bean definitions
  * @type {Aspect<GlobAspectData>}
  */
 export const XmlBeanDefinitions = globAspect({
-    name: "spring-beans",
+    name: SpringBeansType,
     displayName: "XML bean definitions",
     glob: "**/*.xml",
     contentTest: content =>
         content.includes("http://www.springframework.org/") &&
         content.includes("<beans>"),
 });
+
+/**
+ * Cound the number of bean definition files found in this repository
+ * @param {FP[]} fps
+ * @return {number}
+ */
+export function xmlBeanDefinitionFilesCount(fps: FP[]): number {
+    const matches = fps.find(fp => fp.type === SpringBeansType && isGlobMatchFingerprint(fp));
+    return matches ? matches.data.matches.length : 0;
+}
