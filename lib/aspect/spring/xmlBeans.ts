@@ -32,12 +32,9 @@ export const XmlBeanDefinitions = globAspect({
         content.includes("<beans>"),
 });
 
-/**
- * Cound the number of bean definition files found in this repository
- * @param {FP[]} fps
- * @return {number}
- */
-export function xmlBeanDefinitionFilesCount(fps: FP[]): number {
-    const matches = fps.find(fp => fp.type === SpringBeansType && isGlobMatchFingerprint(fp));
+// TODO going into aspect pack
+export function countGlobMatches(fps: FP[], type: string): number {
+    const matches = fps.find(fp => fp.type === type && isGlobMatchFingerprint(fp));
     return matches ? matches.data.matches.length : 0;
 }
+
