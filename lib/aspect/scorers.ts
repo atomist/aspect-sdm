@@ -18,6 +18,7 @@ export function generalScorers(): RepositoryScorer[] {
     return [
         commonScorers.penalizeForExcessiveBranches({ branchLimit: 5 }),
         commonScorers.requireRecentCommit({ days: 10 }),
+        // TODO Exposed secrets
     ];
 }
 
@@ -32,9 +33,21 @@ export function springIdiomScorers(): RepositoryScorer[] {
             ],
             violationsPerPointLost: 2,
         }),
-        commonScorers.penalizeGlobMatches({ type: XmlBeanDefinitions.name, pointsLostPerMatch: 2 }),
-        commonScorers.penalizeGlobMatches({ type: JspFiles.name, pointsLostPerMatch: 2 }),
-        commonScorers.penalizeGlobMatches({ type: DefaultPackageJavaFiles.name, pointsLostPerMatch: 3 }),
+        commonScorers.penalizeGlobMatches({
+            type: XmlBeanDefinitions.name,
+            name: XmlBeanDefinitions.name, // TODO will no longer be needed
+            pointsLostPerMatch: 2
+        }),
+        commonScorers.penalizeGlobMatches({
+            type: JspFiles.name,
+            name: JspFiles.name, // TODO will no longer be needed
+            pointsLostPerMatch: 2
+        }),
+        commonScorers.penalizeGlobMatches({
+            type: DefaultPackageJavaFiles.name, // TODO will no longer be needed
+            name: DefaultPackageJavaFiles.name,
+            pointsLostPerMatch: 3
+        }),
     ];
 }
 
