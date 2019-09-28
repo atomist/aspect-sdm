@@ -69,6 +69,7 @@ import {
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
+import { createScorers } from "./lib/aspect/scorers";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
@@ -118,6 +119,9 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
+                    scorers: {
+                        spring: createScorers(),
+                    },
                     aspectsFactory: RegistrationsBackedAspectsFactory,
 
                     rebase: {
