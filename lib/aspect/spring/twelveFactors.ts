@@ -96,15 +96,22 @@ export const ConsoleLoggingFactorAspect: Aspect<TwelveFactorElement> = {
     extract: async () => [],
     consolidate: async fps => {
         const clfps = fps.filter(isConsoleLoggingFingerprint);
-        return clfps.map(clfp =>
-            fingerprintOf<TwelveFactorElement>({
+        return clfps.length === 0 ? [fingerprintOf({
                 type: TwelveFactorConsoleLoggingFingerprintName,
                 data: {
                     factor: ConsoleLoggingFactor,
-                    fulfilled: clfp.data.present,
+                    fulfilled: false,
                 },
-                path: clfp.path,
-            }));
+            })] :
+            clfps.map(clfp =>
+                fingerprintOf<TwelveFactorElement>({
+                    type: TwelveFactorConsoleLoggingFingerprintName,
+                    data: {
+                        factor: ConsoleLoggingFactor,
+                        fulfilled: clfp.data.present,
+                    },
+                    path: clfp.path,
+                }));
     },
 };
 

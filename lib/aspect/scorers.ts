@@ -62,17 +62,14 @@ export function springIdiomScorers(): RepositoryScorer[] {
         }),
         commonScorers.penalizeGlobMatches({
             type: XmlBeanDefinitions.name,
-            name: XmlBeanDefinitions.name, // TODO will no longer be needed
             pointsLostPerMatch: 2,
         }),
         commonScorers.penalizeGlobMatches({
             type: JspFiles.name,
-            name: JspFiles.name, // TODO will no longer be needed
             pointsLostPerMatch: 2,
         }),
         commonScorers.penalizeGlobMatches({
-            type: DefaultPackageJavaFiles.name, // TODO will no longer be needed
-            name: DefaultPackageJavaFiles.name,
+            type: DefaultPackageJavaFiles.name,
             pointsLostPerMatch: 3,
         }),
     ];
