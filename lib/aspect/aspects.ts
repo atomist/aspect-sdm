@@ -45,12 +45,47 @@ import { SpringBootVersion } from "./spring/springBootVersion";
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { dirName, virtualProjectAspect } from "../move/virtualProjectAspect";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+
+export const JspFiles: Aspect<GlobAspectData> =
+    globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
+
+export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
+    globAspect({
+        name: "default-package-java",
+        displayName: "Java files in default package",
+        glob: "**/src/main/java/*.java"
+    });
+
+export const VirtualProjectAspects = virtualProjectAspect(
+    async p => {
+        return {
+            reason: "has Maven pom",
+            // TODO what about multi modules
+            paths: await gatherFromFiles(p, "**/pom.xml", async f => dirName(f)),
+        };
+    },
+    async p => {
+        return {
+            reason: "has gradle file",
+            paths: await gatherFromFiles(p, "**/build.gradle.json", async f => dirName(f)),
+        };
+    },
+    async p => {
+        return {
+            reason: "has package.json",
+            paths: await gatherFromFiles(p, "**/package.json", async f => dirName(f)),
+        };
+    },
+);
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
     const optionalAspects = isStaging ? [] : [];
 
     const aspects = [
+        VirtualProjectAspects,
         SpringBootStarter,
         enrich(TypeScriptVersion, {
             shortName: "version",
@@ -144,9 +179,3 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
 
     return aspects;
 }
-
-export const JspFiles: Aspect<GlobAspectData> =
-    globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
-
-export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
-    globAspect({ name: "default-package-java", displayName: "Java files in default package", glob: "src/main/java/*.java" });
