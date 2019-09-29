@@ -16,7 +16,8 @@
 
 import {
     adjustBy,
-    commonScorers, FiveStar,
+    commonScorers,
+    FiveStar,
     RepositoryScorer,
 } from "@atomist/sdm-pack-aspect";
 import {
@@ -24,7 +25,10 @@ import {
     JspFiles,
 } from "./aspects";
 import * as idioms from "./spring/idioms";
-import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
+import {
+    isSpringBootVersionFingerprint,
+    SpringBootVersion,
+} from "./spring/springBootVersion";
 import {
     isConsoleLoggingFingerprint,
     isSpringBootAppClassFingerprint,

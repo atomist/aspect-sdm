@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-import { globAspect, GlobAspectData, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
+import {
+    globAspect,
+    GlobAspectData,
+    isGlobMatchFingerprint,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import { extractVersionedArtifact } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
-import { XmldocFileParser, XmldocTreeNode } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
-import { evaluateExpression, isSuccessResult } from "@atomist/tree-path";
+import {
+    XmldocFileParser,
+    XmldocTreeNode,
+} from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
+import {
+    evaluateExpression,
+    isSuccessResult,
+} from "@atomist/tree-path";
 
 const SpringBootVersionType = "spring-boot-version";
 
