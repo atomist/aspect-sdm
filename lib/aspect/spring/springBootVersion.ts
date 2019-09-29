@@ -15,10 +15,10 @@
  */
 
 import { globAspect, GlobAspectData, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
+import { FP } from "@atomist/sdm-pack-fingerprint";
+import { extractVersionedArtifact } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
 import { XmldocFileParser, XmldocTreeNode } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
 import { evaluateExpression, isSuccessResult } from "@atomist/tree-path";
-import { extractVersionedArtifact } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
-import { FP } from "@atomist/sdm-pack-fingerprint";
 
 const SpringBootVersionType = "spring-boot-version";
 

@@ -24,12 +24,12 @@ import {
     JspFiles,
 } from "./aspects";
 import * as idioms from "./spring/idioms";
+import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
 import {
     isConsoleLoggingFingerprint,
     isSpringBootAppClassFingerprint,
 } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
-import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -125,7 +125,7 @@ export function penalizeOldBootVersions(opts: { }): RepositoryScorer {
             return {
                 reason: `Spring Boot version is ${SpringBootVersion.toDisplayableFingerprint(sbv)}`,
                 score,
-            }
-        }
-    }
+            };
+        },
+    };
 }
