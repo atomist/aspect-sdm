@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { reviewerAspects } from "@atomist/sdm-pack-aspect/lib/aspect/common/reviewerAspect";
+import { pathBefore, reviewerAspects } from "@atomist/sdm-pack-aspect";
 import {
     HardcodedPropertyReviewer,
     ImportDotStar,
@@ -24,6 +24,13 @@ import {
     MutableInjectionsReviewer,
     NonSpecificMvcAnnotationsReviewer,
 } from "@atomist/sdm-pack-spring";
+import { logger } from "@atomist/automation-client";
+
+function mavenSourceResolver(path: string): string {
+    const vpath = pathBefore(path, "/src/main/java");
+   logger.info("Virtual path for %s is %s", path, vpath);
+   return vpath;
+}
 
 export const FileIOUsageName = "file-io";
 
@@ -31,6 +38,7 @@ export const FileIoUsage = reviewerAspects({
     name: FileIOUsageName,
     displayName: ImportIoFile,
     reviewer: ImportIoFileReviewer,
+    virtualProjectPathResolver: mavenSourceResolver,
 });
 
 export const DotStarUsageName = "import-dot-star";
@@ -39,6 +47,7 @@ export const DotStarUsage = reviewerAspects({
     name: DotStarUsageName,
     displayName: ImportDotStar,
     reviewer: ImportDotStarReviewer,
+    virtualProjectPathResolver: mavenSourceResolver,
 });
 
 export const MutableInjectionUsageName = "mutable-injection";
@@ -47,6 +56,7 @@ export const MutableInjections = reviewerAspects({
     name: MutableInjectionUsageName,
     displayName: "mutable injection",
     reviewer: MutableInjectionsReviewer,
+    virtualProjectPathResolver: mavenSourceResolver,
 });
 
 export const HardCodedPropertyName = "hard-coded-property";
@@ -55,6 +65,7 @@ export const HardCodedProperty = reviewerAspects({
     name: HardCodedPropertyName,
     displayName: "hard code property",
     reviewer: HardcodedPropertyReviewer,
+    virtualProjectPathResolver: path => pathBefore(path, "/src/main/resources"),
 });
 
 export const NonSpecificMvcAnnotationName = "non-specific-mvc";
@@ -63,4 +74,5 @@ export const NonSpecificMvcAnnotation = reviewerAspects({
     name: NonSpecificMvcAnnotationName,
     displayName: "non specific MVC annotations",
     reviewer: NonSpecificMvcAnnotationsReviewer,
+    virtualProjectPathResolver: mavenSourceResolver,
 });

@@ -14,38 +14,18 @@
  * limitations under the License.
  */
 
-import {
-    Configuration,
-    GraphQL,
-} from "@atomist/automation-client";
+import { Configuration, GraphQL, } from "@atomist/automation-client";
 import { configureHumio } from "@atomist/automation-client-ext-humio";
-import {
-    CachingProjectLoader,
-    GitHubLazyProjectLoader,
-    GoalSigningScope,
-    PushImpact,
-} from "@atomist/sdm";
+import { CachingProjectLoader, GitHubLazyProjectLoader, GoalSigningScope, PushImpact, } from "@atomist/sdm";
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
 import { DefaultAspectRegistry } from "@atomist/sdm-pack-aspect/lib/aspect/DefaultAspectRegistry";
 import { calculateFingerprintTask } from "@atomist/sdm-pack-aspect/lib/job/fingerprintTask";
-import {
-    cachingVirtualProjectFinder,
-    fileNamesVirtualProjectFinder,
-    RebaseFailure,
-    RebaseStrategy,
-    VirtualProjectFinder,
-} from "@atomist/sdm-pack-fingerprint";
+import { RebaseFailure, RebaseStrategy, } from "@atomist/sdm-pack-fingerprint";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
-import {
-    checkDiffHandler,
-    checkGoalExecutionListener,
-} from "./lib/aspect/check";
-import {
-    complianceDiffHandler,
-    complianceGoalExecutionListener,
-} from "./lib/aspect/compliance";
+import { checkDiffHandler, checkGoalExecutionListener, } from "./lib/aspect/check";
+import { complianceDiffHandler, complianceGoalExecutionListener, } from "./lib/aspect/compliance";
 import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
@@ -56,17 +36,11 @@ import {
     EnableAspectReportCommand,
     UpdateAspectCommand,
 } from "./lib/command/manageAspectReport";
-import {
-    OptInCommand,
-    OptOutCommand,
-} from "./lib/command/manageOptOut";
+import { OptInCommand, OptOutCommand, } from "./lib/command/manageOptOut";
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
-import {
-    createFingerprintJob,
-    createFingerprintJobCommand,
-} from "./lib/job/createFingerprintJob";
+import { createFingerprintJob, createFingerprintJobCommand, } from "./lib/job/createFingerprintJob";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
@@ -74,24 +48,6 @@ import { createScorers } from "./lib/aspect/scorers";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
-
-export const virtualProjectFinder: VirtualProjectFinder =
-    // Consider directories containing any of these files to be virtual projects
-    cachingVirtualProjectFinder(
-        fileNamesVirtualProjectFinder(
-            "package.json",
-            {
-                glob: "pom.xml",
-                status: async f => {
-                    return {
-                        include: true,
-                        keepLooking: (await f.getContent()).includes("<modules>"),
-                    };
-                },
-            },
-            "build.gradle",
-            "requirements.txt",
-        ));
 
 export const configuration: Configuration = configure(async sdm => {
 
@@ -138,7 +94,6 @@ export const configuration: Configuration = configure(async sdm => {
 
                     exposeWeb: true,
                     secureWeb: true,
-                    virtualProjectFinder,
                 }),
                 gitHubCommandSupport(
                     {
