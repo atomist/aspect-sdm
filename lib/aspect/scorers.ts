@@ -2,6 +2,7 @@ import { adjustBy, commonScorers, RepositoryScorer } from "@atomist/sdm-pack-asp
 import * as idioms from "./spring/idioms";
 import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -57,5 +58,23 @@ export function springTwelveFactorScorers(): RepositoryScorer[] {
             reviewerName: idioms.FileIOUsageName,
             violationsPerPointLost: 2,
         }),
+        requireLoggingToConsole(),
     ];
+}
+
+export function requireLoggingToConsole(): RepositoryScorer {
+    return {
+        name: "require-console-logging",
+        scoreFingerprints: async rts => {
+            const ltc = rts.analysis.fingerprints.find(isConsoleLoggingFingerprint);
+            const sbs = rts.analysis.fingerprints.find(isSpringBootAppClassFingerprint);
+            if (!!ltc && !!sbs) {
+                return {
+                    reason: `Console logging is required - status is ${ltc.data.present}`,
+                    score: ltc.data.present ? 5 : 1,
+                }
+            }
+            return undefined;
+        }
+    };
 }

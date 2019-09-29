@@ -54,6 +54,7 @@ import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { GlobVirtualizer } from "../aa-move/globVirtualizer";
+import { logger } from "@atomist/automation-client";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -93,6 +94,10 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
 
     const aspects = [
         VirtualProjectAspects,
+
+        // This must run before any other consolidate aspects
+        GlobVirtualizer,
+
         SpringBootStarter,
         enrich(TypeScriptVersion, {
             shortName: "version",
@@ -183,8 +188,8 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...idioms.MutableInjections,
         ...SpringBootTwelveFactors,
         ...optionalAspects,
-        GlobVirtualizer,
     ];
 
+    logger.info("Aspect names are %j", aspects.map(a => a.name))
     return aspects;
 }

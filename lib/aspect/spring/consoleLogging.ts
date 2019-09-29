@@ -27,6 +27,7 @@ import {
 import { SpringBootVersion } from "./springBootVersion";
 
 export const ConsoleLoggingType = "console-logging";
+
 export const ConsoleLoggingClassificationType = "console-logging-classification";
 
 /**
@@ -34,11 +35,12 @@ export const ConsoleLoggingClassificationType = "console-logging-classification"
  * Depends on SpringBootVersion and Logback aspects
  */
 export const ConsoleLogging: Aspect<{ present: boolean }> = {
-        name: ConsoleLoggingType,
-        displayName: "Console logging status",
-        extract: async () => [],
-        consolidate: async fps => {
-            const logbackFingerprint = fps.find(isLogbackFingerprint);
+    name: ConsoleLoggingType,
+    displayName: "Console logging status",
+    extract: async () => [],
+    consolidate: async fps => {
+        const logbackFingerprints = fps.filter(isLogbackFingerprint);
+        return logbackFingerprints.map(logbackFingerprint => {
             const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.matches.some(logsToConsole);
             const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
             const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.matches.length === 0));
@@ -47,9 +49,11 @@ export const ConsoleLogging: Aspect<{ present: boolean }> = {
                 data: {
                     present,
                 },
+                path: logbackFingerprint.path,
             });
-        },
-    };
+        });
+    },
+};
 /**
  * Determine console logging status for Spring Boot applications.
  * Depends on SpringBootVersion and Logback aspects
@@ -66,7 +70,7 @@ export const ConsoleLoggingClassification = projectClassificationAspect({
         },
     });
 
-export function isConsoleLoggingFingerprint(fp: FP): fp is FP<{present: boolean}> {
+export function isConsoleLoggingFingerprint(fp: FP): fp is FP<{ present: boolean }> {
     return fp.type === "console-logging";
 }
 

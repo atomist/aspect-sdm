@@ -39,7 +39,7 @@ export const TwelveFactorCountAspect: CountAspect = {
     consolidate: async fps => {
         return fingerprintOf({
             type: "twelve-factor-count",
-            data: {count: fps.filter(isTwelveFactorFingerprint).filter(fp => fp.data.fulfilled).length},
+            data: { count: fps.filter(isTwelveFactorFingerprint).filter(fp => fp.data.fulfilled).length },
         });
     },
 };
@@ -87,24 +87,28 @@ export function isSpringBootAppClassFingerprint(o: FP): o is FP<SpringBootAppDat
 }
 
 export const TwelveFactorConsoleLoggingFingerprintName = "twelve-factor-spring-boot";
+
 export const ConsoleLoggingFactor = "logging-to-console";
+
 export const ConsoleLoggingFactorAspect: Aspect<TwelveFactorElement> = {
     name: "twelve-factor-logging-to-console",
     displayName: "12-Factor: Logging to console",
     extract: async () => [],
     consolidate: async fps => {
-        const clfp = fps.filter(isConsoleLoggingFingerprint);
-        return fingerprintOf<TwelveFactorElement>({
-            type: TwelveFactorConsoleLoggingFingerprintName,
-            data: {
-                factor: ConsoleLoggingFactor,
-                fulfilled: clfp.length === 1 && clfp[0].data.present,
-            },
-        });
+        const clfps = fps.filter(isConsoleLoggingFingerprint);
+        return clfps.map(clfp =>
+            fingerprintOf<TwelveFactorElement>({
+                type: TwelveFactorConsoleLoggingFingerprintName,
+                data: {
+                    factor: ConsoleLoggingFactor,
+                    fulfilled: clfp.data.present,
+                },
+                path: clfp.path,
+            }));
     },
 };
 
-export function isConsoleLoggingFingerprint(o: FP): o is FP<{present: boolean}> {
+export function isConsoleLoggingFingerprint(o: FP): o is FP<{ present: boolean }> {
     return (!!o.type && o.type === ConsoleLoggingType);
 }
 
@@ -117,4 +121,4 @@ export const SpringBootTwelveFactors = [
     ConsoleLoggingFactorAspect,
     TwelveFactorCountAspect,
     TwelveFactorClassificationAspect,
-    ];
+];
