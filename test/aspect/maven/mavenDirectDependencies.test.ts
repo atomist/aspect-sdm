@@ -65,14 +65,23 @@ describe("mavenDirectDependencies", () => {
         it("should cope with group id before artifact", async () => {
             const p = InMemoryProject.of({ path: "pom.xml", content: groupFirst });
             const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
-            assert.strictEqual(1, deps.length);
+            assert.strictEqual(deps.length, 1);
             validate(deps[0].data);
         });
 
         it("should cope with artifact id before groupId", async () => {
             const p = InMemoryProject.of({ path: "pom.xml", content: artifactFirst });
             const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
-            assert.strictEqual(1, deps.length);
+            assert.strictEqual(deps.length, 1);
+            validate(deps[0].data);
+        });
+
+
+        it("should cope with non-root path", async () => {
+            const p = InMemoryProject.of({ path: "project1/pom.xml", content: groupFirst });
+            const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
+            assert.strictEqual(deps.length, 1);
+            assert.strictEqual(deps[0].path, "project1");
             validate(deps[0].data);
         });
 
