@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
 import { pathBefore, reviewerAspects } from "@atomist/sdm-pack-aspect";
 import {
     HardcodedPropertyReviewer,
@@ -24,12 +25,11 @@ import {
     MutableInjectionsReviewer,
     NonSpecificMvcAnnotationsReviewer,
 } from "@atomist/sdm-pack-spring";
-import { logger } from "@atomist/automation-client";
 
 function mavenSourceResolver(path: string): string {
     const vpath = pathBefore(path, "/src/main/java");
-   logger.info("Virtual path for %s is %s", path, vpath);
-   return vpath;
+    logger.info("Virtual path for %s is %s", path, vpath);
+    return vpath;
 }
 
 export const FileIOUsageName = "file-io";

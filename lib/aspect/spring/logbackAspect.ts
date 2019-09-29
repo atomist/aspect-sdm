@@ -18,6 +18,7 @@ import {
     logger,
     ProjectFile,
 } from "@atomist/automation-client";
+import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
 import {
     Aspect,
     FP,
@@ -27,7 +28,6 @@ import {
     evaluateExpression,
     isSuccessResult,
 } from "@atomist/tree-path";
-import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
 
 export interface LogbackConfigFile {
     content: string;

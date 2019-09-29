@@ -76,7 +76,6 @@ describe("mavenDirectDependencies", () => {
             validate(deps[0].data);
         });
 
-
         it("should cope with non-root path", async () => {
             const p = InMemoryProject.of({ path: "project1/pom.xml", content: groupFirst });
             const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;

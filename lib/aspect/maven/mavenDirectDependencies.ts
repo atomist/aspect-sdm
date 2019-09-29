@@ -18,7 +18,9 @@ import {
     astUtils,
     MatchResult,
 } from "@atomist/automation-client";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { microgrammar } from "@atomist/microgrammar";
+import { dirName } from "@atomist/sdm-pack-aspect";
 import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
@@ -27,8 +29,6 @@ import {
     bold,
     codeLine,
 } from "@atomist/slack-messages";
-import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
-import { dirName } from "@atomist/sdm-pack-aspect";
 
 const MavenDirectDep = "maven-direct-dep";
 

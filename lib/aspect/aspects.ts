@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { logger } from "@atomist/automation-client";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
 import {
     dirName,
@@ -21,7 +23,7 @@ import {
     GitRecency,
     globAspect,
     GlobAspectData,
-    virtualProjectAspect
+    virtualProjectAspect,
 } from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
@@ -29,6 +31,7 @@ import {
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { GlobVirtualizer } from "../aa-move/globVirtualizer";
 import { BuildToolAspect } from "./common/buildToolAspect";
 import { CiAspect } from "./common/ciAspect";
 import {
@@ -52,9 +55,6 @@ import { SpringBootVersion } from "./spring/springBootVersion";
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
-import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
-import { GlobVirtualizer } from "../aa-move/globVirtualizer";
-import { logger } from "@atomist/automation-client";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -63,7 +63,7 @@ export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
     globAspect({
         name: "default-package-java",
         displayName: "Java files in default package",
-        glob: "**/src/main/java/*.java"
+        glob: "**/src/main/java/*.java",
     });
 
 export const VirtualProjectAspects = virtualProjectAspect(
@@ -190,6 +190,6 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...optionalAspects,
     ];
 
-    logger.info("Aspect names are %j", aspects.map(a => a.name))
+    logger.info("Aspect names are %j", aspects.map(a => a.name));
     return aspects;
 }
