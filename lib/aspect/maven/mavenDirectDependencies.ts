@@ -120,13 +120,16 @@ function gavToFingerprint(gav: VersionedArtifact, pomPath: string): FP<Versioned
         ...gav,
         version: !gav.version ? "managed" : gav.version,
     };
+    const pathIn = dirName(pomPath);
+    // Canonicalize .
+    const path = ["", ".", undefined].includes(pathIn) ? undefined : pathIn;
     return {
         type: MavenDirectDep,
         name: `${gav.group}:${gav.artifact}`,
         abbreviation: "mvn",
         version: "0.1.0",
         data,
-        path: dirName(pomPath),
+        path,
         sha: sha256(JSON.stringify(data)),
     };
 }
