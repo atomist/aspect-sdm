@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { globAspect, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
-import { FP } from "@atomist/sdm-pack-fingerprint";
+import { globAspect } from "@atomist/sdm-pack-aspect";
 
 const SpringBeansType = "spring-beans";
 
@@ -31,10 +30,3 @@ export const XmlBeanDefinitions = globAspect({
         content.includes("http://www.springframework.org/") &&
         content.includes("<beans>"),
 });
-
-// TODO going into aspect pack
-export function countGlobMatches(fps: FP[], type: string): number {
-    const matches = fps.find(fp => fp.type === type && isGlobMatchFingerprint(fp));
-    return matches ? matches.data.matches.length : 0;
-}
-
