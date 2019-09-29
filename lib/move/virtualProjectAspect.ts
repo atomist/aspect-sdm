@@ -4,6 +4,7 @@ import { Project, ProjectFile } from "@atomist/automation-client";
 import * as _ from "lodash";
 
 import * as pathlib from "path";
+import { isFile } from "@atomist/automation-client/lib/project/File";
 
 export interface VirtualProjectData {
 
@@ -51,6 +52,6 @@ export function virtualProjectAspect(
  * @param {File} f
  * @return {string}
  */
-export function dirName(f: ProjectFile): string {
-    return pathlib.dirname(f.path);
+export function dirName(f: ProjectFile | string): string {
+    return pathlib.dirname(isFile(f) ? f.path : f);
 }

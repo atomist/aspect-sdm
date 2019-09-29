@@ -27,6 +27,9 @@ import {
     bold,
     codeLine,
 } from "@atomist/slack-messages";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+
+import { dirName } from "../../move/virtualProjectAspect";
 
 const MavenDirectDep = "maven-direct-dep";
 
@@ -97,8 +100,13 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
         };
     },
     extract: async p => {
-        const deps = await findDeclaredDependencies(p, "**/pom.xml");
-        return deps.dependencies.map(gavToFingerprint);
+        const paths = await gatherFromFiles(p, "**/pom.xml", async f => f.path);
+        const toEmit: Array<FP<VersionedArtifact>> = [];
+        for (const path of paths) {
+            const deps = await findDeclaredDependencies(p, path);
+            toEmit.push(...deps.dependencies.map(dep => gavToFingerprint(dep, path)));
+        }
+        return toEmit;
     },
     apply: applyDependencyFingerprint,
     toDisplayableFingerprintName: name => name,
@@ -108,7 +116,7 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
     ],
 };
 
-function gavToFingerprint(gav: VersionedArtifact): FP<VersionedArtifact> {
+function gavToFingerprint(gav: VersionedArtifact, pomPath: string): FP<VersionedArtifact> {
     const data = {
         ...gav,
         version: !gav.version ? "managed" : gav.version,
@@ -119,6 +127,7 @@ function gavToFingerprint(gav: VersionedArtifact): FP<VersionedArtifact> {
         abbreviation: "mvn",
         version: "0.1.0",
         data,
+        path: dirName(pomPath),
         sha: sha256(JSON.stringify(data)),
     };
 }
