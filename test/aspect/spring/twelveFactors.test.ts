@@ -18,7 +18,6 @@ import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import { fingerprintOf } from "@atomist/sdm-pack-fingerprint";
 import * as assert from "assert";
 import { ConsoleLoggingType } from "../../../lib/aspect/spring/consoleLogging";
-import { LogbackData } from "../../../lib/aspect/spring/logbackAspect";
 import {
     SpringBootAppClassAspectName,
     SpringBootAppData,
