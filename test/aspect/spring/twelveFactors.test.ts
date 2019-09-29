@@ -157,7 +157,7 @@ describe("twelve factors", () => {
         describe("console logging", () => {
             it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
                 const consolidation = toArray(await ConsoleLoggingFactorAspect.consolidate([], undefined, undefined));
-                assert(consolidation.length === 1);
+                assert.strictEqual(consolidation.length , 1);
                 assert.strictEqual(consolidation[0].data.factor, ConsoleLoggingFactor);
                 assert.strictEqual(consolidation[0].data.fulfilled, false);
             });
