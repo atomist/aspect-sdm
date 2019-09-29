@@ -22,9 +22,9 @@ import { FP } from "@atomist/sdm-pack-fingerprint";
 
 import * as assert from "assert";
 import {
-    LogbackAspect,
-    LogbackData,
+    LogbackAspect, LogbackConfigFile,
 } from "../../../lib/aspect/spring/logbackAspect";
+import { GlobAspectData } from "@atomist/sdm-pack-aspect";
 
 export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
@@ -89,7 +89,7 @@ describe("Logback aspect", () => {
         it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await doExtractLogback(p);
-            assert.deepStrictEqual(fp.data.configFiles, []);
+            assert.deepStrictEqual(fp.data.matches, []);
         });
 
         it("should find logback-spring", async () => {
@@ -98,12 +98,12 @@ describe("Logback aspect", () => {
                 content: LogbackWithConsole,
             });
             const fp = await doExtractLogback(p);
-            assert.strictEqual(fp.data.configFiles.length, 1);
-            assert.deepStrictEqual(fp.data.configFiles[0].appenders,
+            assert.strictEqual(fp.data.matches.length, 1);
+            assert.deepStrictEqual(fp.data.matches[0].appenders,
                 [
                     { name: "Console", appenderClass: "ch.qos.logback.core.ConsoleAppender" },
                 ]);
-            assert.deepStrictEqual(fp.data.configFiles[0].loggers,
+            assert.deepStrictEqual(fp.data.matches[0].loggers,
                 [
                     { name: "root", appenderNames: ["Console"] },
                     { name: "com.baeldung", appenderNames: ["Console"] },
@@ -113,6 +113,6 @@ describe("Logback aspect", () => {
 
 });
 
-export async function doExtractLogback(p: Project): Promise<FP<LogbackData>> {
+export async function doExtractLogback(p: Project): Promise<FP<GlobAspectData<LogbackConfigFile>>> {
     return LogbackAspect.extract(p, undefined) as any;
 }

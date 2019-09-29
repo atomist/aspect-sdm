@@ -23,7 +23,6 @@ import {
 import {
     isLogbackFingerprint,
     LogbackConfigFile,
-    LogbackData,
 } from "./logbackAspect";
 import { SpringBootVersion } from "./springBootVersion";
 
@@ -40,9 +39,9 @@ export const ConsoleLogging: Aspect<{ present: boolean }> = {
         extract: async () => [],
         consolidate: async fps => {
             const logbackFingerprint = fps.find(isLogbackFingerprint);
-            const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.configFiles.some(logsToConsole);
+            const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.matches.some(logsToConsole);
             const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
-            const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.configFiles.length === 0));
+            const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.matches.length === 0));
             return fingerprintOf({
                 type: ConsoleLoggingType,
                 data: {

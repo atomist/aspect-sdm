@@ -18,10 +18,8 @@ import {
     logger,
     ProjectFile,
 } from "@atomist/automation-client";
-import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import {
     Aspect,
-    fingerprintOf,
     FP,
 } from "@atomist/sdm-pack-fingerprint";
 import { XmldocFileParser } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
@@ -29,9 +27,9 @@ import {
     evaluateExpression,
     isSuccessResult,
 } from "@atomist/tree-path";
+import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
 
 export interface LogbackConfigFile {
-    path: string;
     content: string;
 
     appenders: Array<{
@@ -44,29 +42,18 @@ export interface LogbackConfigFile {
     }>;
 }
 
-export interface LogbackData {
-    configFiles: LogbackConfigFile[];
-}
-
 export const LogbackType = "logback";
 
-export function isLogbackFingerprint(fp: FP): fp is FP<LogbackData> {
-    const maybe = fp.data as LogbackData;
-    return !!maybe && !!maybe.configFiles;
+export function isLogbackFingerprint(fp: FP): fp is FP<GlobAspectData<LogbackConfigFile>> {
+    return fp.type === LogbackType;
 }
 
-export const LogbackAspect: Aspect<LogbackData> = {
+export const LogbackAspect: Aspect<GlobAspectData<LogbackConfigFile>> = globAspect<LogbackConfigFile>({
     name: LogbackType,
     displayName: "Logback",
-    extract: async p => {
-        const configFiles = await gatherFromFiles(p, "**/logback-spring.xml", parseLogbackXml);
-        const data: LogbackData = { configFiles };
-        return fingerprintOf({
-            type: LogbackType,
-            data,
-        });
-    },
-};
+    glob: "**/logback-spring.xml",
+    extract: parseLogbackXml as any,
+});
 
 async function parseLogbackXml(f: ProjectFile): Promise<LogbackConfigFile> {
     const parsed = await new XmldocFileParser().toAst(f);
@@ -89,7 +76,6 @@ async function parseLogbackXml(f: ProjectFile): Promise<LogbackConfigFile> {
         appenderNames: app.$children.filter(c => c.$name === "appender-ref").map(c => (c as any).ref),
     }));
     return {
-        path: f.path,
         content: await f.getContent(),
         appenders,
         loggers,
