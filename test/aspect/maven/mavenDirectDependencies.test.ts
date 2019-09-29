@@ -62,6 +62,13 @@ describe("mavenDirectDependencies", () => {
 
     describe("extract", () => {
 
+        it("should leave path undefined for root", async () => {
+            const p = InMemoryProject.of({ path: "pom.xml", content: groupFirst });
+            const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
+            assert.strictEqual(deps.length, 1);
+            assert.strictEqual(deps[0].path, undefined);
+        });
+
         it("should cope with group id before artifact", async () => {
             const p = InMemoryProject.of({ path: "pom.xml", content: groupFirst });
             const deps = await MavenDirectDependencies.extract(p, undefined) as Array<FP<VersionedArtifact>>;
