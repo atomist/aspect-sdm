@@ -15,7 +15,14 @@
  */
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
-import { dirName, enrich, globAspect, GlobAspectData, virtualProjectAspect } from "@atomist/sdm-pack-aspect";
+import {
+    dirName,
+    enrich,
+    GitRecency,
+    globAspect,
+    GlobAspectData,
+    virtualProjectAspect
+} from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
@@ -46,6 +53,7 @@ import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
+import { GlobVirtualizer } from "../aa-move/globVirtualizer";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -156,6 +164,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             "grouped by Drift Level.",
             manage: false,
         }),
+        GitRecency,
         FrameworkAspect,
         CiAspect,
         BuildToolAspect,
@@ -174,6 +183,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...idioms.MutableInjections,
         ...SpringBootTwelveFactors,
         ...optionalAspects,
+        GlobVirtualizer,
     ];
 
     return aspects;
