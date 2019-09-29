@@ -18,7 +18,10 @@ import {
     logger,
     ProjectFile,
 } from "@atomist/automation-client";
-import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
+import {
+    globAspect,
+    GlobAspectData,
+} from "@atomist/sdm-pack-aspect";
 import {
     Aspect,
     FP,

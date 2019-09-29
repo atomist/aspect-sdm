@@ -15,7 +15,10 @@
  */
 
 import { logger } from "@atomist/automation-client";
-import { pathBefore, reviewerAspects } from "@atomist/sdm-pack-aspect";
+import {
+    pathBefore,
+    reviewerAspects,
+} from "@atomist/sdm-pack-aspect";
 import {
     HardcodedPropertyReviewer,
     ImportDotStar,

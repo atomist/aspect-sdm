@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-import { distinctNonRootPaths, GlobAspectData, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
-import { Aspect, FP } from "@atomist/sdm-pack-fingerprint";
+import {
+    distinctNonRootPaths,
+    GlobAspectData,
+    isGlobMatchFingerprint,
+} from "@atomist/sdm-pack-aspect";
+import {
+    Aspect,
+    FP,
+} from "@atomist/sdm-pack-fingerprint";
 
 /**
  * Virtualize all globs
