@@ -15,10 +15,10 @@
  */
 
 import { adjustBy, commonScorers, RepositoryScorer } from "@atomist/sdm-pack-aspect";
-import * as idioms from "./spring/idioms";
 import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
-import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import * as idioms from "./spring/idioms";
 import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
+import { XmlBeanDefinitions } from "./spring/xmlBeans";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -53,17 +53,17 @@ export function springIdiomScorers(): RepositoryScorer[] {
         commonScorers.penalizeGlobMatches({
             type: XmlBeanDefinitions.name,
             name: XmlBeanDefinitions.name, // TODO will no longer be needed
-            pointsLostPerMatch: 2
+            pointsLostPerMatch: 2,
         }),
         commonScorers.penalizeGlobMatches({
             type: JspFiles.name,
             name: JspFiles.name, // TODO will no longer be needed
-            pointsLostPerMatch: 2
+            pointsLostPerMatch: 2,
         }),
         commonScorers.penalizeGlobMatches({
             type: DefaultPackageJavaFiles.name, // TODO will no longer be needed
             name: DefaultPackageJavaFiles.name,
-            pointsLostPerMatch: 3
+            pointsLostPerMatch: 3,
         }),
     ];
 }
@@ -88,9 +88,9 @@ export function requireLoggingToConsole(): RepositoryScorer {
                 return {
                     reason: `Console logging is required - status is ${ltc.data.present}`,
                     score: ltc.data.present ? 5 : 1,
-                }
+                };
             }
             return undefined;
-        }
+        },
     };
 }

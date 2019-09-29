@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
+import { pathBefore } from "@atomist/sdm-pack-aspect";
 import {
     Aspect,
     fingerprintOf,
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
 import { SpringBootProjectStructure } from "@atomist/sdm-pack-spring";
-import { pathBefore } from "@atomist/sdm-pack-aspect";
 
 export interface SpringBootAppData {
     applicationClassName: string;

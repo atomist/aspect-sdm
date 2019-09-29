@@ -38,9 +38,9 @@ export const GlobVirtualizer: Aspect<GlobAspectData> = {
                     ...gf,
                     data,
                     path,
-                })
+                });
             }
         }
         return emitted;
-    }
+    },
 };
