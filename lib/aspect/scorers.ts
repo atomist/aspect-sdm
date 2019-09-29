@@ -14,10 +14,20 @@
  * limitations under the License.
  */
 
-import { adjustBy, commonScorers, RepositoryScorer } from "@atomist/sdm-pack-aspect";
-import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
+import {
+    adjustBy,
+    commonScorers,
+    RepositoryScorer,
+} from "@atomist/sdm-pack-aspect";
+import {
+    DefaultPackageJavaFiles,
+    JspFiles,
+} from "./aspects";
 import * as idioms from "./spring/idioms";
-import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
+import {
+    isConsoleLoggingFingerprint,
+    isSpringBootAppClassFingerprint,
+} from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 
 export function createScorers(): RepositoryScorer[] {

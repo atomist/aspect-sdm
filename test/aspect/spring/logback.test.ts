@@ -23,7 +23,8 @@ import { FP } from "@atomist/sdm-pack-fingerprint";
 import { GlobAspectData } from "@atomist/sdm-pack-aspect";
 import * as assert from "assert";
 import {
-    LogbackAspect, LogbackConfigFile,
+    LogbackAspect,
+    LogbackConfigFile,
 } from "../../../lib/aspect/spring/logbackAspect";
 
 export const LogbackWithConsole = `<?xml version="1.0" encoding="UTF-8"?>
