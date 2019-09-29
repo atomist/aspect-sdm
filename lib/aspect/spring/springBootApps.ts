@@ -20,6 +20,7 @@ import {
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
 import { SpringBootProjectStructure } from "@atomist/sdm-pack-spring";
+import { pathBefore } from "@atomist/sdm-pack-aspect";
 
 export interface SpringBootAppData {
     applicationClassName: string;
@@ -45,6 +46,8 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
                     displayValue: (structure.applicationClass ? structure.applicationPackage + "." : "") + structure.applicationClass,
                     data,
                     sha: sha256(JSON.stringify(data)),
+                    // TODO handle Kotlin also
+                    path: pathBefore(structure.appClassFile.path, "/src/main/java/"),
                 };
             });
         } else {

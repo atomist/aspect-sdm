@@ -52,7 +52,7 @@ export const LogbackAspect: Aspect<GlobAspectData<LogbackConfigFile>> = globAspe
     name: LogbackType,
     displayName: "Logback",
     glob: "**/logback-spring.xml",
-    extract: parseLogbackXml as any,
+    extract: parseLogbackXml,
 });
 
 async function parseLogbackXml(f: ProjectFile): Promise<LogbackConfigFile> {
