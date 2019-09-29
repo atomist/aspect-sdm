@@ -16,7 +16,7 @@
 
 import {
     adjustBy,
-    commonScorers,
+    commonScorers, FiveStar,
     RepositoryScorer,
 } from "@atomist/sdm-pack-aspect";
 import {
@@ -29,6 +29,7 @@ import {
     isSpringBootAppClassFingerprint,
 } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -72,6 +73,7 @@ export function springIdiomScorers(): RepositoryScorer[] {
             type: DefaultPackageJavaFiles.name,
             pointsLostPerMatch: 3,
         }),
+        penalizeOldBootVersions({}),
     ];
 }
 
@@ -100,4 +102,30 @@ export function requireLoggingToConsole(): RepositoryScorer {
             return undefined;
         },
     };
+}
+
+export function penalizeOldBootVersions(opts: { }): RepositoryScorer {
+    return {
+        name: "spring-boot-version",
+        scoreFingerprints: async rts => {
+            const sbv = rts.analysis.fingerprints.find(isSpringBootVersionFingerprint);
+            if (!sbv) {
+                return undefined;
+            }
+            const versions = sbv.data.matches.map(m => m.version);
+            let score: FiveStar = 5;
+            score = adjustBy(-5 * versions.filter(v => v.startsWith("1.0")).length, score);
+            score = adjustBy(-5 * versions.filter(v => v.startsWith("1.1")).length, score);
+            score = adjustBy(-5 * versions.filter(v => v.startsWith("1.2")).length, score);
+            score = adjustBy(-4.5 * versions.filter(v => v.startsWith("1.3")).length, score);
+            score = adjustBy(-4 * versions.filter(v => v.startsWith("1.4")).length, score);
+            score = adjustBy(-3 * versions.filter(v => v.startsWith("1.5")).length, score);
+            score = adjustBy(-1 * versions.filter(v => v.startsWith("2.0")).length, score);
+            // TODO if not release version, mark that down
+            return {
+                reason: `Spring Boot version is ${SpringBootVersion.toDisplayableFingerprint(sbv)}`,
+                score,
+            }
+        }
+    }
 }

@@ -14,43 +14,42 @@
  * limitations under the License.
  */
 
-import {
-    Aspect,
-    sha256,
-} from "@atomist/sdm-pack-fingerprint";
-import {
-    setSpringBootVersionTransform,
-    SpringBootVersionInspection,
-} from "@atomist/sdm-pack-spring";
+import { globAspect, GlobAspectData, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
+import { XmldocFileParser, XmldocTreeNode } from "@atomist/sdm-pack-spring/lib/xml/XmldocFileParser";
+import { evaluateExpression, isSuccessResult } from "@atomist/tree-path";
+import { extractVersionedArtifact } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
+import { FP } from "@atomist/sdm-pack-fingerprint";
 
 const SpringBootVersionType = "spring-boot-version";
 
-export const SpringBootVersion: Aspect = {
+const parser = new XmldocFileParser();
+
+export interface BootVersion {
+
+    version: string;
+}
+
+export const SpringBootVersion = globAspect<BootVersion>({
     name: SpringBootVersionType,
     displayName: "Spring Boot Version",
-
-    extract: async p => {
-        const versions = await SpringBootVersionInspection(p, undefined);
-        if (!versions || versions.versions.length === 0) {
-            return undefined;
+    glob: "**/pom.xml",
+    extract: async f => {
+        // TODO this doesn't get the non-parsing optimization we can get with files.
+        // Need a variant of globAspect that can run path expressions across the whole project
+        const ast = await parser.toAst(f);
+        const result = evaluateExpression(ast, "//parent[/artifactId[@innerValue='spring-boot-starter-parent']]");
+        if (isSuccessResult(result)) {
+            const va = extractVersionedArtifact(result[0] as any as XmldocTreeNode);
+            if (va) {
+                return { version: va.version };
+            }
         }
-        return {
-            type: SpringBootVersionType,
-            name: SpringBootVersionType,
-            abbreviation: "sbv",
-            version: "0.1.0",
-            data: versions,
-            sha: sha256(JSON.stringify(versions)),
-        };
-    },
-    apply: async (p, papi) => {
-        const fp = papi.parameters.fp;
-        if (fp.data.length !== 1) {
-            return p;
-        }
-        await setSpringBootVersionTransform(fp.data[0])(p, undefined, undefined);
-        return p;
+        return undefined;
     },
     toDisplayableFingerprintName: () => "Spring Boot version",
-    toDisplayableFingerprint: fp => fp.data.versions.map(v => v.version).join(","),
-};
+    toDisplayableFingerprint: fp => fp.data.matches.map(v => v.version).join(","),
+});
+
+export function isSpringBootVersionFingerprint(fp: FP): fp is FP<GlobAspectData<BootVersion>> {
+    return fp.type === SpringBootVersionType && isGlobMatchFingerprint(fp);
+}
