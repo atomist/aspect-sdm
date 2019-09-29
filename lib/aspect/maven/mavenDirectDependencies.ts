@@ -28,8 +28,7 @@ import {
     codeLine,
 } from "@atomist/slack-messages";
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
-
-import { dirName } from "../../move/virtualProjectAspect";
+import { dirName } from "@atomist/sdm-pack-aspect";
 
 const MavenDirectDep = "maven-direct-dep";
 

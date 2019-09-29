@@ -15,7 +15,7 @@
  */
 
 import { SoftwareDeliveryMachine } from "@atomist/sdm";
-import { enrich, globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
+import { dirName, enrich, globAspect, GlobAspectData, virtualProjectAspect } from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
 import {
     DockerfilePath,
@@ -45,7 +45,6 @@ import { SpringBootVersion } from "./spring/springBootVersion";
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
-import { dirName, virtualProjectAspect } from "../move/virtualProjectAspect";
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 
 export const JspFiles: Aspect<GlobAspectData> =
