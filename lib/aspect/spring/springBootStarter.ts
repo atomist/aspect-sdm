@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Aspect, fingerprintOf, FP, } from "@atomist/sdm-pack-fingerprint";
+import { Aspect, fingerprintOf, FP } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { isDependencyFingerprint } from "../maven/mavenDirectDependencies";
 
