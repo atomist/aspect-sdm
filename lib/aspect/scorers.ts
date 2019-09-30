@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import { adjustBy, commonScorers, FiveStar, RepositoryScorer, } from "@atomist/sdm-pack-aspect";
+import { adjustBy, commonScorers, FiveStar, RepositoryScorer, RepoToScore, } from "@atomist/sdm-pack-aspect";
 import { DefaultPackageJavaFiles, JspFiles, } from "./aspects";
 import * as idioms from "./spring/idioms";
 import { isSpringBootVersionFingerprint, SpringBootVersion, } from "./spring/springBootVersion";
 import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint, } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
-import { rewardForFingerprint, rewardForMavenDependency } from "../aa-move/scorerUtils";
+import { makeConditional, scoreOnFingerprintPresence } from "../aa-move/scorerUtils";
+import { VersionedArtifact } from "@atomist/sdm-pack-spring";
+import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
+import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -39,6 +42,11 @@ export function generalScorers(): RepositoryScorer[] {
         commonScorers.requireRecentCommit({ days: 10 }),
         // TODO Exposed secrets
     ];
+}
+
+function isSpringRepo(rts: RepoToScore): boolean {
+    const found = rts.analysis.fingerprints.find(isSpringBootVersionFingerprint);
+    return found && found.data.matches.length > 0;
 }
 
 export function springIdiomScorers(): RepositoryScorer[] {
@@ -67,9 +75,14 @@ export function springIdiomScorers(): RepositoryScorer[] {
         penalizeOldBootVersions({}),
         rewardForSwagger(),
         rewardForLiquibase(),
+        rewardForSpringSecurity(),
+        penalizeForSpringDataRest(),
         rewardForFlyway(),
         rewardForKotlin(),
-    ];
+        penalizeForLog4j(),
+    ].map(scorer => makeConditional(
+        scorer,
+        isSpringRepo));
 }
 
 export function springTwelveFactorScorers(): RepositoryScorer[] {
@@ -79,7 +92,10 @@ export function springTwelveFactorScorers(): RepositoryScorer[] {
             violationsPerPointLost: 2,
         }),
         requireLoggingToConsole(),
-    ];
+    ].map(scorer => makeConditional(
+        // Only run these scorers on Spring projects
+        scorer,
+        isSpringRepo));
 }
 
 export function requireLoggingToConsole(): RepositoryScorer {
@@ -126,35 +142,79 @@ export function penalizeOldBootVersions(opts: {}): RepositoryScorer {
 }
 
 export function rewardForSwagger(): RepositoryScorer {
-    return rewardForMavenDependency({
+    return scoreOnMavenDependencyPresence({
         name: "uses-swagger",
         reason: "Swagger dependency",
+        scoreWhenPresent: 5,
         test: va => va.artifact.includes("swagger")
     });
 }
 
 export function rewardForLiquibase(): RepositoryScorer {
-    return rewardForMavenDependency({
+    return scoreOnMavenDependencyPresence({
         name: "uses-liquibase",
         reason: "Liquibase dependency",
+        scoreWhenPresent: 5,
         test: va => va.artifact.includes("liquibase")
     });
 }
 
 export function rewardForFlyway(): RepositoryScorer {
-    return rewardForMavenDependency({
-            name: "uses-liquibase",
-            reason: "Flyway dependency",
-            test: va => va.group === "org.flywaydb"
+    return scoreOnMavenDependencyPresence({
+        name: "uses-liquibase",
+        reason: "Flyway dependency",
+        scoreWhenPresent: 5,
+        test: va => va.group === "org.flywaydb",
+    });
+}
+
+export function penalizeForLog4j(): RepositoryScorer {
+    return scoreOnMavenDependencyPresence({
+        name: "uses-log4j",
+        reason: "Log4j: Prefer logback",
+        scoreWhenPresent: 3,
+        test: va => va.artifact.includes("log4j"),
+    });
+}
+
+export function rewardForSpringSecurity(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+        name: "uses-spring-security",
+        reason: "Spring Security",
+        scoreWhenPresent: 5,
+        scoreWhenAbsent: 3,
+        test: fp => isSpringBootStarterFingerprint(fp) && fp.data.artifact === "spring-boot-starter-security",
+    });
+}
+
+export function penalizeForSpringDataRest(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+        name: "uses-spring-data-rest",
+        reason: "Expose data selectively",
+        scoreWhenPresent: 2,
+        test: fp => isSpringBootStarterFingerprint(fp) && fp.data.artifact === "spring-boot-starter-data-rest",
+    });
+}
+
+export function rewardForKotlin(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "has-kotlin",
+            reason: "Kotlin files found",
+            scoreWhenPresent: 5,
+            test: fp => fp.type === "language" && fp.name === "kotlin",
         }
     );
 }
 
-export function rewardForKotlin(): RepositoryScorer {
-    return rewardForFingerprint({
-            name: "has-kotlin",
-            reason: "Kotlin files found",
-            test: fp => fp.type === "language" && fp.name === "kotlin",
-        }
-    );
+export function scoreOnMavenDependencyPresence(opts: {
+    name: string,
+    scoreWhenPresent?: FiveStar,
+    scoreWhenAbsent?: FiveStar,
+    reason: string,
+    test: (va: VersionedArtifact) => boolean
+}): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+        ...opts,
+        test: fp => isDependencyFingerprint(fp) && opts.test(fp.data)
+    })
 }

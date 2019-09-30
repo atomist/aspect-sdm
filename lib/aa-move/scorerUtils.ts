@@ -1,26 +1,49 @@
-import { RepositoryScorer } from "@atomist/sdm-pack-aspect";
-import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import { isMavenDependencyFingerprint } from "../aspect/maven/mavenDirectDependencies";
+import { FiveStar, RepositoryScorer, RepoToScore } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
-export function rewardForMavenDependency(opts: { name: string, reason: string, test: (va: VersionedArtifact) => boolean }): RepositoryScorer {
-    return rewardForFingerprint({
-        name: opts.name,
-        reason: opts.reason,
-        test: fp => isMavenDependencyFingerprint(fp) && opts.test(fp.data)
-    })
+/**
+ * Emit the given score only when the condition is met.
+ * Enables existing scorers to be reused in different context.
+ */
+export function makeConditional(scorer: RepositoryScorer,
+                                test: (rts: RepoToScore) => boolean): RepositoryScorer {
+    return {
+        ...scorer,
+        scoreFingerprints: async rts => {
+            return test(rts) ?
+                scorer.scoreFingerprints(rts) :
+                undefined;
+        },
+    };
 }
 
-export function rewardForFingerprint(opts: { name: string, reason: string, test: (fp: FP) => boolean }): RepositoryScorer {
+/**
+ * Score with the given score when the fingerprint is present
+ */
+export function scoreOnFingerprintPresence(opts: {
+    name: string,
+    scoreWhenPresent?: FiveStar,
+    scoreWhenAbsent?: FiveStar,
+    reason: string,
+    test: (fp: FP) => boolean
+}): RepositoryScorer {
     return {
         name: opts.name,
         scoreFingerprints: async rts => {
             const found = rts.analysis.fingerprints
                 .find(opts.test);
-            return found ? {
-                reason: opts.reason,
-                score: 5,
-            } : undefined;
+            if (found && opts.scoreWhenPresent) {
+                return {
+                    reason: opts.reason + " - present",
+                    score: opts.scoreWhenPresent,
+                };
+            } else if (opts.scoreWhenAbsent) {
+                return {
+                    reason: opts.reason + " - absent",
+                    score: opts.scoreWhenAbsent,
+                };
+            }
+            return undefined;
         }
     }
 }
