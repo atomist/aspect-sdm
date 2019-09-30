@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
+import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import { isSpringBootStarterFingerprint } from "./springBootStarter";
 import { isXmlBeanDefinitionsFingerprint } from "./xmlBeans";
 
@@ -46,4 +46,3 @@ export const SpringClassificationAspect: Aspect = projectClassificationAspect(
         testFingerprints: async fps => fps.some(fp => isXmlBeanDefinitionsFingerprint(fp) && fp.data.matches.length > 0),
     },
 );
-

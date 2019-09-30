@@ -42,6 +42,7 @@ import { LanguageAspect } from "./common/languageAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
 import { K8sSpecs } from "./k8s/specAspect";
+import { JavaVersion } from "./maven/javaVersion";
 import { MavenDirectDependencies } from "./maven/mavenDirectDependencies";
 import { MavenParentPom } from "./maven/parentPom";
 import { NpmDependencies } from "./node/npmDependencies";
@@ -52,11 +53,10 @@ import { LogbackAspect } from "./spring/logbackAspect";
 import { SpringBootAppClass } from "./spring/springBootApps";
 import { SpringBootStarter } from "./spring/springBootStarter";
 import { SpringBootVersion } from "./spring/springBootVersion";
+import { SpringClassificationAspect } from "./spring/springClassificationAspect";
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
-import { JavaVersion } from "./maven/javaVersion";
-import { SpringClassificationAspect } from "./spring/springClassificationAspect";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
