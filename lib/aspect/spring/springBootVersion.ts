@@ -45,6 +45,7 @@ export const SpringBootVersion = globAspect<BootVersion>({
     glob: "**/pom.xml",
     extract: async f => {
         // TODO this doesn't get the non-parsing optimization we can get with files.
+        // Could switch to matchAspect
         // Need a variant of globAspect that can run path expressions across the whole project
         const ast = await parser.toAst(f);
         const result = evaluateExpression(ast, "//parent[/artifactId[@innerValue='spring-boot-starter-parent']]");

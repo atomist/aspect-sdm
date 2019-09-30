@@ -58,6 +58,15 @@ describe("frameworkAspect", () => {
             return assert(fps.some(fp => fp.name === "node"));
         });
 
+        it("finds node from package.json lower down", async () => {
+            const p = InMemoryProject.of({
+                path: "thing/two/package.json", content: "something",
+            });
+            const fps = await doExtract(p);
+            assert.strictEqual(fps.length, 1);
+            return assert(fps.some(fp => fp.name === "node"));
+        });
+
     });
 
     describe("spring boot", () => {
@@ -79,6 +88,14 @@ describe("frameworkAspect", () => {
         it("finds spring boot from pom", async () => {
             const p = InMemoryProject.of({
                 path: "pom.xml", content: springBootPom(),
+            });
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "spring-boot"));
+        });
+
+        it("finds spring boot from pom lower down", async () => {
+            const p = InMemoryProject.of({
+                path: "a/b/pom.xml", content: springBootPom(),
             });
             const fps = await doExtract(p);
             return assert(fps.some(fp => fp.name === "spring-boot"));
@@ -169,6 +186,14 @@ describe("frameworkAspect", () => {
             return assert(fps.some(fp => fp.name === "rails"));
         });
 
+        it("finds rails in gemfile further down with single quotes", async () => {
+            const p = InMemoryProject.of({
+                path: "some/path/to/the/Gemfile", content: adoptAHydrantGemfile,
+            });
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "rails"));
+        });
+
         it("finds rails in gemfile with double quotes", async () => {
             const p = InMemoryProject.of({
                 path: "Gemfile", content: `gem "rails"`,
@@ -208,6 +233,16 @@ docutils==0.14`,
         it("finds Django in Django-ey requirements.txt", async () => {
             const p = InMemoryProject.of({
                 path: "requirements.txt",
+                content: `Django==2.2.1
+docutils==0.14`,
+            });
+            const fps = await doExtract(p);
+            return assert(fps.some(fp => fp.name === "django"));
+        });
+
+        it("finds Django in Django-ey requirements.txt further down", async () => {
+            const p = InMemoryProject.of({
+                path: "a/is/greater/than/b/requirements.txt",
                 content: `Django==2.2.1
 docutils==0.14`,
             });
