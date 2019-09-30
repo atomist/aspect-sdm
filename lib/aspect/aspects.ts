@@ -56,6 +56,7 @@ import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
 import { JavaVersion } from "./maven/javaVersion";
+import { SpringClassificationAspect } from "./spring/springClassificationAspect";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -172,6 +173,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             manage: false,
         }),
         GitRecency,
+        SpringClassificationAspect,
         FrameworkAspect,
         CiAspect,
         BuildToolAspect,
