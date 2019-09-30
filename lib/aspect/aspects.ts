@@ -55,6 +55,7 @@ import { SpringBootVersion } from "./spring/springBootVersion";
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { JavaVersion } from "./maven/javaVersion";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -98,6 +99,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         // This must run before any other consolidate aspects
         GlobVirtualizer,
 
+        JavaVersion,
         SpringBootStarter,
         enrich(TypeScriptVersion, {
             shortName: "version",
