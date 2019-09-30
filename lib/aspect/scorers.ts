@@ -18,9 +18,9 @@ import {
     adjustBy,
     commonScorers,
     FiveStar,
+    makeConditional,
     RepositoryScorer,
     RepoToScore,
-    makeConditional,
     scoreOnFingerprintPresence,
 } from "@atomist/sdm-pack-aspect";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
