@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import {
-    Aspect,
-    FP,
-    sha256,
-} from "@atomist/sdm-pack-fingerprint";
+import { Aspect, fingerprintOf, FP, } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
+import { isDependencyFingerprint } from "../maven/mavenDirectDependencies";
 
 const SpringBootStarterType = "spring-boot-starter";
+
+export function isSpringBootStarterFingerprint(fp: FP): fp is FP<VersionedArtifact> {
+    return fp.type === SpringBootStarterType && isDependencyFingerprint(fp);
+}
 
 /**
  * Detect which Spring Boot starter dependencies are included in your projects,
@@ -38,13 +38,14 @@ const SpringBootStarterType = "spring-boot-starter";
 export const SpringBootStarter: Aspect<VersionedArtifact> = {
     name: SpringBootStarterType,
     displayName: "Spring Boot Starter",
-    extract: async p => {
-        const deps = await findDeclaredDependencies(p);
-        if (deps.dependencies.length === 0) {
+    extract: async () => [],
+    consolidate: async fps => {
+        const depFingerprints = fps.filter(isDependencyFingerprint);
+        if (depFingerprints.length === 0) {
             return undefined;
         }
-        return deps.dependencies
-            .filter(d => d.artifact.includes("-starter"))
+        return depFingerprints
+            .filter(d => d.data.artifact.includes("-starter"))
             .map(createSpringBootStarterFingerprint);
     },
     toDisplayableFingerprint: fp => {
@@ -54,11 +55,11 @@ export const SpringBootStarter: Aspect<VersionedArtifact> = {
         "https://atomist-blogs.github.io/org-visualizer/modules/_lib_feature_spring_springbootstarterfeature_.html#springbootstarterfeature",
 };
 
-function createSpringBootStarterFingerprint(data: VersionedArtifact): FP<VersionedArtifact> {
-    return {
+function createSpringBootStarterFingerprint(dep: FP<VersionedArtifact>): FP<VersionedArtifact> {
+    return fingerprintOf({
         type: SpringBootStarterType,
-        name: `starter:${data.group}:${data.artifact}`,
-        data,
-        sha: sha256(JSON.stringify(data)),
-    };
+        name: `starter:${dep.data.group}:${dep.data.artifact}`,
+        data: dep.data,
+        path: dep.path,
+    });
 }
