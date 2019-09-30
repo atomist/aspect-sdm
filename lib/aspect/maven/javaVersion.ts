@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { matchAspect } from "../../aa-move/matchAspect";
-import { microgrammar } from "@atomist/microgrammar";
 import { MicrogrammarBasedFileParser } from "@atomist/automation-client";
-import { FP } from "@atomist/sdm-pack-fingerprint";
+import { microgrammar } from "@atomist/microgrammar";
 import { GlobAspectData } from "@atomist/sdm-pack-aspect";
+import { FP } from "@atomist/sdm-pack-fingerprint";
+import { matchAspect } from "../../aa-move/matchAspect";
 
 export const JavaVersionType = "java-version";
 
@@ -46,7 +46,6 @@ export const JavaVersion = matchAspect<JavaVersionData>({
         return { javaVersion: mr.$value };
     },
     toDisplayableFingerprint: fp => {
-        return fp.data.matches.map(m => m.javaVersion).join(",")
+        return fp.data.matches.map(m => m.javaVersion).join(",");
     },
 });
-

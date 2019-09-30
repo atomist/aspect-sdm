@@ -30,6 +30,7 @@ import {
     DefaultPackageJavaFiles,
     JspFiles,
 } from "./aspects";
+import { isJavaVersionFingerprint, JavaVersion } from "./maven/javaVersion";
 import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
@@ -42,7 +43,6 @@ import {
     isSpringBootAppClassFingerprint,
 } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
-import { isJavaVersionFingerprint, JavaVersion } from "./maven/javaVersion";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
