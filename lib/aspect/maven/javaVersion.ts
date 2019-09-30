@@ -16,7 +16,10 @@
 
 import { MicrogrammarBasedFileParser } from "@atomist/automation-client";
 import { microgrammar } from "@atomist/microgrammar";
-import { GlobAspectData, matchAspect } from "@atomist/sdm-pack-aspect";
+import {
+    GlobAspectData,
+    matchAspect,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
 export const JavaVersionType = "java-version";
