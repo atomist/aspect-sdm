@@ -20,12 +20,10 @@ import {
     FiveStar,
     RepositoryScorer,
     RepoToScore,
-} from "@atomist/sdm-pack-aspect";
-import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import {
     makeConditional,
     scoreOnFingerprintPresence,
-} from "../aa-move/scorerUtils";
+} from "@atomist/sdm-pack-aspect";
+import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import {
     DefaultPackageJavaFiles,
     JspFiles,
