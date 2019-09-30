@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-import {
-    adjustBy,
-    commonScorers,
-    FiveStar,
-    RepositoryScorer,
-} from "@atomist/sdm-pack-aspect";
-import {
-    DefaultPackageJavaFiles,
-    JspFiles,
-} from "./aspects";
+import { adjustBy, commonScorers, FiveStar, RepositoryScorer, } from "@atomist/sdm-pack-aspect";
+import { DefaultPackageJavaFiles, JspFiles, } from "./aspects";
 import * as idioms from "./spring/idioms";
-import {
-    isSpringBootVersionFingerprint,
-    SpringBootVersion,
-} from "./spring/springBootVersion";
-import {
-    isConsoleLoggingFingerprint,
-    isSpringBootAppClassFingerprint,
-} from "./spring/twelveFactors";
+import { isSpringBootVersionFingerprint, SpringBootVersion, } from "./spring/springBootVersion";
+import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint, } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import { rewardForFingerprint, rewardForMavenDependency } from "../aa-move/scorerUtils";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -78,6 +65,10 @@ export function springIdiomScorers(): RepositoryScorer[] {
             pointsLostPerMatch: 3,
         }),
         penalizeOldBootVersions({}),
+        rewardForSwagger(),
+        rewardForLiquibase(),
+        rewardForFlyway(),
+        rewardForKotlin(),
     ];
 }
 
@@ -108,7 +99,7 @@ export function requireLoggingToConsole(): RepositoryScorer {
     };
 }
 
-export function penalizeOldBootVersions(opts: { }): RepositoryScorer {
+export function penalizeOldBootVersions(opts: {}): RepositoryScorer {
     return {
         name: "spring-boot-version",
         scoreFingerprints: async rts => {
@@ -132,4 +123,38 @@ export function penalizeOldBootVersions(opts: { }): RepositoryScorer {
             };
         },
     };
+}
+
+export function rewardForSwagger(): RepositoryScorer {
+    return rewardForMavenDependency({
+        name: "uses-swagger",
+        reason: "Swagger dependency",
+        test: va => va.artifact.includes("swagger")
+    });
+}
+
+export function rewardForLiquibase(): RepositoryScorer {
+    return rewardForMavenDependency({
+        name: "uses-liquibase",
+        reason: "Liquibase dependency",
+        test: va => va.artifact.includes("liquibase")
+    });
+}
+
+export function rewardForFlyway(): RepositoryScorer {
+    return rewardForMavenDependency({
+            name: "uses-liquibase",
+            reason: "Flyway dependency",
+            test: va => va.group === "org.flywaydb"
+        }
+    );
+}
+
+export function rewardForKotlin(): RepositoryScorer {
+    return rewardForFingerprint({
+            name: "has-kotlin",
+            reason: "Kotlin files found",
+            test: fp => fp.type === "language" && fp.name === "kotlin",
+        }
+    );
 }
