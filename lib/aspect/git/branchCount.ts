@@ -15,9 +15,16 @@
  */
 
 import {
+    GitHubRepoRef,
+    isLocalProject,
+    isRemoteRepoRef,
     LocalProject,
     logger,
+    Project,
+    RepoRef,
+    ScmProviderType,
 } from "@atomist/automation-client";
+import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import { execPromise } from "@atomist/sdm";
 import {
     bandFor,
@@ -25,8 +32,10 @@ import {
 } from "@atomist/sdm-pack-aspect/lib/util/bands";
 import {
     Aspect,
+    ExtractFingerprint,
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
+import { api } from "../../util/gitHubApi";
 
 export const BranchCountType = "branch-count";
 
@@ -34,59 +43,75 @@ export interface BranchCountData {
     count: number;
 }
 
+function isGitHubRemote(rr: RepoRef): rr is GitHubRepoRef {
+    return isRemoteRepoRef(rr) &&
+        (rr.providerType === ScmProviderType.github_com || rr.providerType === ScmProviderType.ghe);
+}
+
+/**
+ * Determine the branch count for the project.  If the project is a
+ * GitHubRepoRef and the credentials provided in the
+ * PushImpactListenerInvocation are token credentials, it attempts to
+ * use the GitHub API to ascertain the branch count.  If those things
+ * are not true or if using the GitHub API fails, it tries to
+ * unshallow the clone of the project and uses the Git CLI to count
+ * the branches, For large repos this may take a long time and consume
+ * a lot of memory.  If that fails, it returns `undefined`.
+ */
+export const extractBranchCount: ExtractFingerprint<BranchCountData> = async (p, pili) => {
+    if (isGitHubRemote(p.id) && isTokenCredentials(pili.credentials)) {
+        try {
+            const github = api(pili.credentials.token, p.id.apiBase);
+            const branches = await github.paginate("GET /repos/:owner/:repo/branches", { owner: p.id.owner, repo: p.id.repo, per_page: 100 });
+            const data = { count: branches.length };
+            return {
+                type: BranchCountType,
+                name: BranchCountType,
+                data,
+                sha: sha256(JSON.stringify(data)),
+            };
+        } catch (e) {
+            logger.warn(`Failed to retrieve branch count using @octokit/rest: ${e.message}`);
+        }
+    }
+    if (isLocalProject(p)) {
+        const opts = { cwd: p.baseDir };
+        try {
+            const shallowOutput = await execPromise("git", ["rev-parse", "--is-shallow-repository"], opts);
+            const shallow = shallowOutput.stdout.trim();
+            if (shallow === "true") {
+                await execPromise("git", ["fetch", "--unshallow"], opts);
+            }
+            await execPromise("git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"], opts);
+            await execPromise("git", ["fetch", "origin"], opts);
+            const commandResult = await execPromise("git", ["branch", "--list", "-r", "origin/*"], opts);
+            const count = commandResult.stdout
+                .split("\n")
+                .filter(l => !l.includes("origin/HEAD")).length - 1;
+            const data = { count };
+            logger.debug("Branch count for %s is %d", p.id.url, count);
+            return {
+                type: BranchCountType,
+                name: BranchCountType,
+                data,
+                sha: sha256(JSON.stringify(data)),
+            };
+        } catch (e) {
+            logger.warn(`Failed to get branch count from Git CLI: ${e.message}`);
+        }
+    }
+    logger.debug(`Project ${p.name} is not a GitHub nor local project`);
+    return undefined;
+};
+
+/**
+ * Git repository branch count aspect.
+ */
 export const branchCount: Aspect<BranchCountData> = {
     name: BranchCountType,
     displayName: "Branch count",
     baseOnly: true,
-    extract: async p => {
-        const lp = p as LocalProject;
-
-        try {
-            await execPromise(
-                "git", ["fetch", "--unshallow"],
-                {
-                    cwd: lp.baseDir,
-                });
-        } catch (e) {
-            logger.warn(e.message);
-        }
-        try {
-            await execPromise(
-                "git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"],
-                {
-                    cwd: lp.baseDir,
-                });
-        } catch (e) {
-            logger.warn(e.message);
-        }
-        try {
-            await execPromise(
-                "git", ["fetch", "origin"],
-                {
-                    cwd: lp.baseDir,
-                });
-        } catch (e) {
-            logger.warn(e.message);
-        }
-
-        const commandResult = await execPromise(
-            "git", ["branch", "--list", "-r", "origin/*"],
-            {
-                cwd: lp.baseDir,
-            });
-
-        const count = commandResult.stdout
-            .split("\n")
-            .filter(l => !l.includes("origin/HEAD")).length - 1;
-        const data = { count };
-        logger.debug("Branch count for %s is %d", p.id.url, count);
-        return {
-            type: BranchCountType,
-            name: BranchCountType,
-            data,
-            sha: sha256(JSON.stringify(data)),
-        };
-    },
+    extract: extractBranchCount,
     toDisplayableFingerprintName: () => "Branch count",
     toDisplayableFingerprint: fp => {
         return bandFor<"Low" | "Medium" | "High" | "Excessive">({
