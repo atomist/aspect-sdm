@@ -101,6 +101,10 @@ export const configuration: Configuration = configure(async sdm => {
                     scorers: {
                         spring: createScorers(),
                     },
+                    weightings: {
+                        "spring-boot-version": 3,
+                        "hard-coded-property": 2,
+                    },
                     aspectsFactory: RegistrationsBackedAspectsFactory,
 
                     rebase: {
