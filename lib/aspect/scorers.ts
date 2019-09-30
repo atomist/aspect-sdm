@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { adjustBy, commonScorers, FiveStar, RepositoryScorer, RepoToScore, } from "@atomist/sdm-pack-aspect";
-import { DefaultPackageJavaFiles, JspFiles, } from "./aspects";
-import * as idioms from "./spring/idioms";
-import { isSpringBootVersionFingerprint, SpringBootVersion, } from "./spring/springBootVersion";
-import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint, } from "./spring/twelveFactors";
-import { XmlBeanDefinitions } from "./spring/xmlBeans";
-import { makeConditional, scoreOnFingerprintPresence } from "../aa-move/scorerUtils";
+import { adjustBy, commonScorers, FiveStar, RepositoryScorer, RepoToScore } from "@atomist/sdm-pack-aspect";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
+import { makeConditional, scoreOnFingerprintPresence } from "../aa-move/scorerUtils";
+import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
 import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
+import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
+import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
+import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
+import { XmlBeanDefinitions } from "./spring/xmlBeans";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -146,7 +146,7 @@ export function rewardForSwagger(): RepositoryScorer {
         name: "uses-swagger",
         reason: "Swagger dependency",
         scoreWhenPresent: 5,
-        test: va => va.artifact.includes("swagger")
+        test: va => va.artifact.includes("swagger"),
     });
 }
 
@@ -155,7 +155,7 @@ export function rewardForLiquibase(): RepositoryScorer {
         name: "uses-liquibase",
         reason: "Liquibase dependency",
         scoreWhenPresent: 5,
-        test: va => va.artifact.includes("liquibase")
+        test: va => va.artifact.includes("liquibase"),
     });
 }
 
@@ -202,7 +202,7 @@ export function rewardForKotlin(): RepositoryScorer {
             reason: "Kotlin files found",
             scoreWhenPresent: 5,
             test: fp => fp.type === "language" && fp.name === "kotlin",
-        }
+        },
     );
 }
 
@@ -211,10 +211,10 @@ export function scoreOnMavenDependencyPresence(opts: {
     scoreWhenPresent?: FiveStar,
     scoreWhenAbsent?: FiveStar,
     reason: string,
-    test: (va: VersionedArtifact) => boolean
+    test: (va: VersionedArtifact) => boolean,
 }): RepositoryScorer {
     return scoreOnFingerprintPresence({
         ...opts,
-        test: fp => isDependencyFingerprint(fp) && opts.test(fp.data)
-    })
+        test: fp => isDependencyFingerprint(fp) && opts.test(fp.data),
+    });
 }

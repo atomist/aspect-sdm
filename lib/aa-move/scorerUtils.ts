@@ -41,7 +41,7 @@ export function scoreOnFingerprintPresence(opts: {
     scoreWhenPresent?: FiveStar,
     scoreWhenAbsent?: FiveStar,
     reason: string,
-    test: (fp: FP) => boolean
+    test: (fp: FP) => boolean,
 }): RepositoryScorer {
     return {
         name: opts.name,
@@ -60,6 +60,6 @@ export function scoreOnFingerprintPresence(opts: {
                 };
             }
             return undefined;
-        }
-    }
+        },
+    };
 }
