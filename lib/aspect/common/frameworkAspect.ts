@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import {
     Aspect,
@@ -21,7 +22,6 @@ import {
     NpmDeps,
 } from "@atomist/sdm-pack-fingerprint";
 import { NpmDepData } from "@atomist/sdm-pack-fingerprint/lib/fingerprints/npmDeps";
-import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 
 export const FrameworkName = "framework";
 
