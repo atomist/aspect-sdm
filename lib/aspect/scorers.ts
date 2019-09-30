@@ -14,15 +14,33 @@
  * limitations under the License.
  */
 
-import { adjustBy, commonScorers, FiveStar, RepositoryScorer, RepoToScore } from "@atomist/sdm-pack-aspect";
+import {
+    adjustBy,
+    commonScorers,
+    FiveStar,
+    RepositoryScorer,
+    RepoToScore,
+} from "@atomist/sdm-pack-aspect";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import { makeConditional, scoreOnFingerprintPresence } from "../aa-move/scorerUtils";
-import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
+import {
+    makeConditional,
+    scoreOnFingerprintPresence,
+} from "../aa-move/scorerUtils";
+import {
+    DefaultPackageJavaFiles,
+    JspFiles,
+} from "./aspects";
 import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
-import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
-import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
+import {
+    isSpringBootVersionFingerprint,
+    SpringBootVersion,
+} from "./spring/springBootVersion";
+import {
+    isConsoleLoggingFingerprint,
+    isSpringBootAppClassFingerprint,
+} from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 
 export function createScorers(): RepositoryScorer[] {
