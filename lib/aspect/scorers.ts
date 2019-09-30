@@ -30,7 +30,10 @@ import {
     DefaultPackageJavaFiles,
     JspFiles,
 } from "./aspects";
-import { isJavaVersionFingerprint, JavaVersion } from "./maven/javaVersion";
+import {
+    isJavaVersionFingerprint,
+    JavaVersion,
+} from "./maven/javaVersion";
 import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
