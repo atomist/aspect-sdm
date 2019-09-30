@@ -42,12 +42,14 @@ import {
     isSpringBootAppClassFingerprint,
 } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import { isJavaVersionFingerprint, JavaVersion } from "./maven/javaVersion";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
         // Penalize for not enough known about this repository
         commonScorers.anchorScoreAt(3),
         ...generalScorers(),
+        ...javaScorers(),
         ...springIdiomScorers(),
         ...springTwelveFactorScorers(),
     ];
@@ -65,6 +67,12 @@ export function generalScorers(): RepositoryScorer[] {
 function isSpringRepo(rts: RepoToScore): boolean {
     const found = rts.analysis.fingerprints.find(isSpringBootVersionFingerprint);
     return found && found.data.matches.length > 0;
+}
+
+export function javaScorers(): RepositoryScorer[] {
+    return [
+        penalizeOldJavaVersion({}),
+    ];
 }
 
 export function springIdiomScorers(): RepositoryScorer[] {
@@ -129,6 +137,34 @@ export function requireLoggingToConsole(): RepositoryScorer {
                 };
             }
             return undefined;
+        },
+    };
+}
+
+export function penalizeOldJavaVersion(opts: {}): RepositoryScorer {
+    return {
+        name: "java-version",
+        scoreFingerprints: async rts => {
+            const jvf = rts.analysis.fingerprints.find(isJavaVersionFingerprint);
+            if (!jvf) {
+                return undefined;
+            }
+            let score: FiveStar = 5;
+            const versions = jvf.data.matches.map(v => v.javaVersion);
+            for (const version of versions) {
+                switch (version) {
+                    case "1.8" :
+                        score = adjustBy(-2);
+                        break;
+                    case "1.7" :
+                        score = adjustBy(-3);
+                        break;
+                }
+            }
+            return {
+                reason: `Java version is ${JavaVersion.toDisplayableFingerprint(jvf)}`,
+                score,
+            };
         },
     };
 }
