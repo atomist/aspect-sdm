@@ -23,6 +23,7 @@ import {
     GitRecency,
     globAspect,
     GlobAspectData,
+    GlobVirtualizer,
     virtualProjectAspect,
 } from "@atomist/sdm-pack-aspect";
 import { LeinDeps } from "@atomist/sdm-pack-clojure/lib/fingerprints/clojure";
@@ -31,7 +32,6 @@ import {
     DockerPorts,
 } from "@atomist/sdm-pack-docker";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
-import { GlobVirtualizer } from "../aa-move/globVirtualizer";
 import { BuildToolAspect } from "./common/buildToolAspect";
 import { CiAspect } from "./common/ciAspect";
 import {

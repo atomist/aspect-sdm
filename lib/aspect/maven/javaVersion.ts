@@ -16,9 +16,8 @@
 
 import { MicrogrammarBasedFileParser } from "@atomist/automation-client";
 import { microgrammar } from "@atomist/microgrammar";
-import { GlobAspectData } from "@atomist/sdm-pack-aspect";
+import { GlobAspectData, matchAspect } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
-import { matchAspect } from "../../aa-move/matchAspect";
 
 export const JavaVersionType = "java-version";
 
@@ -36,6 +35,10 @@ export function isJavaVersionFingerprint(fp: FP): fp is FP<GlobAspectData<JavaVe
     return fp.type === JavaVersionType;
 }
 
+/**
+ * Loook for Java Version in a Maven file
+ * @type {Aspect<GlobAspectData<JavaVersionData>>}
+ */
 export const JavaVersion = matchAspect<JavaVersionData>({
     name: JavaVersionType,
     displayName: "Java version",
