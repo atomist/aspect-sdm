@@ -57,7 +57,7 @@ export function createScorers(): RepositoryScorer[] {
 export function generalScorers(): RepositoryScorer[] {
     return [
         commonScorers.penalizeForExcessiveBranches({ branchLimit: 5 }),
-        commonScorers.requireRecentCommit({ days: 10 }),
+        commonScorers.requireRecentCommit({ days: 15 }),
         // TODO Exposed secrets
     ];
 }
