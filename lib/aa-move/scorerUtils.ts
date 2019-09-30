@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { FiveStar, RepositoryScorer, RepoToScore } from "@atomist/sdm-pack-aspect";
+import {
+    FiveStar,
+    RepositoryScorer,
+    RepoToScore,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
 /**
