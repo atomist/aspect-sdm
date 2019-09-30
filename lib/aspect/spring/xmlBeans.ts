@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { globAspect, GlobAspectData, isGlobMatchFingerprint } from "@atomist/sdm-pack-aspect";
+import {
+    globAspect,
+    GlobAspectData,
+    isGlobMatchFingerprint,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 
 const SpringBeansType = "spring-beans";
