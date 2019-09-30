@@ -68,7 +68,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "dependency",
             category: "Java",
             unit: "version",
-            url: "drift?type=maven-direct-dep&band=true&repos=true",
+            url: "drift?type=maven-direct-dep&band=true&repos=false",
             description: "Maven declared dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         }),
@@ -76,7 +76,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "parent",
             category: "Java",
             unit: "version",
-            url: `drift?type=${MavenParentPom.name}&band=true&repos=true`,
+            url: `drift?type=${MavenParentPom.name}&band=true&repos=false`,
             description: "Maven parent POM in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         }),
@@ -84,7 +84,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "dependency",
             category: "Java",
             unit: "version",
-            url: "drift?type=clojure-project-deps&band=true&repos=true",
+            url: "drift?type=clojure-project-deps&band=true&repos=false",
             description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         }),
