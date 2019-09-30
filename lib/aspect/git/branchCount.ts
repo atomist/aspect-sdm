@@ -26,6 +26,7 @@ import {
 } from "@atomist/automation-client";
 import { isTokenCredentials } from "@atomist/automation-client/lib/operations/common/ProjectOperationCredentials";
 import { execPromise } from "@atomist/sdm";
+import { isInLocalMode } from "@atomist/sdm-core";
 import {
     bandFor,
     Default,
@@ -53,10 +54,12 @@ function isGitHubRemote(rr: RepoRef): rr is GitHubRepoRef {
  * GitHubRepoRef and the credentials provided in the
  * PushImpactListenerInvocation are token credentials, it attempts to
  * use the GitHub API to ascertain the branch count.  If those things
- * are not true or if using the GitHub API fails, it tries to
- * unshallow the clone of the project and uses the Git CLI to count
- * the branches, For large repos this may take a long time and consume
- * a lot of memory.  If that fails, it returns `undefined`.
+ * are not true or if using the GitHub API fails, it tries to use the
+ * Git CLI to count the branches, after unshallowing the clone if
+ * necessary.  The check for whether a project is a shallow clone or
+ * not is only performed when not running in local mode.  For large
+ * repos, unshallowing a clone may take a long time and consume a lot
+ * of memory.  If that fails, it returns `undefined`.
  */
 export const extractBranchCount: ExtractFingerprint<BranchCountData> = async (p, pili) => {
     if (isGitHubRemote(p.id) && isTokenCredentials(pili.credentials)) {
@@ -75,15 +78,17 @@ export const extractBranchCount: ExtractFingerprint<BranchCountData> = async (p,
         }
     }
     if (isLocalProject(p)) {
-        const opts = { cwd: p.baseDir };
         try {
-            const shallowOutput = await execPromise("git", ["rev-parse", "--is-shallow-repository"], opts);
-            const shallow = shallowOutput.stdout.trim();
-            if (shallow === "true") {
-                await execPromise("git", ["fetch", "--unshallow"], opts);
+            const opts = { cwd: p.baseDir };
+            if (!isInLocalMode()) {
+                const shallowOutput = await execPromise("git", ["rev-parse", "--is-shallow-repository"], opts);
+                const shallow = shallowOutput.stdout.trim();
+                if (shallow === "true") {
+                    await execPromise("git", ["fetch", "--unshallow"], opts);
+                    await execPromise("git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"], opts);
+                    await execPromise("git", ["fetch", "origin"], opts);
+                }
             }
-            await execPromise("git", ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"], opts);
-            await execPromise("git", ["fetch", "origin"], opts);
             const commandResult = await execPromise("git", ["branch", "--list", "-r", "origin/*"], opts);
             const count = commandResult.stdout
                 .split("\n")
