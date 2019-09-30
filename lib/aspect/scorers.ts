@@ -65,9 +65,15 @@ export function generalScorers(): RepositoryScorer[] {
     ];
 }
 
-function isSpringRepo(rts: RepoToScore): boolean {
+/**
+ * Look first for Spring Boot version, then for Spring Boot app class
+ */
+function isSpringBootRepo(rts: RepoToScore): boolean {
     const found = rts.analysis.fingerprints.find(isSpringBootVersionFingerprint);
-    return found && found.data.matches.length > 0;
+    if (found && found.data.matches.length > 0) {
+        return true;
+    }
+    return rts.analysis.fingerprints.some(isSpringBootAppClassFingerprint);
 }
 
 export function javaScorers(): RepositoryScorer[] {
@@ -109,7 +115,7 @@ export function springIdiomScorers(): RepositoryScorer[] {
         penalizeForLog4j(),
     ].map(scorer => makeConditional(
         scorer,
-        isSpringRepo));
+        isSpringBootRepo));
 }
 
 export function springTwelveFactorScorers(): RepositoryScorer[] {
@@ -122,7 +128,7 @@ export function springTwelveFactorScorers(): RepositoryScorer[] {
     ].map(scorer => makeConditional(
         // Only run these scorers on Spring projects
         scorer,
-        isSpringRepo));
+        isSpringBootRepo));
 }
 
 export function requireLoggingToConsole(): RepositoryScorer {
@@ -187,7 +193,7 @@ export function penalizeOldBootVersions(opts: {}): RepositoryScorer {
             score = adjustBy(-4 * versions.filter(v => v.startsWith("1.4")).length, score);
             score = adjustBy(-3 * versions.filter(v => v.startsWith("1.5")).length, score);
             score = adjustBy(-1 * versions.filter(v => v.startsWith("2.0")).length, score);
-            // TODO if not release version, mark that down
+            score = adjustBy(-2 * versions.filter(v => v.includes("SNAPSHOT")).length, score);
             return {
                 reason: `Spring Boot version is ${SpringBootVersion.toDisplayableFingerprint(sbv)}`,
                 score,
