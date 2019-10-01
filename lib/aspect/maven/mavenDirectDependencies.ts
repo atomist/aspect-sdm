@@ -85,6 +85,10 @@ function updateDependencyStanza(dep: MatchResult, to: VersionedArtifact): void {
 }
 
 export function isDependencyFingerprint(fp: FP): fp is FP<VersionedArtifact> {
+    return !!fp.data.group && !!fp.data.artifact;
+}
+
+export function isMavenDependencyFingerprint(fp: FP): fp is FP<VersionedArtifact> {
     return fp.type === MavenDirectDep && !!fp.data.artifact;
 }
 

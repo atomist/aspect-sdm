@@ -24,27 +24,16 @@ import {
     scoreOnFingerprintPresence,
 } from "@atomist/sdm-pack-aspect";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import {
-    DefaultPackageJavaFiles,
-    JspFiles,
-} from "./aspects";
-import {
-    isJavaVersionFingerprint,
-    JavaVersion,
-} from "./maven/javaVersion";
-import { isDependencyFingerprint } from "./maven/mavenDirectDependencies";
+import { DefaultPackageJavaFiles, JspFiles, } from "./aspects";
+import { isJavaVersionFingerprint, JavaVersion, } from "./maven/javaVersion";
+import { isMavenDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
-import {
-    isSpringBootVersionFingerprint,
-    SpringBootVersion,
-} from "./spring/springBootVersion";
-import {
-    isConsoleLoggingFingerprint,
-    isSpringBootAppClassFingerprint,
-} from "./spring/twelveFactors";
+import { isSpringBootVersionFingerprint, SpringBootVersion, } from "./spring/springBootVersion";
+import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint, } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
-import { isMavenPluginFingerprint, MavenBuildPlugins } from "./maven/mavenPlugins";
+import { isMavenPluginFingerprint } from "./maven/mavenPlugins";
+import { isYamlConfigFileFingerprint } from "./spring/yamlConfigFiles";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -112,6 +101,7 @@ export function springIdiomScorers(): RepositoryScorer[] {
         rewardForSpringSecurity(),
         penalizeForSpringDataRest(),
         rewardForFlyway(),
+        penalizeForYamlConfigFiles(),
         rewardForKotlin(),
         penalizeForLog4j(),
         scoreForGitPlugin(),
@@ -250,10 +240,20 @@ export function rewardForSpringSecurity(): RepositoryScorer {
     });
 }
 
+export function penalizeForYamlConfigFiles(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+        name: "uses-yaml-config",
+        reason: "Expose data selectively",
+        scoreWhenPresent: 3,
+        scoreWhenAbsent: 5,
+        test: fp => isYamlConfigFileFingerprint(fp) && fp.data.matches.length > 0,
+    });
+}
+
 export function penalizeForSpringDataRest(): RepositoryScorer {
     return scoreOnFingerprintPresence({
         name: "uses-spring-data-rest",
-        reason: "Expose data selectively",
+        reason: "Expose data selectively: per Rod Johnson",
         scoreWhenPresent: 2,
         test: fp => isSpringBootStarterFingerprint(fp) && fp.data.artifact === "spring-boot-starter-data-rest",
     });
@@ -289,6 +289,6 @@ export function scoreOnMavenDependencyPresence(opts: {
 }): RepositoryScorer {
     return scoreOnFingerprintPresence({
         ...opts,
-        test: fp => isDependencyFingerprint(fp) && opts.test(fp.data),
+        test: fp => isMavenDependencyFingerprint(fp) && opts.test(fp.data),
     });
 }
