@@ -58,6 +58,7 @@ import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
 import { MavenBuildPlugins } from "./maven/mavenPlugins";
+import { YamlConfigFiles } from "./spring/yamlConfigFiles";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -186,6 +187,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         LogbackAspect,
         ConsoleLogging,
         JspFiles,
+        YamlConfigFiles,
         DefaultPackageJavaFiles,
         ...idioms.HardCodedProperty,
         ...idioms.NonSpecificMvcAnnotation,
