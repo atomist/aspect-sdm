@@ -42,6 +42,7 @@ import { LanguageAspect } from "./common/languageAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
 import { gitClassificationAspect } from "./git/gitClassificationAspect";
+import { GradleBuildFiles } from "./gradle/gradleBuildFile";
 import { BadJavaApis } from "./java/badApis";
 import { K8sSpecs } from "./k8s/specAspect";
 import { JavaVersion } from "./maven/javaVersion";
@@ -196,6 +197,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         JspFiles,
         YamlConfigFiles,
         DefaultPackageJavaFiles,
+        GradleBuildFiles,
         ...idioms.HardCodedProperty,
         ...idioms.NonSpecificMvcAnnotation,
         ...idioms.DotStarUsage,
