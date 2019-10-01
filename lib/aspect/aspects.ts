@@ -61,6 +61,7 @@ import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { YamlConfigFiles } from "./spring/yamlConfigFiles";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { DefaultBannerAspect } from "./spring/defaultBannerTxtAspect";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -180,6 +181,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         GitRecency,
         gitClassificationAspect({ deadDays: 365, maxBranches: 10 }),
         SpringClassificationAspect,
+        DefaultBannerAspect,
         ReactiveWebUsageAspect,
         FrameworkAspect,
         CiAspect,
