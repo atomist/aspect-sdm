@@ -24,7 +24,7 @@ import {
     Default,
 } from "@atomist/sdm-pack-aspect/lib/util/bands";
 import {
-    Aspect,
+    Aspect, FP,
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
 
@@ -32,6 +32,10 @@ export const BranchCountType = "branch-count";
 
 export interface BranchCountData {
     count: number;
+}
+
+export function isBranchCountFingerprint(fp: FP): fp is FP<BranchCountData> {
+    return fp.type === BranchCountType;
 }
 
 export const branchCount: Aspect<BranchCountData> = {
