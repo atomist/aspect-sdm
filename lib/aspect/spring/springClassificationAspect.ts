@@ -21,10 +21,10 @@ import {
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import { isSpringBootStarterFingerprint } from "./springBootStarter";
 import { isXmlBeanDefinitionsFingerprint } from "./xmlBeans";
+import { isReactiveWebUsageFingerprint } from "./reactiveWebUsageAspect";
 
 /**
- * Classification Spring projects
- * @type {ClassificationAspect}
+ * Classification for Spring projects
  */
 export const SpringClassificationAspect: Aspect = projectClassificationAspect(
     {
@@ -63,11 +63,16 @@ export const SpringClassificationAspect: Aspect = projectClassificationAspect(
         reason: "uses spring XML",
         testFingerprints: async fps => fps.some(fp => isXmlBeanDefinitionsFingerprint(fp) && fp.data.matches.length > 0),
     },
+    {
+        tags: "reactive-web",
+        reason: "uses reactive web",
+        testFingerprints: async fps => fps.some(fp => isReactiveWebUsageFingerprint(fp) && fp.data.matches.length > 0),
+    }
 );
 
-export function springStarterClassifier(opts: { tags: string, reason: string, starter: string}): DerivedClassifier {
+export function springStarterClassifier(opts: { tags: string, reason: string, starter: string }): DerivedClassifier {
     return {
         ...opts,
-        testFingerprints: async fps => fps.some(fp => isSpringBootStarterFingerprint(fp) && fp.data.artifact === opts.starter),
+        testFingerprints: async fps => fps.some(fp => isSpringBootStarterFingerprint(fp) && fp.data.artifact.includes(opts.starter)),
     };
 }
