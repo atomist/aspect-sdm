@@ -68,6 +68,7 @@ import {
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
+import { createWorkspaceScorers } from "./lib/aspect/workspaceScorers";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
@@ -103,6 +104,7 @@ export const configuration: Configuration = configure(async sdm => {
                     scorers: {
                         spring: createScorers(),
                     },
+                    workspaceScorers: createWorkspaceScorers(),
                     weightings: {
                         "spring-boot-version": 3,
                         "hard-coded-property": 2,
