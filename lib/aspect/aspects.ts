@@ -58,7 +58,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             shortName: "dependency",
             category: "Node.js",
             unit: "version",
-            url: "drift?type=npm-project-deps&band=true&repos=true",
+            url: "drift?type=npm-project-deps&band=true&repos=false",
             description: "Node direct dependencies in use across all repositories in your workspace, " +
                 "grouped by Drift Level.",
         }),
