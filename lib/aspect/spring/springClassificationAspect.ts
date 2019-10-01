@@ -19,10 +19,10 @@ import {
     projectClassificationAspect,
 } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { isDefaultBannerFingerprint } from "./defaultBannerTxtAspect";
 import { isReactiveWebUsageFingerprint } from "./reactiveWebUsageAspect";
 import { isSpringBootStarterFingerprint } from "./springBootStarter";
 import { isXmlBeanDefinitionsFingerprint } from "./xmlBeans";
-import { isDefaultBannerFingerprint } from "./defaultBannerTxtAspect";
 
 /**
  * Classification for Spring projects
