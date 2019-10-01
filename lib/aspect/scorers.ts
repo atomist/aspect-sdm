@@ -44,6 +44,7 @@ import {
     isSpringBootAppClassFingerprint,
 } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
+import { isMavenPluginFingerprint, MavenBuildPlugins } from "./maven/mavenPlugins";
 
 export function createScorers(): RepositoryScorer[] {
     const allScorers = [
@@ -113,6 +114,7 @@ export function springIdiomScorers(): RepositoryScorer[] {
         rewardForFlyway(),
         rewardForKotlin(),
         penalizeForLog4j(),
+        scoreForGitPlugin(),
     ].map(scorer => makeConditional(
         scorer,
         isSpringBootRepo));
@@ -263,6 +265,17 @@ export function rewardForKotlin(): RepositoryScorer {
             reason: "Kotlin files found",
             scoreWhenPresent: 5,
             test: fp => fp.type === "language" && fp.name === "kotlin",
+        },
+    );
+}
+
+export function scoreForGitPlugin(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "has-git-plugin",
+            reason: "Maven git plugin is good: per Josh Long",
+            scoreWhenPresent: 5,
+            scoreWhenAbsent: 2,
+            test: fp => isMavenPluginFingerprint(fp) && fp.data.artifact === "git-commit-id-plugin",
         },
     );
 }

@@ -57,6 +57,7 @@ import { SpringClassificationAspect } from "./spring/springClassificationAspect"
 import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { TravisScriptsAspect } from "./travis/travisAspect";
+import { MavenBuildPlugins } from "./maven/mavenPlugins";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
@@ -128,6 +129,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             description: "Maven declared dependencies in use across all repositories in your workspace, " +
             "grouped by Drift Level.",
         }),
+        MavenBuildPlugins,
         enrich(MavenParentPom, {
             shortName: "parent",
             category: "Java",

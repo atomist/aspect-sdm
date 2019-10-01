@@ -21,7 +21,7 @@
   "main": "./index.js",
   "types": "./index.d.ts",
   "dependencies": {
-    "@atomist/automation-client": "^1.7.1-cache2.20190928235715",
+    "@atomist/automation-client": "^1.8.0-master.20191001022338",
     "@atomist/automation-client-ext-dashboard": "1.1.1-master.20190810154215",
     "@atomist/automation-client-ext-humio": "^0.2.1",
     "@atomist/microgrammar": "^1.2.1",
