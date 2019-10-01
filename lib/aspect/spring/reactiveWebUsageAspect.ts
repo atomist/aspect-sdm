@@ -15,8 +15,8 @@
  */
 
 import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
-import { JavaSourceFiles } from "@atomist/sdm-pack-spring/lib/java/javaProjectUtils";
 import { FP } from "@atomist/sdm-pack-fingerprint";
+import { JavaSourceFiles } from "@atomist/sdm-pack-spring/lib/java/javaProjectUtils";
 
 const ReactiveWebUsageType = "reactive-web";
 
