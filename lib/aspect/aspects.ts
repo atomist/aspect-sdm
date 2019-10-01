@@ -50,6 +50,7 @@ import { MavenParentPom } from "./maven/parentPom";
 import { NpmDependencies } from "./node/npmDependencies";
 import { TypeScriptVersion } from "./node/TypeScriptVersion";
 import { ConsoleLogging } from "./spring/consoleLogging";
+import { DefaultBannerAspect } from "./spring/defaultBannerTxtAspect";
 import * as idioms from "./spring/idioms";
 import { LogbackAspect } from "./spring/logbackAspect";
 import { ReactiveWebUsageAspect } from "./spring/reactiveWebUsageAspect";
@@ -61,7 +62,6 @@ import { SpringBootTwelveFactors } from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { YamlConfigFiles } from "./spring/yamlConfigFiles";
 import { TravisScriptsAspect } from "./travis/travisAspect";
-import { DefaultBannerAspect } from "./spring/defaultBannerTxtAspect";
 
 export const JspFiles: Aspect<GlobAspectData> =
     globAspect({ name: "jsp-files", displayName: "JSP files", glob: "**/*.jsp" });
