@@ -45,6 +45,7 @@ import {
 } from "./lib/aspect/compliance";
 import { raisePrDiffHandler } from "./lib/aspect/praisePr";
 import { createScorers } from "./lib/aspect/scorers";
+import { createWorkspaceScorers } from "./lib/aspect/workspaceScorers";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
 import { FeedbackCommand } from "./lib/command/feedback";
@@ -68,7 +69,6 @@ import {
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
-import { createWorkspaceScorers } from "./lib/aspect/workspaceScorers";
 
 // Mode can be online or job
 const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";

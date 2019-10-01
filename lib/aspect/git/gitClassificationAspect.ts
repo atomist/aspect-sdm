@@ -18,14 +18,14 @@ import {
     ClassificationAspect, daysSince,
     GitRecencyData,
     GitRecencyType,
-    projectClassificationAspect
+    projectClassificationAspect,
 } from "@atomist/sdm-pack-aspect";
-import { isBranchCountFingerprint } from "./branchCount";
 import { FP } from "@atomist/sdm-pack-fingerprint";
+import { isBranchCountFingerprint } from "./branchCount";
 
 export function gitClassificationAspect(opts: {
     deadDays: number,
-    maxBranches: number
+    maxBranches: number,
 }): ClassificationAspect {
     return projectClassificationAspect({
             name: "git",
@@ -47,6 +47,6 @@ export function gitClassificationAspect(opts: {
             tags: `>${opts.maxBranches}-branches`,
             reason: `More than ${opts.maxBranches} branches`,
             testFingerprints: async fps =>
-                fps.some(fp => isBranchCountFingerprint(fp) && fp.data.count > opts.maxBranches)
+                fps.some(fp => isBranchCountFingerprint(fp) && fp.data.count > opts.maxBranches),
         });
 }
