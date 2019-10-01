@@ -24,14 +24,26 @@ import {
     scoreOnFingerprintPresence,
 } from "@atomist/sdm-pack-aspect";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
-import { DefaultPackageJavaFiles, JspFiles } from "./aspects";
-import { isJavaVersionFingerprint, JavaVersion } from "./maven/javaVersion";
+import {
+    DefaultPackageJavaFiles,
+    JspFiles,
+} from "./aspects";
+import {
+    isJavaVersionFingerprint,
+    JavaVersion,
+} from "./maven/javaVersion";
 import { isMavenDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import { isMavenPluginFingerprint } from "./maven/mavenPlugins";
 import * as idioms from "./spring/idioms";
 import { isSpringBootStarterFingerprint } from "./spring/springBootStarter";
-import { isSpringBootVersionFingerprint, SpringBootVersion } from "./spring/springBootVersion";
-import { isConsoleLoggingFingerprint, isSpringBootAppClassFingerprint } from "./spring/twelveFactors";
+import {
+    isSpringBootVersionFingerprint,
+    SpringBootVersion,
+} from "./spring/springBootVersion";
+import {
+    isConsoleLoggingFingerprint,
+    isSpringBootAppClassFingerprint,
+} from "./spring/twelveFactors";
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { isYamlConfigFileFingerprint } from "./spring/yamlConfigFiles";
 

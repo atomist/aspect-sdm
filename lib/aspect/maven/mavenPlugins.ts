@@ -16,9 +16,19 @@
 
 import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { dirName } from "@atomist/sdm-pack-aspect";
-import { Aspect, fingerprintOf, FP } from "@atomist/sdm-pack-fingerprint";
-import { Plugin, VersionedArtifact } from "@atomist/sdm-pack-spring";
-import { findDeclaredManagedPlugins, findDeclaredPlugins } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
+import {
+    Aspect,
+    fingerprintOf,
+    FP,
+} from "@atomist/sdm-pack-fingerprint";
+import {
+    Plugin,
+    VersionedArtifact,
+} from "@atomist/sdm-pack-spring";
+import {
+    findDeclaredManagedPlugins,
+    findDeclaredPlugins,
+} from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
 
 const MavenPlugin = "maven-plugin";
 

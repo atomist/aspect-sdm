@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { DerivedClassifier, projectClassificationAspect } from "@atomist/sdm-pack-aspect";
+import {
+    DerivedClassifier,
+    projectClassificationAspect,
+} from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
 import { isSpringBootStarterFingerprint } from "./springBootStarter";
 import { isXmlBeanDefinitionsFingerprint } from "./xmlBeans";

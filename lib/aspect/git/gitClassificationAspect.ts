@@ -15,7 +15,8 @@
  */
 
 import {
-    ClassificationAspect, daysSince,
+    ClassificationAspect,
+    daysSince,
     GitRecencyData,
     GitRecencyType,
     projectClassificationAspect,
