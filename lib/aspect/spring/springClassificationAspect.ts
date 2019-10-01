@@ -19,9 +19,9 @@ import {
     projectClassificationAspect,
 } from "@atomist/sdm-pack-aspect";
 import { Aspect } from "@atomist/sdm-pack-fingerprint";
+import { isReactiveWebUsageFingerprint } from "./reactiveWebUsageAspect";
 import { isSpringBootStarterFingerprint } from "./springBootStarter";
 import { isXmlBeanDefinitionsFingerprint } from "./xmlBeans";
-import { isReactiveWebUsageFingerprint } from "./reactiveWebUsageAspect";
 
 /**
  * Classification for Spring projects
@@ -67,7 +67,7 @@ export const SpringClassificationAspect: Aspect = projectClassificationAspect(
         tags: "reactive-web",
         reason: "uses reactive web",
         testFingerprints: async fps => fps.some(fp => isReactiveWebUsageFingerprint(fp) && fp.data.matches.length > 0),
-    }
+    },
 );
 
 export function springStarterClassifier(opts: { tags: string, reason: string, starter: string }): DerivedClassifier {
