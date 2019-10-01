@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import { globAspect, GlobAspectData } from "@atomist/sdm-pack-aspect";
+import {
+    globAspect,
+    GlobAspectData,
+} from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
 import { JavaSourceFiles } from "@atomist/sdm-pack-spring/lib/java/javaProjectUtils";
 
