@@ -28,6 +28,7 @@ import {
     DefaultPackageJavaFiles,
     JspFiles,
 } from "./aspects";
+import { isGradleBuildFilesFingerprint } from "./gradle/gradleBuildFile";
 import {
     isCatchesThrowableFingerprint,
     isCreatesNewThreadFingerprint,
