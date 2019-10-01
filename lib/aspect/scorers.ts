@@ -29,6 +29,13 @@ import {
     JspFiles,
 } from "./aspects";
 import {
+    isCatchesThrowableFingerprint,
+    isCreatesNewThreadFingerprint,
+    isThrowsRuntimeExceptionFingerprint,
+    isUsesDirectJdbcApisFingerprint,
+    isUsesJavaUtilDateOrCalendarFingerprint,
+} from "./java/badApis";
+import {
     isJavaVersionFingerprint,
     JavaVersion,
 } from "./maven/javaVersion";
@@ -117,6 +124,11 @@ export function springIdiomScorers(): RepositoryScorer[] {
         rewardForKotlin(),
         penalizeForLog4j(),
         scoreForGitPlugin(),
+        penalizeUsingJavaUtilDateOrCalendar(),
+        penalizeUsingJdbcDirectly(),
+        penalizeThrowingRuntimeException(),
+        seriouslyPenalizeCatchingThrowable(),
+        penalizeCreatingNewThreads(),
     ].map(scorer => makeConditional(
         scorer,
         isSpringBootRepo));
@@ -288,6 +300,56 @@ export function scoreForGitPlugin(): RepositoryScorer {
             scoreWhenPresent: 5,
             scoreWhenAbsent: 2,
             test: fp => isMavenPluginFingerprint(fp) && fp.data.artifact === "git-commit-id-plugin",
+        },
+    );
+}
+
+export function penalizeUsingJavaUtilDateOrCalendar(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "uses-java-util-date-calendar",
+            reason: "You shouldn't use java.util.Date or java.util.Calendar",
+            scoreWhenPresent: 2,
+            test: fp => isUsesJavaUtilDateOrCalendarFingerprint(fp) && fp.data.matches.length > 0,
+        },
+    );
+}
+
+export function penalizeUsingJdbcDirectly(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "uses-direct-jdbc",
+            reason: "You shouldn't use the JDBC API directly, use JdbcTemplate",
+            scoreWhenPresent: 2,
+            test: fp => isUsesDirectJdbcApisFingerprint(fp) && fp.data.matches.length > 0,
+        },
+    );
+}
+
+export function penalizeThrowingRuntimeException(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "throws-runtime-exception",
+            reason: "You shouldn't throw RuntimeException, create a subclass",
+            scoreWhenPresent: 2,
+            test: fp => isThrowsRuntimeExceptionFingerprint(fp) && fp.data.matches.length > 0,
+        },
+    );
+}
+
+export function penalizeCreatingNewThreads(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "using-new-thread",
+            reason: "You shouldn't create a new thread directly",
+            scoreWhenPresent: 2,
+            test: fp => isCreatesNewThreadFingerprint(fp) && fp.data.matches.length > 0,
+        },
+    );
+}
+
+export function seriouslyPenalizeCatchingThrowable(): RepositoryScorer {
+    return scoreOnFingerprintPresence({
+            name: "catch-throwable",
+            reason: "You really shouldn't catch Throwable",
+            scoreWhenPresent: 0,
+            test: fp => isCatchesThrowableFingerprint(fp) && fp.data.matches.length > 0,
         },
     );
 }
