@@ -255,7 +255,7 @@ export function rewardForSpringSecurity(): RepositoryScorer {
 export function penalizeForYamlConfigFiles(): RepositoryScorer {
     return scoreOnFingerprintPresence({
         name: "uses-yaml-config",
-        reason: "Expose data selectively",
+        reason: "Prefer properties files",
         scoreWhenPresent: 3,
         scoreWhenAbsent: 5,
         test: fp => isYamlConfigFileFingerprint(fp) && fp.data.matches.length > 0,
