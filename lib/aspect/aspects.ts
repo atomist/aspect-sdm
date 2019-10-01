@@ -42,6 +42,7 @@ import { LanguageAspect } from "./common/languageAspect";
 import { DockerFrom } from "./docker/docker";
 import { branchCount } from "./git/branchCount";
 import { gitClassificationAspect } from "./git/gitClassificationAspect";
+import { BadJavaApis } from "./java/badApis";
 import { K8sSpecs } from "./k8s/specAspect";
 import { JavaVersion } from "./maven/javaVersion";
 import { MavenDirectDependencies } from "./maven/mavenDirectDependencies";
@@ -201,6 +202,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...idioms.FileIoUsage,
         ...idioms.MutableInjections,
         ...SpringBootTwelveFactors,
+        ...BadJavaApis,
         ...optionalAspects,
     ];
 
