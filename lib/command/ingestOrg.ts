@@ -17,6 +17,7 @@
 import { logger } from "@atomist/automation-client";
 import { CommandHandlerRegistration } from "@atomist/sdm";
 import {
+    GetGithubProvider,
     IngestScmOrgs,
     IngestScmRepos,
     OwnerType,
@@ -41,22 +42,40 @@ export const IngestOrg: CommandHandlerRegistration<IngestOrgsParameters> = {
     listener: async ci => {
 
         const gh = api(undefined, "https://api.github.com");
-        const ghOrg = (await gh.orgs.get({
+        const ghOrg = await gh.orgs.get({
             org: ci.parameters.owner,
-        })).data;
+        }).then(result => result.data).catch(() => undefined);
+        const ghUser = await gh.users.getByUsername({
+            username: ci.parameters.owner,
+        }).then(result => result.data).catch(() => undefined);
 
-        const ingestOrg = {
+        const ingestOrg = !!ghOrg ? {
             id: ghOrg.id.toString(),
             name: ghOrg.login,
-            ownerType: ghOrg.type === "Organization" ? OwnerType.organization : OwnerType.user,
+            ownerType: OwnerType.organization,
             url: ghOrg.html_url,
+        } : {
+            id: ghUser.id.toString(),
+            name: ghUser.login,
+            ownerType: OwnerType.user,
+            url: ghUser.html_url,
         };
+
+        if (!ci.parameters.providerId) {
+            const ghProvider = await ci.context.graphClient.query<GetGithubProvider.Query, GetGithubProvider.Variables>({
+                name: "getGithubProvider",
+                variables: {},
+            });
+            if (ghProvider.GitHubProvider.length > 0) {
+                ci.parameters.providerId = ghProvider.GitHubProvider[0].id;
+            }
+        }
 
         const org = await ci.context.graphClient.mutate<IngestScmOrgs.Mutation, IngestScmOrgs.Variables>({
             name: "ingestScmOrgs",
             variables: {
                 scmOrgsInput: { orgs: [ingestOrg] },
-                scmProviderId: `${ci.context.workspaceId}_${ci.parameters.providerId}`,
+                scmProviderId: `${ci.context.workspaceId}_${!!ci.parameters.providerId}`,
             },
         });
 
