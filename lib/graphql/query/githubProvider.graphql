@@ -1,0 +1,5 @@
+query GetGithubProvider {
+    GitHubProvider {
+        id
+    }
+}
