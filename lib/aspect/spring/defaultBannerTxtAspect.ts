@@ -19,7 +19,6 @@ import {
     GlobAspectData,
 } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
-import { JavaSourceFiles } from "@atomist/sdm-pack-spring/lib/java/javaProjectUtils";
 
 const DefaultBannerType = "default-banner";
 
@@ -32,6 +31,6 @@ export function isDefaultBannerFingerprint(fp: FP): fp is FP<GlobAspectData> {
  */
 export const DefaultBannerAspect = globAspect({
     name: DefaultBannerType,
-    displayName: undefined,
+    displayName: "Spring Boot banner",
     glob: "**/src/main/resources/banner.txt",
 });

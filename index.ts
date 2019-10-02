@@ -101,9 +101,7 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
-                    scorers: {
-                        spring: createScorers(),
-                    },
+                    scorers: createScorers(),
                     workspaceScorers: createWorkspaceScorers(),
                     weightings: {
                         "spring-boot-version": 3,

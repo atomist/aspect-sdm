@@ -54,16 +54,22 @@ import {
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { isYamlConfigFileFingerprint } from "./spring/yamlConfigFiles";
 
-export function createScorers(): RepositoryScorer[] {
-    const allScorers = [
-        // Penalize for not enough known about this repository
-        commonScorers.anchorScoreAt(3),
-        ...generalScorers(),
-        ...javaScorers(),
-        ...springIdiomScorers(),
-        ...springTwelveFactorScorers(),
-    ];
-    return allScorers;
+export function createScorers(): Record<string, RepositoryScorer[]> {
+    return {
+        spring: [
+            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
+            ...springIdiomScorers(),
+            ...springTwelveFactorScorers(),
+        ],
+        java: [
+            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
+            ...javaScorers(),
+        ],
+        general: [
+            commonScorers.anchorScoreAt(3),
+            ...generalScorers(),
+        ],
+    };
 }
 
 export function generalScorers(): RepositoryScorer[] {
@@ -89,7 +95,9 @@ function isSpringBootRepo(rts: RepoToScore): boolean {
 export function javaScorers(): RepositoryScorer[] {
     return [
         penalizeOldJavaVersion({}),
-    ];
+    ].map(scorer => makeConditional(
+        scorer,
+        isSpringBootRepo));
 }
 
 export function springIdiomScorers(): RepositoryScorer[] {

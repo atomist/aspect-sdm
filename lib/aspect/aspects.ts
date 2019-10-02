@@ -115,7 +115,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "fingerprint/typescript-version/typescript-version?byOrg=true&trim=false",
             description: "TypeScript versions in use across all repositories in your workspace, " +
-            "broken out by version and repositories that use each version.",
+                "broken out by version and repositories that use each version.",
         }),
         enrich(NpmDependencies, {
             shortName: "dependency",
@@ -123,26 +123,42 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "drift?type=npm-project-deps&band=true&repos=false",
             description: "Node direct dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
+                "grouped by Drift Level.",
         }),
         TravisScriptsAspect,
-        SpringBootVersion,
+        enrich(SpringBootVersion, {
+            shortName: "version",
+            category: "Java",
+            unit: "version",
+            url: `fingerprint/${SpringBootVersion.name}/${SpringBootVersion.name}?byOrg=true&trim=false`,
+            description: "Spring Boot versions in use across all repositories in your workspace, " +
+                "broken out by version and repositories that use each version.",
+            manage: false,
+        }),
         enrich(MavenDirectDependencies, {
             shortName: "dependency",
             category: "Java",
             unit: "version",
             url: "drift?type=maven-direct-dep&band=true&repos=false",
             description: "Maven declared dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
+                "grouped by Drift Level.",
         }),
-        MavenBuildPlugins,
+        enrich(MavenBuildPlugins, {
+            shortName: "plugin",
+            category: "Java",
+            unit: "version",
+            url: `drift?type=${MavenBuildPlugins.name}&band=true&repos=false`,
+            description: "Maven plugins in use across all repositories in your workspace, " +
+                "grouped by Drift Level.",
+            manage: false,
+        }),
         enrich(MavenParentPom, {
             shortName: "parent",
             category: "Java",
             unit: "version",
             url: `drift?type=${MavenParentPom.name}&band=true&repos=false`,
             description: "Maven parent POM in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
+                "grouped by Drift Level.",
         }),
         enrich(LeinDeps, {
             shortName: "dependency",
@@ -150,7 +166,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "version",
             url: "drift?type=clojure-project-deps&band=true&repos=false",
             description: "Leiningen direct dependencies in use across all repositories in your workspace, " +
-            "grouped by Drift Level.",
+                "grouped by Drift Level.",
         }),
         enrich(DockerFrom, {
             shortName: "images",
@@ -158,7 +174,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "tag",
             url: "fingerprint/docker-base-image/*?byOrg=true&trim=false",
             description: "Docker base images in use across all repositories in your workspace, " +
-            "broken out by image label and repositories where used.",
+                "broken out by image label and repositories where used.",
         }),
         DockerfilePath,
         enrich(DockerPorts, {
@@ -167,7 +183,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             unit: "port",
             url: "fingerprint/docker-ports/docker-ports?byOrg=true&trim=false",
             description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
-            "broken out by port number and repositories where used.",
+                "broken out by port number and repositories where used.",
             manage: false,
         }),
         K8sSpecs,
@@ -176,11 +192,17 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             category: "Git",
             unit: "branch",
             url: `fingerprint/${branchCount.name}/${branchCount.name}?byOrg=true&trim=false`,
-            description: "Number of Git branches across repositories in your workspace, " +
-            "grouped by Drift Level.",
+            description: "Number of Git branches across repositories in your workspace.",
             manage: false,
         }),
-        GitRecency,
+        enrich(GitRecency, {
+            shortName: "commits",
+            category: "Git",
+            unit: "day",
+            url: `fingerprint/${GitRecency.name}/${GitRecency.name}?byOrg=true&trim=false`,
+            description: "Number of days since last Git commit.",
+            manage: false,
+        }),
         gitClassificationAspect({ deadDays: 365, maxBranches: 10 }),
         SpringClassificationAspect,
         DefaultBannerAspect,

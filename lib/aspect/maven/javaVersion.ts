@@ -39,7 +39,7 @@ export function isJavaVersionFingerprint(fp: FP): fp is FP<GlobAspectData<JavaVe
 }
 
 /**
- * Loook for Java Version in a Maven file
+ * Look for Java Version in a Maven file
  * @type {Aspect<GlobAspectData<JavaVersionData>>}
  */
 export const JavaVersion = matchAspect<JavaVersionData>({
