@@ -43,7 +43,7 @@ describe("ciAspect", () => {
             for (const f of ["pipeline.yml", "ci/pipeline.yml"]) {
                 const p = InMemoryProject.of({ path: f, content: "something" });
                 const fps = await doExtract(p);
-                return assert(fps.some(fp => fp.name === "concourse"));
+                assert(fps.some(fp => fp.name === "concourse"));
             }
         });
 
@@ -51,7 +51,7 @@ describe("ciAspect", () => {
             for (const f of [".github/workflows/mine.yml", ".github/workflows/yours.yaml"]) {
                 const p = InMemoryProject.of({ path: f, content: "something" });
                 const fps = await doExtract(p);
-                return assert(fps.some(fp => fp.name === "github-actions"));
+                assert(fps.some(fp => fp.name === "github-actions"));
             }
         });
 
@@ -62,8 +62,8 @@ describe("ciAspect", () => {
             );
             const fps = await doExtract(p);
             assert(fps.length === 2);
-            return assert(fps.some(fp => fp.name === "travis"));
-            return assert(fps.some(fp => fp.name === "jenkins"));
+            assert(fps.some(fp => fp.name === "travis"));
+            assert(fps.some(fp => fp.name === "jenkins"));
         });
 
     });

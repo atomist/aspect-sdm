@@ -18,7 +18,9 @@ import {
     astUtils,
     MatchResult,
 } from "@atomist/automation-client";
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { microgrammar } from "@atomist/microgrammar";
+import { dirName } from "@atomist/sdm-pack-aspect";
 import { ApplyFingerprint, Aspect, DefaultTargetDiffHandler, FP, sha256 } from "@atomist/sdm-pack-fingerprint";
 import { VersionedArtifact } from "@atomist/sdm-pack-spring";
 import { findDeclaredDependencies } from "@atomist/sdm-pack-spring/lib/maven/parse/fromPom";
@@ -82,6 +84,14 @@ function updateDependencyStanza(dep: MatchResult, to: VersionedArtifact): void {
     }
 }
 
+export function isDependencyFingerprint(fp: FP): fp is FP<VersionedArtifact> {
+    return !!fp.data.group && !!fp.data.artifact;
+}
+
+export function isMavenDependencyFingerprint(fp: FP): fp is FP<VersionedArtifact> {
+    return fp.type === MavenDirectDep && !!fp.data.artifact;
+}
+
 /**
  * Emits direct dependencies only
  */
@@ -97,8 +107,13 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
         };
     },
     extract: async p => {
-        const deps = await findDeclaredDependencies(p, "**/pom.xml");
-        return deps.dependencies.map(gavToFingerprint);
+        const paths = await gatherFromFiles(p, "**/pom.xml", async f => f.path);
+        const toEmit: Array<FP<VersionedArtifact>> = [];
+        for (const path of paths) {
+            const deps = await findDeclaredDependencies(p, path);
+            toEmit.push(...deps.dependencies.map(dep => gavToFingerprint(dep, path)));
+        }
+        return toEmit;
     },
     apply: applyDependencyFingerprint,
     toDisplayableFingerprintName: name => name,
@@ -108,17 +123,21 @@ Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using 
     ],
 };
 
-function gavToFingerprint(gav: VersionedArtifact): FP<VersionedArtifact> {
+function gavToFingerprint(gav: VersionedArtifact, pomPath: string): FP<VersionedArtifact> {
     const data = {
         ...gav,
         version: !gav.version ? "managed" : gav.version,
     };
+    const pathIn = dirName(pomPath);
+    // Canonicalize .
+    const path = ["", ".", undefined].includes(pathIn) ? undefined : pathIn;
     return {
         type: MavenDirectDep,
         name: `${gav.group}:${gav.artifact}`,
         abbreviation: "mvn",
         version: "0.1.0",
         data,
+        path,
         sha: sha256(JSON.stringify(data)),
     };
 }

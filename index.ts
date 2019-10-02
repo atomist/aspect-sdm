@@ -44,6 +44,8 @@ import {
     complianceGoalExecutionListener,
 } from "./lib/aspect/compliance";
 import { raisePrDiffHandler } from "./lib/aspect/praisePr";
+import { createScorers } from "./lib/aspect/scorers";
+import { createWorkspaceScorers } from "./lib/aspect/workspaceScorers";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
 import { FeedbackCommand } from "./lib/command/feedback";
@@ -99,6 +101,14 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
+                    scorers: {
+                        spring: createScorers(),
+                    },
+                    workspaceScorers: createWorkspaceScorers(),
+                    weightings: {
+                        "spring-boot-version": 3,
+                        "hard-coded-property": 2,
+                    },
                     aspectsFactory: RegistrationsBackedAspectsFactory,
 
                     rebase: {

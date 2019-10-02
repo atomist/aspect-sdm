@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { gatherFromFiles } from "@atomist/automation-client/lib/project/util/projectUtils";
 import { projectClassificationAspect } from "@atomist/sdm-pack-aspect";
 import {
     Aspect,
@@ -38,17 +39,19 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
     {
         tags: "node",
         reason: "has package.json",
-        test: async p => p.hasFile("package.json"),
+        test: async p => (await p.getFiles("**/package.json")).length > 0,
     },
     {
         tags: "spring-boot",
         reason: "POM file references Spring Boot",
         test: async p => {
-            const pom = await p.getFile("pom.xml");
-            if (!pom) {
-                return false;
+            const pomContents = await gatherFromFiles(p, "**/pom.xml", async f => f.getContent());
+            for (const pomContent of pomContents) {
+                if (pomContent.includes("org.springframework.boot")) {
+                    return true;
+                }
             }
-            return (await pom.getContent()).includes("org.springframework.boot");
+            return false;
         },
     },
     {
@@ -65,26 +68,28 @@ export const FrameworkAspect: Aspect = projectClassificationAspect(
         tags: "rails",
         reason: "Gemfile references Rails",
         test: async p => {
-            const gemfile = await p.getFile("Gemfile");
-            if (!gemfile) {
-                return false;
-            }
             const gemMatch = /gem[\s+]['"]rails['"]/;
-            const content = await gemfile.getContent();
-            return gemMatch.test(content);
+            const gemfileContents = await gatherFromFiles(p, "**/Gemfile", async f => f.getContent());
+            for (const content of gemfileContents) {
+                if (gemMatch.test(content)) {
+                    return true;
+                }
+            }
+            return false;
         },
     },
     {
         tags: "django",
         reason: "requirements.txt references Django",
         test: async p => {
-            const reqText = await p.getFile("requirements.txt");
-            if (!reqText) {
-                return false;
-            }
             const djangoMatch = /^Django==/;
-            const content = await reqText.getContent();
-            return djangoMatch.test(content);
+            const reqTexts = await gatherFromFiles(p, "**/requirements.txt", async f => f.getContent());
+            for (const content of reqTexts) {
+                if (djangoMatch.test(content)) {
+                    return true;
+                }
+            }
+            return false;
         },
     },
 );
