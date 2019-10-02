@@ -58,18 +58,18 @@ import { isYamlConfigFileFingerprint } from "./spring/yamlConfigFiles";
 
 export function createScorers(): Record<string, RepositoryScorer[]> {
     return {
-        spring: [
-            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
-            ...springIdiomScorers(),
-            ...springTwelveFactorScorers(),
+        general: [
+            commonScorers.anchorScoreAt(3),
+            ...generalScorers(),
         ],
         java: [
             makeConditional(commonScorers.anchorScoreAt(3), isJavaRepo),
             ...javaScorers(),
         ],
-        general: [
-            commonScorers.anchorScoreAt(3),
-            ...generalScorers(),
+        spring: [
+            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
+            ...springIdiomScorers(),
+            ...springTwelveFactorScorers(),
         ],
     };
 }
