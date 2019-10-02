@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-seeds/empty-sdm/compare/1.0.28...HEAD)
 
+### Added
+
+-   Add Spring aspects. [#27](https://github.com/atomist/aspect-sdm/issues/27)
+
 ### Changed
 
 -   First try GitHub API when counting branches. [#26](https://github.com/atomist/aspect-sdm/issues/26)
