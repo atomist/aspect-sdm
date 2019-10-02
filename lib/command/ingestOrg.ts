@@ -75,7 +75,7 @@ export const IngestOrg: CommandHandlerRegistration<IngestOrgsParameters> = {
             name: "ingestScmOrgs",
             variables: {
                 scmOrgsInput: { orgs: [ingestOrg] },
-                scmProviderId: `${ci.context.workspaceId}_${!!ci.parameters.providerId}`,
+                scmProviderId: `${ci.context.workspaceId}_${ci.parameters.providerId}`,
             },
         });
 
