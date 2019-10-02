@@ -28,6 +28,7 @@ import {
     DefaultPackageJavaFiles,
     JspFiles,
 } from "./aspects";
+import { isGradleBuildFilesFingerprint } from "./gradle/gradleBuildFile";
 import {
     isCatchesThrowableFingerprint,
     isCreatesNewThreadFingerprint,
@@ -39,6 +40,7 @@ import {
     isJavaVersionFingerprint,
     JavaVersion,
 } from "./maven/javaVersion";
+import { isMavenBuildFilesFingerprint } from "./maven/mavenBuildFile";
 import { isMavenDependencyFingerprint } from "./maven/mavenDirectDependencies";
 import { isMavenPluginFingerprint } from "./maven/mavenPlugins";
 import * as idioms from "./spring/idioms";
@@ -62,7 +64,7 @@ export function createScorers(): Record<string, RepositoryScorer[]> {
             ...springTwelveFactorScorers(),
         ],
         java: [
-            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
+            makeConditional(commonScorers.anchorScoreAt(3), isJavaRepo),
             ...javaScorers(),
         ],
         general: [
@@ -90,6 +92,14 @@ function isSpringBootRepo(rts: RepoToScore): boolean {
         return true;
     }
     return rts.analysis.fingerprints.some(isSpringBootAppClassFingerprint);
+}
+
+/**
+ * Look first for Spring Boot version, then for Spring Boot app class
+ */
+function isJavaRepo(rts: RepoToScore): boolean {
+    const found = rts.analysis.fingerprints.find(fp => isMavenBuildFilesFingerprint(fp) || isGradleBuildFilesFingerprint(fp));
+    return (found && found.data.matches.length > 0);
 }
 
 export function javaScorers(): RepositoryScorer[] {

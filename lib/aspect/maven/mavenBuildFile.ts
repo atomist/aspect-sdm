@@ -23,13 +23,13 @@ import {
     FP,
 } from "@atomist/sdm-pack-fingerprint";
 
-export function isGradleBuildFilesFingerprint(fp: FP): fp is FP<GlobAspectData> {
-    return fp.type === GradleBuildFilesType;
+export function isMavenBuildFilesFingerprint(fp: FP): fp is FP<GlobAspectData> {
+    return fp.type === MavenBuildFilesType;
 }
 
-export const GradleBuildFilesType = "gradle-build-files";
-export const GradleBuildFiles: Aspect<GlobAspectData> = globAspect({
-    name: GradleBuildFilesType,
-    displayName: "Gradle build files",
-    glob: "**/build{*.gradle,*.gradle.kts}",
+export const MavenBuildFilesType = "maven-build-files";
+export const MavenBuildFiles: Aspect<GlobAspectData> = globAspect({
+    name: MavenBuildFilesType,
+    displayName: "Maven POM files",
+    glob: "**/pom.xml",
 });
