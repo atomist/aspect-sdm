@@ -30,7 +30,7 @@ import {
     displayName,
     displayValue,
 } from "@atomist/sdm-pack-fingerprint/lib/machine/Aspects";
-import { ComplicanceData } from "../goal/compliance";
+import { ComplianceData } from "../goal/compliance";
 
 export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): FingerprintDiffHandler {
     return async (pli, diffs, aspect) => {
@@ -50,7 +50,7 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
             }
         }
 
-        let data = getFromContext<ComplicanceData>("compliance", context);
+        let data = getFromContext<ComplianceData>("compliance", context);
         if (!data) {
             data = {
                 owner: sdm.configuration.name,
@@ -72,8 +72,7 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
 
                 displayName: displayName(aspect, fp),
                 displayValue: displayValue(aspect, fp),
-
-                aspectName: aspect.displayName,
+                displayType: aspect.displayName,
             };
         }));
         data.differences.push(...discrepancies.map(d => {
@@ -92,10 +91,10 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
         }));
         data.aspects.push({
             type: aspect.name,
-            aspectName: aspect.displayName,
+            displayType: aspect.displayName,
         });
 
-        storeInContext<ComplicanceData>("compliance", data, context);
+        storeInContext<ComplianceData>("compliance", data, context);
         return [];
     };
 }
@@ -105,7 +104,7 @@ export function complianceGoalExecutionListener(): GoalExecutionListener {
         const { goalEvent, context } = li;
 
         if (goalEvent.state !== SdmGoalState.in_process) {
-            const data = getFromContext<ComplicanceData>("compliance", context);
+            const data = getFromContext<ComplianceData>("compliance", context);
             if (!!data) {
                 await context.messageClient.send(data, addressEvent("PolicyCompliance"));
             }
