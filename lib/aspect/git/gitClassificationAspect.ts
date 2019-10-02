@@ -18,7 +18,7 @@ import {
     ClassificationAspect,
     daysSince,
     GitRecencyData,
-    GitRecencyType,
+    GitRecencyType, Monorepo,
     projectClassificationAspect,
 } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
@@ -49,5 +49,6 @@ export function gitClassificationAspect(opts: {
             reason: `More than ${opts.maxBranches} branches`,
             testFingerprints: async fps =>
                 fps.some(fp => isBranchCountFingerprint(fp) && fp.data.count > opts.maxBranches),
-        });
+        },
+        Monorepo);
 }
