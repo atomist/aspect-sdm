@@ -34,6 +34,7 @@ import {
 import {
     Aspect,
     ExtractFingerprint,
+    FP,
     sha256,
 } from "@atomist/sdm-pack-fingerprint";
 import { api } from "../../util/gitHubApi";
@@ -47,6 +48,10 @@ export interface BranchCountData {
 function isGitHubRemote(rr: RepoRef): rr is GitHubRepoRef {
     return isRemoteRepoRef(rr) &&
         (rr.providerType === ScmProviderType.github_com || rr.providerType === ScmProviderType.ghe);
+}
+
+export function isBranchCountFingerprint(fp: FP): fp is FP<BranchCountData> {
+    return fp.type === BranchCountType;
 }
 
 /**

@@ -208,6 +208,5 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...optionalAspects,
     ];
 
-    logger.info("Aspect names are %j", aspects.map(a => a.name));
     return aspects;
 }
