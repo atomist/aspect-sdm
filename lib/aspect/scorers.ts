@@ -28,7 +28,6 @@ import {
     DefaultPackageJavaFiles,
     JspFiles,
 } from "./aspects";
-import { isGradleBuildFilesFingerprint } from "./gradle/gradleBuildFile";
 import {
     isCatchesThrowableFingerprint,
     isCreatesNewThreadFingerprint,
@@ -71,6 +70,7 @@ export function generalScorers(): RepositoryScorer[] {
     return [
         commonScorers.penalizeForExcessiveBranches({ branchLimit: 5 }),
         commonScorers.requireRecentCommit({ days: 15 }),
+        commonScorers.PenalizeMonorepos,
         // TODO Exposed secrets
     ];
 }
