@@ -18,7 +18,8 @@ import {
     ClassificationAspect,
     daysSince,
     GitRecencyData,
-    GitRecencyType, Monorepo,
+    GitRecencyType,
+    Monorepo,
     projectClassificationAspect,
 } from "@atomist/sdm-pack-aspect";
 import { FP } from "@atomist/sdm-pack-fingerprint";
