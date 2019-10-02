@@ -69,7 +69,7 @@ export function isBranchCountFingerprint(fp: FP): fp is FP<BranchCountData> {
 export const extractBranchCount: ExtractFingerprint<BranchCountData> = async (p, pili) => {
     if (isGitHubRemote(p.id) && isTokenCredentials(pili.credentials)) {
         try {
-            const github = api(pili.credentials.token, p.id.apiBase);
+            const github = api(pili.credentials.token);
             const branches = await github.paginate("GET /repos/:owner/:repo/branches", { owner: p.id.owner, repo: p.id.repo, per_page: 100 });
             const data = { count: branches.length };
             return {
