@@ -54,4 +54,9 @@ export const SpringBootAppClass: Aspect<SpringBootAppData> = {
             return undefined;
         }
     },
+    stats: {
+        defaultStatStatus: {
+            entropy: false
+        }
+    }
 };
