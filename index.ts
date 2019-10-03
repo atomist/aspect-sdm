@@ -171,7 +171,7 @@ export const configuration: Configuration = configure(async sdm => {
                     registerAspects: false,
                 }),
             );
-            sdm.addCommand(createFingerprintJobCommand(sdm))
+            sdm.addEvent(createFingerprintJob(sdm))
                 .addEvent(createPolicyLogOnPullRequest(aspects))
                 .addCommand(calculateFingerprintTask(sdm, aspects));
 
