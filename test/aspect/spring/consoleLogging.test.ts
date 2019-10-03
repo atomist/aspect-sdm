@@ -41,9 +41,9 @@ describe("Console logging aspect", () => {
     describe("consolidation", () => {
         it("should find console logging in spring-boot without logback, providing fingerprint", async () => {
             const p = GishProject();
-            const sfp = await SpringBootVersion.extract(p, undefined) as any as FP;
+            const sfp = await SpringBootVersion.extract(p, undefined) as any as FP[]    ;
             const lfp = await doExtractLogback(p);
-            const consolidated = toArray(await ConsoleLogging.consolidate([sfp, lfp], undefined, undefined));
+            const consolidated = toArray(await ConsoleLogging.consolidate([...sfp, lfp], undefined, undefined));
             assert.strictEqual(consolidated.length, 1);
             assert.deepStrictEqual(consolidated[0].data.present, true);
         });

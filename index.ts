@@ -64,7 +64,6 @@ import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import {
     createFingerprintJob,
-    createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";

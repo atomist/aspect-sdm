@@ -36,7 +36,12 @@ export const SpringBootVersion: Aspect<BootVersion> = {
     extract: async p => {
         const fps = await extractParentPom(p);
         if (!!fps && fps.length > 0) {
-            return fps.find(fp => fp.data.artifact === "spring-boot-starter-parent" && fp.data.group === "org.springframework.boot");
+            return fps.filter(fp => fp.data.artifact === "spring-boot-starter-parent" && fp.data.group === "org.springframework.boot").map(fp => ({
+                ...fp,
+                type: SpringBootVersionType,
+                name: SpringBootVersionType,
+                abbreviation: "sbv",
+            }));
         }
         return undefined;
     },
