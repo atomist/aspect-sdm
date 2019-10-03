@@ -156,8 +156,22 @@ export const configuration: Configuration = configure(async sdm => {
                 },
             };
         } else {
-            sdm.addEvent(createFingerprintJob(sdm))
-                .addCommand(createFingerprintJobCommand(sdm))
+            sdm.addExtensionPacks(
+                aspectSupport({
+                    aspects,
+                    scorers: createScorers(),
+                    workspaceScorers: createWorkspaceScorers(),
+                    weightings: {
+                        "spring-boot-version": 3,
+                        "hard-coded-property": 2,
+                    },
+                    aspectsFactory: RegistrationsBackedAspectsFactory,
+
+                    exposeWeb: false,
+                    registerAspects: false,
+                }),
+            );
+            sdm.addCommand(createFingerprintJobCommand(sdm))
                 .addEvent(createPolicyLogOnPullRequest(aspects))
                 .addCommand(calculateFingerprintTask(sdm, aspects));
 
