@@ -75,7 +75,9 @@ export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
         glob: "**/src/main/java/*.java",
     });
 
-export const VirtualProjectAspects = virtualProjectAspect(
+export const VirtualProjectAspects = virtualProjectAspect({
+        virtualProjectLimit: 50,
+    },
     async p => {
         return {
             reason: "has Maven pom",
