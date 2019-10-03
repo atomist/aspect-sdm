@@ -88,7 +88,7 @@ export function generalScorers(): RepositoryScorer[] {
  */
 function isSpringBootRepo(rts: RepoToScore): boolean {
     const found = rts.analysis.fingerprints.find(isSpringBootVersionFingerprint);
-    if (found && found.data.matches.length > 0) {
+    if (found) {
         return true;
     }
     return rts.analysis.fingerprints.some(isSpringBootAppClassFingerprint);
@@ -219,7 +219,7 @@ export function penalizeOldBootVersions(opts: {}): RepositoryScorer {
             if (!sbv) {
                 return undefined;
             }
-            const versions = sbv.data.matches.map(m => m.version);
+            const versions = [sbv.data.version];
             let score: FiveStar = 5;
             score = adjustBy(-5 * versions.filter(v => v.startsWith("1.0")).length, score);
             score = adjustBy(-5 * versions.filter(v => v.startsWith("1.1")).length, score);

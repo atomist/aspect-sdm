@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { projectUtils } from "@atomist/automation-client";
+import {
+    Project,
+    projectUtils,
+} from "@atomist/automation-client";
 import { Microgrammar } from "@atomist/microgrammar";
+import { Version } from "@atomist/sdm-core";
 import {
     Aspect,
     DefaultTargetDiffHandler,
@@ -61,30 +65,9 @@ export const MavenParentPom: Aspect<VersionedArtifact> = {
 Project ${bold(`${diff.owner}/${diff.repo}/${diff.branch}`)} is currently using version ${codeLine(diff.to.data.version)}.`,
         };
     },
-    extract: async p => {
-        return _.flatten(await projectUtils.gatherFromFiles<Array<FP<VersionedArtifact>>>(p, "**/pom.xml", async f => {
-            const pom = await f.getContent();
-            const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
-            return matches.map(gavToFingerprint);
-        }));
-    },
+    extract: extractParentPom,
     apply: async (p, papi) => {
-        await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
-            const pom = await f.getContent();
-            const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
-            if (matches.length === 0) {
-                return;
-            }
-            const fp = papi.parameters.fp;
-            const artifact = fp.data;
-            const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
-            if (!!artifactToUpdate) {
-                const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
-                updater.version = artifact.version;
-                await f.setContent(updater.newContent());
-            }
-        });
-        return p;
+        return applyParentPom(papi.parameters.fp.data, p);
     },
     toDisplayableFingerprintName: name => name,
     toDisplayableFingerprint: fp => fp.data.version,
@@ -107,4 +90,29 @@ function gavToFingerprint(gav: VersionedArtifact): FP {
         data,
         sha: sha256(JSON.stringify(data)),
     };
+}
+
+export async function extractParentPom(p: Project): Promise<Array<FP<VersionedArtifact>>> {
+    return _.flatten(await projectUtils.gatherFromFiles<Array<FP<VersionedArtifact>>>(p, "**/pom.xml", async f => {
+        const pom = await f.getContent();
+        const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
+        return matches.map(gavToFingerprint);
+    }));
+}
+
+export async function applyParentPom(artifact: VersionedArtifact, p: Project): Promise<Project> {
+    await projectUtils.doWithFiles(p, "**/pom.xml", async f => {
+        const pom = await f.getContent();
+        const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
+        if (matches.length === 0) {
+            return;
+        }
+        const artifactToUpdate = matches.find(m => m.group === artifact.group && m.artifact === artifact.artifact);
+        if (!!artifactToUpdate) {
+            const updater = Microgrammar.updatableMatch(artifactToUpdate as any, pom);
+            updater.version = artifact.version;
+            await f.setContent(updater.newContent());
+        }
+    });
+    return p;
 }
