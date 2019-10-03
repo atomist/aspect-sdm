@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-import { GitCommandGitProject, GitHubRepoRef, InMemoryProject, Project } from "@atomist/automation-client";
+import {
+    GitCommandGitProject,
+    GitHubRepoRef,
+    InMemoryProject,
+    Project,
+} from "@atomist/automation-client";
 import { MavenBuildPlugins } from "../../../lib/aspect/maven/mavenPlugins";
 import { ZipkinPom } from "./zipkinPom";
 
