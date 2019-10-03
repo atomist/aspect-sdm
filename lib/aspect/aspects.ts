@@ -76,7 +76,7 @@ export const DefaultPackageJavaFiles: Aspect<GlobAspectData> =
     });
 
 export const VirtualProjectAspects = virtualProjectAspect({
-        virtualProjectLimit: 50,
+        virtualProjectLimit: 500,
     },
     async p => {
         return {
