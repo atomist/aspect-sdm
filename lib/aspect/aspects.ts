@@ -135,7 +135,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             url: `fingerprint/${SpringBootVersion.name}/${SpringBootVersion.name}?byOrg=true&trim=false`,
             description: "Spring Boot versions in use across all repositories in your workspace, " +
                 "broken out by version and repositories that use each version.",
-            manage: false,
+            manage: true,
         }),
         enrich(MavenDirectDependencies, {
             shortName: "dependency",
