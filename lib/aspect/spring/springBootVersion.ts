@@ -18,10 +18,11 @@ import {
     Aspect,
     DefaultTargetDiffHandler,
     FP,
+    fingerprintOf,
 } from "@atomist/sdm-pack-fingerprint";
 import {
     applyParentPom,
-    extractParentPom,
+    gatherParentPoms,
 } from "../maven/parentPom";
 
 const SpringBootVersionType = "spring-boot-version";
@@ -34,14 +35,16 @@ export const SpringBootVersion: Aspect<BootVersion> = {
     name: SpringBootVersionType,
     displayName: "Spring Boot version",
     extract: async p => {
-        const fps = await extractParentPom(p);
-        if (!!fps && fps.length > 0) {
-            return fps.filter(fp => fp.data.artifact === "spring-boot-starter-parent" && fp.data.group === "org.springframework.boot").map(fp => ({
-                ...fp,
-                type: SpringBootVersionType,
-                name: SpringBootVersionType,
-                abbreviation: "sbv",
-            }));
+        const gavs = await gatherParentPoms(p);
+        if (!!gavs && gavs.length > 0) {
+            return gavs.filter(gav =>
+                gav.artifact === "spring-boot-starter-parent"
+                && gav.group === "org.springframework.boot").map(gav => (fingerprintOf({
+                    data: gav,
+                    type: SpringBootVersionType,
+                    name: SpringBootVersionType,
+                    abbreviation: "sbv",
+                })));
         }
         return undefined;
     },
