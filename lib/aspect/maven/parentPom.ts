@@ -96,8 +96,8 @@ export async function extractParentPom(p: Project): Promise<Array<FP<VersionedAr
     return (await gatherParentPoms(p)).map(gavToFingerprint);
 }
 
-export async function gatherParentPoms(p: Project): Promise<Array<VersionedArtifact>> {
-    return _.flatten(await projectUtils.gatherFromFiles<Array<VersionedArtifact>>(p, "**/pom.xml", async f => {
+export async function gatherParentPoms(p: Project): Promise<VersionedArtifact[]> {
+    return _.flatten(await projectUtils.gatherFromFiles<VersionedArtifact[]>(p, "**/pom.xml", async f => {
         const pom = await f.getContent();
         const matches = PARENT_GRAMMAR.findMatches(pom) as VersionedArtifact[];
         return matches;

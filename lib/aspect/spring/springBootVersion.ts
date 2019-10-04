@@ -17,8 +17,8 @@
 import {
     Aspect,
     DefaultTargetDiffHandler,
-    FP,
     fingerprintOf,
+    FP,
 } from "@atomist/sdm-pack-fingerprint";
 import {
     applyParentPom,
