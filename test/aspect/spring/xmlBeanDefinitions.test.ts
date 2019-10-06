@@ -29,7 +29,7 @@ describe("XML bean definitions", () => {
     it("should not find in empty project", async () => {
         const p = InMemoryProject.of();
         const fp = await doExtract(p);
-        assert.deepStrictEqual(fp.data.matches, []);
+        assert.deepStrictEqual(fp, []);
     });
 
     it("should not find with non-Spring XML", async () => {
@@ -38,7 +38,7 @@ describe("XML bean definitions", () => {
             content: "<xml></xml>",
         });
         const fp = await doExtract(p);
-        assert.deepStrictEqual(fp.data.matches, []);
+        assert.deepStrictEqual(fp, []);
     });
 
 });

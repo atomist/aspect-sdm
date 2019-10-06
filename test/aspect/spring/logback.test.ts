@@ -90,7 +90,7 @@ describe("Logback aspect", () => {
         it("should not find in empty project", async () => {
             const p = InMemoryProject.of();
             const fp = await doExtractLogback(p);
-            assert.deepStrictEqual(fp.data.matches, []);
+            assert.deepStrictEqual(fp, []);
         });
 
         it("should find logback-spring", async () => {

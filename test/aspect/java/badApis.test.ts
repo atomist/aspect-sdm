@@ -15,7 +15,6 @@
  */
 
 import { InMemoryProject } from "@atomist/automation-client";
-import { Immaterial } from "@atomist/sdm";
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import * as assert from "assert";
 import {
@@ -38,8 +37,7 @@ public class Test {
                 `,
             });
             const fp = toArray(await UsesJavaUtilDateOrCalendar.extract(p, undefined));
-            assert.strictEqual(fp.length, 1);
-            assert.strictEqual(fp[0].data.matches.length, 0);
+            assert.strictEqual(fp.length, 0);
         });
 
         it("should match on java.util.Date usage", async () => {
@@ -91,8 +89,7 @@ public class App {
                 `,
             });
             const fp = toArray(await CreatesNewThread.extract(p, undefined));
-            assert.strictEqual(fp.length, 1);
-            assert.strictEqual(fp[0].data.matches.length, 0);
+            assert.strictEqual(fp.length, 0);
         });
 
         it("should match on new Thread(...)", async () => {
@@ -124,8 +121,7 @@ public class App {
                 `,
             });
             const fp = toArray(await UsesDirectJdbcApis.extract(p, undefined));
-            assert.strictEqual(fp.length, 1);
-            assert.strictEqual(fp[0].data.matches.length, 0);
+            assert.strictEqual(fp.length, 0);
         });
 
         it("should match on Connection import", async () => {
@@ -225,8 +221,7 @@ public class App {
                 `,
             });
             const fp = toArray(await ThrowsRuntimeException.extract(p, undefined));
-            assert.strictEqual(fp.length, 1);
-            assert.strictEqual(fp[0].data.matches.length, 0);
+            assert.strictEqual(fp.length, 0);
         });
 
         it("should match on throwing RuntimeException", async () => {
@@ -281,8 +276,7 @@ public class App {
                 `,
             });
             const fp = toArray(await CatchesThrowable.extract(p, undefined));
-            assert.strictEqual(fp.length, 1);
-            assert.strictEqual(fp[0].data.matches.length, 0);
+            assert.strictEqual(fp.length, 0);
         });
 
         it("should match on catching Throwable", async () => {
