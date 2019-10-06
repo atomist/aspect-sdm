@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// tslint:disable:max-file-line-count
 export const ZipkinPom = `<?xml version="1.0" encoding="UTF-8"?>
 <!--
 

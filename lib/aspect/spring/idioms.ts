@@ -16,6 +16,7 @@
 
 import {
     pathBefore,
+    // tslint:disable-next-line:deprecation
     reviewerAspects,
 } from "@atomist/sdm-pack-aspect";
 import {
@@ -34,6 +35,7 @@ function mavenSourceResolver(path: string): string {
 
 export const FileIOUsageName = "file-io";
 
+// tslint:disable-next-line:deprecation
 export const FileIoUsage = reviewerAspects({
     name: FileIOUsageName,
     displayName: ImportIoFile,
@@ -43,6 +45,7 @@ export const FileIoUsage = reviewerAspects({
 
 export const DotStarUsageName = "import-dot-star";
 
+// tslint:disable-next-line:deprecation
 export const DotStarUsage = reviewerAspects({
     name: DotStarUsageName,
     displayName: ImportDotStar,
@@ -52,6 +55,7 @@ export const DotStarUsage = reviewerAspects({
 
 export const MutableInjectionUsageName = "mutable-injection";
 
+// tslint:disable-next-line:deprecation
 export const MutableInjections = reviewerAspects({
     name: MutableInjectionUsageName,
     displayName: "mutable injection",
@@ -61,6 +65,7 @@ export const MutableInjections = reviewerAspects({
 
 export const HardCodedPropertyName = "hard-coded-property";
 
+// tslint:disable-next-line:deprecation
 export const HardCodedProperty = reviewerAspects({
     name: HardCodedPropertyName,
     displayName: "hard code property",
@@ -70,6 +75,7 @@ export const HardCodedProperty = reviewerAspects({
 
 export const NonSpecificMvcAnnotationName = "non-specific-mvc";
 
+// tslint:disable-next-line:deprecation
 export const NonSpecificMvcAnnotation = reviewerAspects({
     name: NonSpecificMvcAnnotationName,
     displayName: "non specific MVC annotations",

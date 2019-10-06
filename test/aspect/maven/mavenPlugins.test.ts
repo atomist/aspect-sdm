@@ -30,7 +30,6 @@ describe("maven plugins", () => {
             { path: "pom.xml", content: ZipkinPom },
         );
         const extracted = await MavenBuildPlugins.extract(project, undefined);
-        console.log(JSON.stringify(extracted));
     }).timeout(200000);
 
 });
