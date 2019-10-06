@@ -40,9 +40,13 @@ export const ConsoleLogging: Aspect<{ present: boolean }> = {
     extract: async () => [],
     consolidate: async fps => {
         const logbackFingerprints = fps.filter(isLogbackFingerprint);
+        const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
+        // If this isn't a Spring Boot project return
+        if (!isSpringBoot) {
+            return [];
+        }
         return logbackFingerprints.map(logbackFingerprint => {
             const hasLogbackWithConsole = !!logbackFingerprint && logbackFingerprint.data.matches.some(logsToConsole);
-            const isSpringBoot = fps.some(fp => fp.type === SpringBootVersion.name);
             const present = hasLogbackWithConsole || (isSpringBoot && (!logbackFingerprint || logbackFingerprint.data.matches.length === 0));
             return fingerprintOf({
                 type: ConsoleLoggingType,

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-import {
-    InMemoryProject,
-} from "@atomist/automation-client";
+import { InMemoryProject } from "@atomist/automation-client";
 
 import { toArray } from "@atomist/sdm-core/lib/util/misc/array";
 import {
@@ -41,7 +39,7 @@ describe("Console logging aspect", () => {
     describe("consolidation", () => {
         it("should find console logging in spring-boot without logback, providing fingerprint", async () => {
             const p = GishProject();
-            const sfp = await SpringBootVersion.extract(p, undefined) as any as FP[]    ;
+            const sfp = await SpringBootVersion.extract(p, undefined) as any as FP[];
             const lfp = await doExtractLogback(p);
             const consolidated = toArray(await ConsoleLogging.consolidate([...sfp, lfp], undefined, undefined));
             assert.strictEqual(consolidated.length, 1);
@@ -49,23 +47,25 @@ describe("Console logging aspect", () => {
         });
 
         it("should find console in logback-spring", async () => {
+            const sfp = await SpringBootVersion.extract( GishProject(), undefined) as any as FP[];
             const p = InMemoryProject.of({
                 path: "src/main/resources/logback-spring.xml",
                 content: LogbackWithConsole,
             });
             const fp = await doExtractLogback(p);
-            const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
+            const consolidated = toArray(await ConsoleLogging.consolidate([...toArray(sfp), fp], undefined, undefined));
             assert.strictEqual(consolidated.length, 1);
             assert.deepStrictEqual(consolidated[0].data.present, true);
         });
 
         it("should find no console in logback-spring", async () => {
+            const sfp = await SpringBootVersion.extract( GishProject(), undefined) as any as FP[];
             const p = InMemoryProject.of({
                 path: "src/main/resources/logback-spring.xml",
                 content: LogbackNoConsole,
             });
             const fp = await doExtractLogback(p);
-            const consolidated = toArray(await ConsoleLogging.consolidate([fp], undefined, undefined));
+            const consolidated = toArray(await ConsoleLogging.consolidate([...toArray(sfp), fp], undefined, undefined));
             assert.strictEqual(consolidated.length, 1);
             assert.deepStrictEqual(consolidated[0].data.present, false);
         });

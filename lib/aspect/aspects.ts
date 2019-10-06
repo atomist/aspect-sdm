@@ -179,7 +179,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
                 "broken out by image label and repositories where used.",
         }),
         DockerfilePath,
-        enrich(DockerPorts, {
+        /*enrich(DockerPorts, {
             shortName: "ports",
             category: "Docker",
             unit: "port",
@@ -187,7 +187,7 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
             description: "Ports exposed in Docker configuration in use  across all repositories in your workspace, " +
                 "broken out by port number and repositories where used.",
             manage: false,
-        }),
+        }),*/
         K8sSpecs,
         enrich(branchCount, {
             shortName: "branches",
