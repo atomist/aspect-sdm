@@ -22,7 +22,7 @@ export interface ComplianceData {
     _branch: string;
     _owner: string;
     _repo: string;
-    
+
     targets: Array<{
         type: string;
         name: string;
