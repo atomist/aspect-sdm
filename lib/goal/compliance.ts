@@ -20,7 +20,9 @@ export interface ComplianceData {
 
     _sha: string;
     _branch: string;
-
+    _owner: string;
+    _repo: string;
+    
     targets: Array<{
         type: string;
         name: string;
@@ -46,4 +48,6 @@ export interface ComplianceData {
         type: string;
         displayType: string;
     }>;
+
+    ts: number;
 }

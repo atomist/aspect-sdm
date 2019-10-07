@@ -57,9 +57,12 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
                 state: "created",
                 _branch: push.branch,
                 _sha: push.after.sha,
+                _owner: push.repo.owner,
+                _repo: push.repo.name,
                 targets: [],
                 differences: [],
                 aspects: [],
+                ts: Date.now(),
             };
         }
         data.targets.push(...targets.map(t => {
