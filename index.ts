@@ -65,6 +65,7 @@ import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
 import {
     createFingerprintJob,
+    createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
@@ -173,6 +174,7 @@ export const configuration: Configuration = configure(async sdm => {
             );
             sdm.addEvent(createFingerprintJob(sdm))
                 .addEvent(createPolicyLogOnPullRequest(aspects))
+                .addCommand(createFingerprintJobCommand(sdm))
                 .addCommand(calculateFingerprintTask(sdm, aspects));
 
             return {};
@@ -216,7 +218,7 @@ export const configuration: Configuration = configure(async sdm => {
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
 
             /*cfg.sdm.postgres = {
-                user: "squirrel",
+                user: "xxx",
                 password: "xxx",
                 database: "org_viz",
                 host: "localhost",
