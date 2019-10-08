@@ -101,7 +101,7 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
-                    scorers: createScorers(),
+                    scorers: createScorers(sdm),
                     workspaceScorers: createWorkspaceScorers(),
                     weightings: {
                         "spring-boot-version": 3,
@@ -158,7 +158,7 @@ export const configuration: Configuration = configure(async sdm => {
             sdm.addExtensionPacks(
                 aspectSupport({
                     aspects,
-                    scorers: createScorers(),
+                    scorers: createScorers(sdm),
                     workspaceScorers: createWorkspaceScorers(),
                     weightings: {
                         "spring-boot-version": 3,
