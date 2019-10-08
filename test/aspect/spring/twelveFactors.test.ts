@@ -48,7 +48,7 @@ describe("twelve factors", () => {
             assert.strictEqual(consolidation[0].data.count, 1);
         });
 
-        it("should have a count of 0 if there is an unfulfilled 12 factor fingerprint", async () => {
+        it("should not have a count of 0 if there is an unfulfilled 12 factor fingerprint", async () => {
             const twelveFactorFP = fingerprintOf<TwelveFactorElement>({
                 type: TwelveFactorSpringBootFingerprintName,
                 data: {
@@ -57,17 +57,14 @@ describe("twelve factors", () => {
                 },
             });
             const consolidation = toArray(await TwelveFactorCountAspect.consolidate([twelveFactorFP], undefined, undefined));
-            assert(consolidation.length === 1);
-            assert.strictEqual(consolidation[0].data.count, 0);
+            assert(consolidation.length === 0);
         });
     });
 
     describe("single project per repo", () => {
-        it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
+        it("should not have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
             const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([], undefined, undefined));
-            assert(consolidation.length === 1);
-            assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
-            assert.strictEqual(consolidation[0].data.fulfilled, false);
+            assert(consolidation.length === 0);
         });
 
         it("should have fulfilled 12 factor element when there is a single spring boot app fingerprint", async () => {
@@ -132,11 +129,9 @@ describe("twelve factors", () => {
         });
 
         describe("single project per repo", () => {
-            it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
+            it("should not have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
                 const consolidation = toArray(await SingleProjectPerRepoFactorAspect.consolidate([], undefined, undefined));
-                assert(consolidation.length === 1);
-                assert.strictEqual(consolidation[0].data.factor, SingleProjectPerRepoFactor);
-                assert.strictEqual(consolidation[0].data.fulfilled, false);
+                assert(consolidation.length === 0);
             });
 
             it("should have fulfilled 12 factor element when there is a single spring boot app fingerprint", async () => {
