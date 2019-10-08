@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SoftwareDeliveryMachine } from "@atomist/sdm";
 import {
     adjustBy,
     commonScorers,
@@ -56,22 +57,27 @@ import {
 import { XmlBeanDefinitions } from "./spring/xmlBeans";
 import { isYamlConfigFileFingerprint } from "./spring/yamlConfigFiles";
 
-export function createScorers(): Record<string, RepositoryScorer[]> {
-    return {
-        general: [
-            commonScorers.anchorScoreAt(3),
-            ...generalScorers(),
-        ],
-        java: [
-            makeConditional(commonScorers.anchorScoreAt(3), isJavaRepo),
-            ...javaScorers(),
-        ],
-        spring: [
-            makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
-            ...springIdiomScorers(),
-            ...springTwelveFactorScorers(),
-        ],
-    };
+export function createScorers(sdm: SoftwareDeliveryMachine): Record<string, RepositoryScorer[]> {
+    const isStaging = sdm.configuration.endpoints.api.includes("staging");
+    if (isStaging) {
+        return {
+            general: [
+                commonScorers.anchorScoreAt(3),
+                ...generalScorers(),
+            ],
+            java: [
+                makeConditional(commonScorers.anchorScoreAt(3), isJavaRepo),
+                ...javaScorers(),
+            ],
+            spring: [
+                makeConditional(commonScorers.anchorScoreAt(3), isSpringBootRepo),
+                ...springIdiomScorers(),
+                ...springTwelveFactorScorers(),
+            ],
+        };
+    } else {
+        return {};
+    }
 }
 
 export function generalScorers(): RepositoryScorer[] {
