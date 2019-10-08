@@ -33,6 +33,7 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
+import * as fs from "fs";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
@@ -213,6 +214,20 @@ export const configuration: Configuration = configure(async sdm => {
             }
 
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
+
+            cfg.sdm.postgres = {
+                user: "squirrel",
+                password: "Jzjf2kLQQxpf86",
+                database: "org_viz",
+                host: "localhost",
+                port: 5433,
+                ssl: {
+                    rejectUnauthorized: false,
+                    ca: fs.readFileSync("/Users/cdupuis/Downloads/server-ca-2.pem").toString(),
+                    key: fs.readFileSync("/Users/cdupuis/Downloads/client-key-2.pem").toString(),
+                    cert: fs.readFileSync("/Users/cdupuis/Downloads/client-cert-2.pem").toString(),
+                },
+            }
 
             return cfg;
         },

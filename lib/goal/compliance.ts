@@ -47,6 +47,7 @@ export interface ComplianceData {
     aspects: Array<{
         type: string;
         displayType: string;
+        manageable: boolean;
     }>;
 
     ts: number;

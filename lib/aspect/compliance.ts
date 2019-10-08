@@ -20,6 +20,7 @@ import {
     SdmGoalState,
     SoftwareDeliveryMachine,
 } from "@atomist/sdm";
+import { AspectWithReportDetails } from "@atomist/sdm-pack-aspect";
 import { toName } from "@atomist/sdm-pack-fingerprint/lib/adhoc/preferences";
 import {
     Diff,
@@ -95,6 +96,8 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
         data.aspects.push({
             type: aspect.name,
             displayType: aspect.displayName,
+            manageable: !!(aspect as AspectWithReportDetails).details && (aspect as AspectWithReportDetails).details.manage !== undefined
+                ? (aspect as AspectWithReportDetails).details.manage : !!aspect.apply,
         });
 
         storeInContext<ComplianceData>("compliance", data, context);
