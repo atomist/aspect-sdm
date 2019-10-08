@@ -4,7 +4,7 @@ import { VirtualProjectAspects } from "../../lib/aspect/aspects";
 
 describe("VirtualProjectAspects", () => {
 
-    it("should not fail", async () => {
+    it.skip("should not fail", async () => {
         const p = await GitCommandGitProject.fromExistingDirectory({
             owner: "sdm-org",
             repo: "engine-and-editor",
