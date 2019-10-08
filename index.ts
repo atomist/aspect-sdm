@@ -227,7 +227,7 @@ export const configuration: Configuration = configure(async sdm => {
                     key: fs.readFileSync("/Users/cdupuis/Downloads/client-key-2.pem").toString(),
                     cert: fs.readFileSync("/Users/cdupuis/Downloads/client-cert-2.pem").toString(),
                 },
-            }
+            };
 
             return cfg;
         },
