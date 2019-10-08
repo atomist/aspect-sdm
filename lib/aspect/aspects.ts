@@ -101,7 +101,7 @@ export const VirtualProjectAspects = virtualProjectAspect({
 
 export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
     const isStaging = sdm.configuration.endpoints.api.includes("staging");
-    const optionalAspects = isStaging ? [] : [];
+    const optionalAspects = isStaging ? [...SpringBootTwelveFactors] : [];
 
     const aspects = [
         VirtualProjectAspects,
@@ -227,7 +227,6 @@ export function createAspects(sdm: SoftwareDeliveryMachine): Aspect[] {
         ...idioms.DotStarUsage,
         ...idioms.FileIoUsage,
         ...idioms.MutableInjections,
-        ...SpringBootTwelveFactors,
         ...BadJavaApis,
         ...optionalAspects,
     ];
