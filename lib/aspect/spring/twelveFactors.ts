@@ -37,9 +37,13 @@ export const TwelveFactorCountAspect: CountAspect = {
     displayName: "12 factor count",
     extract: async () => [],
     consolidate: async fps => {
+        const count = fps.filter(isTwelveFactorFingerprint).filter(fp => fp.data.fulfilled).length;
+        if (count === 0) {
+            return [];
+        }
         return fingerprintOf({
             type: "twelve-factor-count",
-            data: { count: fps.filter(isTwelveFactorFingerprint).filter(fp => fp.data.fulfilled).length },
+            data: { count },
         });
     },
 };
@@ -72,6 +76,9 @@ export const SingleProjectPerRepoFactorAspect: Aspect<TwelveFactorElement> = {
     extract: async () => [],
     consolidate: async fps => {
         const springBootAppClassFP = fps.filter(isSpringBootAppClassFingerprint);
+        if (!springBootAppClassFP || springBootAppClassFP.length === 0) {
+            return [];
+        }
         return fingerprintOf<TwelveFactorElement>({
             type: TwelveFactorSpringBootFingerprintName,
             data: {
