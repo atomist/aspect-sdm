@@ -33,7 +33,6 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
-import * as fs from "fs";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
@@ -142,12 +141,11 @@ export const configuration: Configuration = configure(async sdm => {
             });
 
             // Install default workflow
-            aspects.filter(a => !!a.workflows && a.workflows.length > 0)
-                .forEach(a => a.workflows = [
-                    complianceDiffHandler(sdm),
-                    checkDiffHandler(sdm, aspectRegistry),
-                    raisePrDiffHandler(sdm, aspectRegistry, async () => []),
-                ]);
+            aspects.forEach(a => a.workflows = [
+                complianceDiffHandler(sdm),
+                checkDiffHandler(sdm, aspectRegistry),
+                raisePrDiffHandler(sdm, aspectRegistry, async () => []),
+            ]);
 
             return {
                 analyze: {

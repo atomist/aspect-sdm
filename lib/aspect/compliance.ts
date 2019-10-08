@@ -89,13 +89,14 @@ export function complianceDiffHandler(sdm: SoftwareDeliveryMachine): Fingerprint
 
                 displayName: displayName(aspect, fp),
                 displayValue: displayValue(aspect, fp),
+                displayType: aspect.displayName,
 
                 aspectName: aspect.displayName,
             };
         }));
         data.aspects.push({
             type: aspect.name,
-            displayType: aspect.displayName,
+            displayType: aspect.displayName || aspect.name,
             manageable: !!(aspect as AspectWithReportDetails).details && (aspect as AspectWithReportDetails).details.manage !== undefined
                 ? (aspect as AspectWithReportDetails).details.manage : !!aspect.apply,
         });
