@@ -150,11 +150,9 @@ describe("twelve factors", () => {
         });
 
         describe("console logging", () => {
-            it("should have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
+            it("should not have unfulfilled 12 factor element when there are no usable fingerprints", async () => {
                 const consolidation = toArray(await ConsoleLoggingFactorAspect.consolidate([], undefined, undefined));
-                assert.strictEqual(consolidation.length , 1);
-                assert.strictEqual(consolidation[0].data.factor, ConsoleLoggingFactor);
-                assert.strictEqual(consolidation[0].data.fulfilled, false);
+                assert.strictEqual(consolidation.length , 0);
             });
 
             it("should have fulfilled 12 factor element when there is a single spring boot app fingerprint", async () => {
