@@ -71,6 +71,7 @@ import {
 import { ProviderType } from "./lib/typings/types";
 import { wrapAspectWithTiming } from "./lib/util/aspectTiming";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
+import { ExecuteTaskMetricReportingAutomationEventListener } from "./lib/util/executeTaskTiming";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
 
@@ -222,6 +223,7 @@ export const configuration: Configuration = configure(async sdm => {
             }
 
             cfg.metadataProcessor = new RemoveIntentsMetadataProcessor();
+            cfg.listeners.push(new ExecuteTaskMetricReportingAutomationEventListener());
 
             /*cfg.sdm.postgres = {
                 user: "xxx",
