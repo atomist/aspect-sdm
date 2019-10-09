@@ -69,6 +69,7 @@ import {
     createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { ProviderType } from "./lib/typings/types";
+import { wrapAspectWithTiming } from "./lib/util/aspectTiming";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
@@ -78,7 +79,8 @@ const mode = process.env.ATOMIST_ORG_VISUALIZER_MODE || "online";
 
 export const configuration: Configuration = configure(async sdm => {
 
-        const aspects = createAspects(sdm);
+        const wrapAspect = wrapAspectWithTiming(sdm);
+        const aspects = createAspects(sdm).map(wrapAspect);
 
         if (mode === "online") {
 
