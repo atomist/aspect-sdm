@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased](https://github.com/atomist-seeds/empty-sdm/compare/1.1.6...HEAD)
 
+### Changed
+
+-   Check for GitHub.com provider type. [#34](https://github.com/atomist/aspect-sdm/issues/34)
+
 ## [1.1.6](https://github.com/atomist-seeds/empty-sdm/compare/1.1.5...1.1.6) - 2019-10-08
 
 ## [1.1.5](https://github.com/atomist-seeds/empty-sdm/compare/1.1.4...1.1.5) - 2019-10-08
