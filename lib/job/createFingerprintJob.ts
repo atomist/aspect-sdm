@@ -152,7 +152,7 @@ async function createFpJob(ctx: HandlerContext,
                 parameters,
                 name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
                 description: `Analyzing repositories in ${org.name}`,
-                concurrentTasks: 2,
+                concurrentTasks: 4,
             },
             ctx);
     } catch (e) {
