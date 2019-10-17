@@ -142,7 +142,6 @@ export const configuration: Configuration = configure(async sdm => {
                 idealStore: undefined,
                 problemStore: undefined,
                 aspects,
-                undesirableUsageChecker: undefined,
                 configuration,
             });
 
