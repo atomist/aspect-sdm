@@ -139,8 +139,6 @@ export const configuration: Configuration = configure(async sdm => {
             );
 
             const aspectRegistry = new DefaultAspectRegistry({
-                idealStore: undefined,
-                problemStore: undefined,
                 aspects,
                 configuration,
             });

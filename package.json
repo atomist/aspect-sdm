@@ -1,6 +1,6 @@
 {
   "name": "@atomist/aspect-sdm",
-  "version": "1.1.11",
+  "version": "1.1.10",
   "description": "SDM for calculating fingerprints and serving up drift reports",
   "author": "Atomist Inc.",
   "license": "Apache-2.0",
@@ -25,9 +25,9 @@
     "@atomist/automation-client-ext-dashboard": "1.1.1-master.20190810154215",
     "@atomist/automation-client-ext-humio": "^0.2.1",
     "@atomist/microgrammar": "^1.2.1",
-    "@atomist/sdm": "1.8.0-master.20191102194220",
+    "@atomist/sdm": "1.8.0-master.20191102181820",
     "@atomist/sdm-core": "1.8.0-master.20191030155232",
-    "@atomist/sdm-pack-aspect": "1.0.0-master.20191031213835",
+    "@atomist/sdm-pack-aspect": "1.0.0-fp-workspace-migration.20191102182214",
     "@atomist/sdm-pack-build": "^1.0.6",
     "@atomist/sdm-pack-clojure": "^2.0.2",
     "@atomist/sdm-pack-docker": "2.0.3-master.20190903064256",
@@ -48,17 +48,17 @@
     "@atomist/sdm-local": "^1.2.1",
     "@types/mocha": "^5.2.7",
     "@types/power-assert": "^1.5.0",
-    "chokidar": "^3.0.2",
+    "chokidar": "^3.3.0",
     "espower-typescript": "^9.0.2",
-    "mocha": "^6.2.0",
+    "mocha": "^6.2.2",
     "npm-run-all": "^4.1.5",
     "power-assert": "^1.6.1",
     "rimraf": "^3.0.0",
     "supervisor": "^0.12.0",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.19.0",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
     "typedoc": "^0.15.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.4"
   },
   "directories": {
     "test": "test"
