@@ -104,8 +104,6 @@ async function fingerprintProvider(owner: string,
     const orgs = result.Org.map(org => {
         const provider = org.scmProvider;
         return {
-            providerId: provider.providerId,
-            name: org.owner,
             tasks: org.repos.map(repo => {
                 return {
                     providerId: provider.providerId,
@@ -123,43 +121,41 @@ async function fingerprintProvider(owner: string,
     const aspects = await getAspectRegistrations(ctx);
     const owners = _.uniq(aspects.map(a => a.owner)).filter(o => !!o);
 
-    for (const org of orgs) {
-        const analyzed = await prefs.get<boolean>(preferenceKey(org.name), { scope: PreferenceScope.Sdm, defaultValue: false });
+    const analyzed = await prefs.get<boolean>(preferenceKey(), { scope: PreferenceScope.Sdm, defaultValue: false });
 
-        if (!analyzed || rerun) {
-            // Create the fingerprinting job for this SDM
-            await createFpJob(ctx, sdm, org.tasks, org);
+    if (!analyzed || rerun) {
+        // Create the fingerprinting job for this SDM
+        await createFpJob(ctx, sdm, _.flatten(orgs.map(o => o.tasks)), providerId);
 
-            // Now create fingerprinting jobs for all SDMs that are registered owners
-            for (const o of owners) {
-                await createFpJob(ctx, sdm, org.tasks, org, o);
-            }
-
-            await prefs.put<boolean>(preferenceKey(org.name), true, { scope: PreferenceScope.Sdm });
+        // Now create fingerprinting jobs for all SDMs that are registered owners
+        for (const o of owners) {
+            await createFpJob(ctx, sdm, _.flatten(orgs.map(o => o.tasks)), providerId, o);
         }
+
+        await prefs.put<boolean>(preferenceKey(), true, { scope: PreferenceScope.Sdm });
     }
 }
 
 async function createFpJob(ctx: HandlerContext,
                            sdm: SoftwareDeliveryMachine,
                            parameters: any[],
-                           org: { name: string, providerId: string },
+                           providerId: string,
                            owner?: string): Promise<void> {
     try {
         await createJob<CalculateFingerprintTaskParameters>({
                 registration: owner,
                 command: calculateFingerprintTask(sdm, []),
                 parameters,
-                name: `OrganizationAnalysis/${org.providerId}/${org.name}`,
-                description: `Analyzing repositories in ${org.name}`,
+                name: `OrganizationAnalysis/${providerId}/organization`,
+                description: `Analyzing repositories in workspace`,
                 concurrentTasks: 4,
             },
             ctx);
     } catch (e) {
-        logger.warn("Failed to create job for org '%s': %s", org.name, e.message);
+        logger.warn("Failed to create job: %s", e.message);
     }
 }
 
-function preferenceKey(org: string): string {
-    return `analyzed/${org}`;
+function preferenceKey(): string {
+    return `analyzed/organization`;
 }
