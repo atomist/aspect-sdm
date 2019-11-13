@@ -42,6 +42,7 @@ import { getAspectRegistrations } from "../aspect/aspectsFactory";
 import {
     OnDiscoveryJob,
     OnGitHubAppInstallation,
+    ProviderType,
     ReposByProvider,
 } from "../typings/types";
 
@@ -107,6 +108,7 @@ async function fingerprintProvider(owner: string,
             tasks: org.repos.map(repo => {
                 return {
                     providerId: provider.providerId,
+                    providerType: provider.providerType,
                     repoId: repo.id,
                     owner: repo.owner,
                     name: repo.name,
@@ -125,11 +127,11 @@ async function fingerprintProvider(owner: string,
 
     if (!analyzed || rerun) {
         // Create the fingerprinting job for this SDM
-        await createFpJob(ctx, sdm, _.flatten(orgs.map(o => o.tasks)), providerId);
+        await createFpJob(ctx, sdm, _.flatten(orgs.map(org => org.tasks.filter(t => t.providerType === ProviderType.github_com))), providerId);
 
         // Now create fingerprinting jobs for all SDMs that are registered owners
         for (const o of owners) {
-            await createFpJob(ctx, sdm, _.flatten(orgs.map(o => o.tasks)), providerId, o);
+            await createFpJob(ctx, sdm, _.flatten(orgs.map(org => org.tasks)), providerId, o);
         }
 
         await prefs.put<boolean>(preferenceKey(), true, { scope: PreferenceScope.Sdm });
