@@ -83,7 +83,7 @@ export const configuration: Configuration = configure(async sdm => {
 
             const pushImpact = new PushImpact()
                 .withExecutionListener(complianceGoalExecutionListener());
-            
+
             if (process.env.NODE_ENV === "production") {
                 sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
             }
