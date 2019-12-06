@@ -38,10 +38,6 @@ import * as _ from "lodash";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
-    checkDiffHandler,
-    checkGoalExecutionListener,
-} from "./lib/aspect/check";
-import {
     complianceDiffHandler,
     complianceGoalExecutionListener,
 } from "./lib/aspect/compliance";
@@ -86,9 +82,8 @@ export const configuration: Configuration = configure(async sdm => {
         if (mode === "online") {
 
             const pushImpact = new PushImpact()
-                .withExecutionListener(complianceGoalExecutionListener())
-                .withExecutionListener(checkGoalExecutionListener());
-
+                .withExecutionListener(complianceGoalExecutionListener());
+            
             if (process.env.NODE_ENV === "production") {
                 sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
             }
@@ -146,7 +141,6 @@ export const configuration: Configuration = configure(async sdm => {
             // Install default workflow
             aspects.forEach(a => a.workflows = [
                 complianceDiffHandler(sdm),
-                checkDiffHandler(sdm, aspectRegistry),
                 raisePrDiffHandler(sdm, aspectRegistry, async () => []),
             ]);
 
