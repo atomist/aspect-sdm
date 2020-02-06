@@ -24,7 +24,6 @@ import {
     GitHubLazyProjectLoader,
     GoalSigningScope,
     PushImpact,
-    pushTest,
 } from "@atomist/sdm";
 import { configure } from "@atomist/sdm-core";
 import { aspectSupport } from "@atomist/sdm-pack-aspect";
@@ -34,7 +33,6 @@ import {
     RebaseFailure,
     RebaseStrategy,
 } from "@atomist/sdm-pack-fingerprint";
-import * as _ from "lodash";
 import { createAspects } from "./lib/aspect/aspects";
 import { RegistrationsBackedAspectsFactory } from "./lib/aspect/aspectsFactory";
 import {
@@ -64,7 +62,6 @@ import {
     createFingerprintJob,
     createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
-import { ProviderType } from "./lib/typings/types";
 import { wrapAspectWithTiming } from "./lib/util/aspectTiming";
 import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { ExecuteTaskMetricReportingAutomationEventListener } from "./lib/util/executeTaskTiming";
@@ -144,7 +141,9 @@ export const configuration: Configuration = configure(async sdm => {
                 raisePrDiffHandler(sdm, aspectRegistry, async () => []),
             ]);
 
-            return {
+            return {};
+
+            /*return {
                 analyze: {
                     test: pushTest("Is GitHub.com", async p => {
                         return _.get(p.push, "repo.org.provider.providerType", ProviderType.github_com) === ProviderType.github_com;
@@ -153,7 +152,7 @@ export const configuration: Configuration = configure(async sdm => {
                         [pushImpact],
                     ],
                 },
-            };
+            };*/
         } else {
             sdm.addExtensionPacks(
                 aspectSupport({
