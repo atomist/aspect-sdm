@@ -44,17 +44,12 @@ import { createScorers } from "./lib/aspect/scorers";
 import { createWorkspaceScorers } from "./lib/aspect/workspaceScorers";
 import { broadcastTargetCommand } from "./lib/command/broadcastTarget";
 import { unsetTargetCommand } from "./lib/command/disableTarget";
-import { FeedbackCommand } from "./lib/command/feedback";
 import { IngestOrg } from "./lib/command/ingestOrg";
 import {
     DisableAspectReportCommand,
     EnableAspectReportCommand,
     UpdateAspectCommand,
 } from "./lib/command/manageAspectReport";
-import {
-    OptInCommand,
-    OptOutCommand,
-} from "./lib/command/manageOptOut";
 import { setTargetCommand } from "./lib/command/setTarget";
 import { tryTargetCommand } from "./lib/command/tryTarget";
 import { createPolicyLogOnPullRequest } from "./lib/event/policyLog";
@@ -63,7 +58,6 @@ import {
     createFingerprintJobCommand,
 } from "./lib/job/createFingerprintJob";
 import { wrapAspectWithTiming } from "./lib/util/aspectTiming";
-import { gitHubCommandSupport } from "./lib/util/commentCommand";
 import { ExecuteTaskMetricReportingAutomationEventListener } from "./lib/util/executeTaskTiming";
 import { MessageRoutingAutomationEventListener } from "./lib/util/MessageRoutingAutomationEventListener";
 import { RemoveIntentsMetadataProcessor } from "./lib/util/removeIntents";
@@ -85,9 +79,7 @@ export const configuration: Configuration = configure(async sdm => {
                 sdm.addIngester(GraphQL.ingester({ path: "./lib/graphql/ingester/AspectRegistration.graphql" }));
             }
 
-            sdm.addCommand(OptInCommand)
-                .addCommand(OptOutCommand)
-                .addCommand(DisableAspectReportCommand)
+            sdm.addCommand(DisableAspectReportCommand)
                 .addCommand(EnableAspectReportCommand)
                 .addCommand(UpdateAspectCommand)
                 .addCommand(IngestOrg)
@@ -120,14 +112,6 @@ export const configuration: Configuration = configure(async sdm => {
                     exposeWeb: true,
                     secureWeb: true,
                 }),
-                gitHubCommandSupport(
-                    {
-                        commands: [
-                            OptInCommand,
-                            OptOutCommand,
-                            FeedbackCommand,
-                        ],
-                    }),
             );
 
             const aspectRegistry = new DefaultAspectRegistry({
