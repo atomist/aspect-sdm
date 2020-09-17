@@ -18,7 +18,6 @@ import {
     Configuration,
     GraphQL,
 } from "@atomist/automation-client";
-import { configureHumio } from "@atomist/automation-client-ext-humio";
 import {
     CachingProjectLoader,
     GitHubLazyProjectLoader,
@@ -215,8 +214,4 @@ export const configuration: Configuration = configure(async sdm => {
 
             return cfg;
         },
-
-        postProcessors: [
-            configureHumio,
-        ],
     });
