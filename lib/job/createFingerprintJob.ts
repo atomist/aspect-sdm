@@ -88,35 +88,40 @@ export function createFingerprintJob(sdm: SoftwareDeliveryMachine): EventHandler
     };
 }
 
-async function fingerprintProvider(owner: string,
+export async function fingerprintProvider(owner: string,
                                    providerId: string,
                                    rerun: boolean,
                                    ctx: HandlerContext,
                                    sdm: SoftwareDeliveryMachine): Promise<void> {
 
-    const result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
-        name: "ReposByProvider",
-        variables: {
-            providerId,
-            org: owner,
-        },
-    });
+    const repos: Array<ReposByProvider.Query["Repo"][0]> = [];
+    let result: ReposByProvider.Query;
+    let offset = 0;
+    const length = 2500;
+    do {
+        result = await ctx.graphClient.query<ReposByProvider.Query, ReposByProvider.Variables>({
+            name: "ReposByProvider",
+            variables: {
+                providerId,
+                org: owner,
+                offset,
+                length,
+            },
+        });
+        repos.push(...(result.Repo || []));
+        offset = offset + length;
+    } while (result.Repo?.length > 0)
 
-    const orgs = result.Org.map(org => {
-        const provider = org.scmProvider;
-        return {
-            tasks: org.repos.map(repo => {
-                return {
-                    providerId: provider.providerId,
-                    providerType: provider.providerType,
-                    repoId: repo.id,
-                    owner: repo.owner,
-                    name: repo.name,
-                    branch: repo.defaultBranch || "master",
-                };
-            }),
-        };
-    });
+    const orgs = _.map(_.groupBy(repos, "org.scmProvider.providerId"), (v, k) => ({
+        tasks: v.map(r => ({
+            providerId: r.org.scmProvider.providerId,
+            providerType: r.org.scmProvider.providerType,
+            repoId: r.id,
+            owner: r.owner,
+            name: r.name,
+            branch: r.defaultBranch || "master",
+        })),
+    }));
 
     const prefs: PreferenceStore = configurationValue<PreferenceStoreFactory>("sdm.preferenceStoreFactory")(ctx);
 

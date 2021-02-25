@@ -1,16 +1,15 @@
-query ReposByProvider($providerId: String, $org: String) {
-    Org(owner: $org) {
+query ReposByProvider($providerId: String, $org: String, $offset: Int!, $length: Int!) {
+    Repo(owner: $org, first: $length, offset: $offset, orderBy: [id_asc]) {
+        id
         owner
-        repos {
-            id
-            owner
-            name
-            defaultBranch
-        }
-        scmProvider(providerId: $providerId) @required {
-            id
-            providerId
-            providerType
+        name
+        defaultBranch
+        org @required {
+            scmProvider(providerId: $providerId) @required {
+                id
+                providerId
+                providerType
+            }
         }
     }
 }
